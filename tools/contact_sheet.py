@@ -67,21 +67,22 @@ def font(size):
 
 
 def sheet(frames, cols, out, title=None):
-    """frames: [(path, caption)]"""
+    """frames: [(path, caption)]. Captions sit in a strip under each tile so they never cover the picture."""
     ims = [Image.open(p).convert("RGB") for p, _ in frames]
     w, h = ims[0].size
+    f = font(max(14, w // 22))
+    cap_h = f.size + 10
     rows = (len(ims) + cols - 1) // cols
     top = 36 if title else 0
-    canvas = Image.new("RGB", (cols * (w + 4) + 4, rows * (h + 4) + 4 + top), (255, 255, 255))
-    f = font(max(14, w // 20)); d = ImageDraw.Draw(canvas)
+    canvas = Image.new("RGB", (cols * (w + 4) + 4, rows * (h + cap_h + 4) + 4 + top), (255, 255, 255))
+    d = ImageDraw.Draw(canvas)
     if title:
         d.text((8, 6), title, font=font(20), fill=(0, 0, 0))
     for i, (im, (_, cap)) in enumerate(zip(ims, frames)):
-        x, y = 4 + (i % cols) * (w + 4), top + 4 + (i // cols) * (h + 4)
+        x, y = 4 + (i % cols) * (w + 4), top + 4 + (i // cols) * (h + cap_h + 4)
         canvas.paste(im, (x, y))
-        tw = d.textlength(cap, font=f)
-        d.rectangle([x, y, x + tw + 10, y + f.size + 8], fill=(0, 0, 0))
-        d.text((x + 5, y + 3), cap, font=f, fill=(255, 230, 0))
+        d.rectangle([x, y + h, x + w, y + h + cap_h], fill=(20, 20, 20))
+        d.text((x + 6, y + h + 4), cap, font=f, fill=(255, 230, 0))
     canvas.save(out, quality=88)
     return out
 

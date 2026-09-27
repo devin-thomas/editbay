@@ -1,0 +1,17 @@
+{
+ "assets": [
+  {
+   "file": "mix.wav",
+   "sha256_16": "54852129f571efe1",
+   "kind": "own",
+   "source": "editbay mix: devin-v1 narration, beat_bed.py bed, sfx_synth.py effects",
+   "license": "",
+   "label": "",
+   "prompt": "",
+   "tool": "",
+   "cost_usd": 0.0,
+   "note": "voice disclosed on the end card",
+   "added": "2026-09-26"
+  }
+ ]
+}

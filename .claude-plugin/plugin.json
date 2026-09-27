@@ -1,6 +1,6 @@
 {
   "name": "editbay",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Agent skills for editing and making videos with a coding agent, built on HyperFrames: transcribe, cut, plan the beats, build, verify, deliver; plus reference-to-style and skill retros.",
   "author": {
     "name": "Devin Thomas",
@@ -17,16 +17,19 @@
     "verification"
   ],
   "skills": [
+    "./skills/video-director",
     "./skills/footage-intake",
     "./skills/transcript-reconcile",
     "./skills/rough-cut",
     "./skills/voiceover",
     "./skills/beat-sheet",
+    "./skills/broll-sourcing",
     "./skills/sound-bed",
     "./skills/motion-build",
     "./skills/render-verify",
     "./skills/delivery-pack",
     "./skills/reference-to-style",
-    "./skills/style-craft-reel"
+    "./skills/style-craft-reel",
+    "./skills/skill-retro"
   ]
 }

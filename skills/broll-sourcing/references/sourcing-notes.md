@@ -1,0 +1,16 @@
+# Sourcing notes
+
+- **Capture sizes:** a card in a 1920x1080 frame that holds a web page reads best when the page was captured at
+  1280 px wide; full-width captures shrink text below phone legibility.
+- **Scroll "recordings":** capture the full page, then animate `y` on the image inside a masked card in HyperFrames.
+  Timing then follows the beat sheet and never drops frames.
+- **Logos:** vector (SVG) from the owner's brand or press page when it exists; record the page URL and the date.
+  Use the owner's colours and clear space; do not animate a logo into something it is not.
+- **Stock:** keep the licence text or page URL per file; some "free" licences forbid use in endorsements or
+  require credit.
+- **Generated stills:** keep the prompt, model, seed, and cost in the ledger. Photoreal people and places are the
+  highest risk of being mistaken for real: label them.
+- **Generated clips:** Kling returns 24 fps. Re-encode for seek-safe placement:
+  `ffmpeg -i raw.mp4 -an -vf "fps=60" -c:v libx264 -crf 16 -g 1 -keyint_min 1 -bf 0 -pix_fmt yuv420p clip-60.mp4`
+  (speed changes, if any, before the fps filter with `setpts`).
+- **Downloads:** results from aggregators expire (24 hours to 14 days in their docs): download immediately and hash.

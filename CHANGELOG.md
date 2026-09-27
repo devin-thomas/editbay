@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 (2026-09-26)
+
+- Skills: video-director (entry point: brief, route, goal condition, loop), broll-sourcing, delivery-pack,
+  reference-to-style, style-craft-reel, skill-retro. 14 skills in the plugin.
+- Tools: asset_ledger (provenance and a gate), deliver, reference_report, remux_audio (HyperFrames renders normalise
+  audio to about -16 LUFS; this puts a -14 master back). contact_sheet captions moved under the tiles.
+- Examples: explainer delivered (4K master, 1080p, 9:16, captions, thumbnails); the Kenn Ejima reel measured and
+  broken down; an original craft reel built from that style.
+
 ## 0.1.0 (2026-09-26)
 
 First cut, built from an analysis of Nate Herk's "Opus 5.5 Just Changed Video Editing Forever" (2026-09-25), the
