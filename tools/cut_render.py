@@ -11,6 +11,10 @@ How: video frames are kept by timestamp in one decode pass (select + setpts), au
 numpy with 5 ms fades at every join, then both are muxed. Each keep contributes round(dur*fps) frames and exactly
 frames*sr/fps samples, so picture and sound stay the same length across any number of cuts. (Seeking each
 segment with -ss on millisecond-rounded times skips one frame and holds another; this avoids that.)
+EDLs that go back in time (ordered selects from cut_plan --selects) render one forward run at a time: each run
+seeks near its start with source timestamps kept (-copyts) and selects frames by half-frame time windows, then the
+identical encodes are joined without re-encoding. (One split/trim/concat graph would buffer every out-of-order
+stretch in memory.) Audio slices follow the keep order either way.
 After rendering, every join is measured: a join louder than --join-db (-30 dBFS) within 25 ms means a clipped word
 or leftover sound, and exits 1. Results go to <out>.render.json.
 """
@@ -32,15 +36,46 @@ def run(cmd):
 
 def render(edl, out, crf, fade_ms=5):
     src, fps = edl["source"], edl["fps"]
-    keeps = [(k["in"], k["out"]) for k in edl["keep"]]
+    keeps = [("gap", k["gap"]) if "gap" in k else (k["in"], k["out"]) for k in edl["keep"]]
     fr = lambda t: round(t * fps)
     tmp = tempfile.mkdtemp(prefix="cut_")
-    # Video: keep frames whose index falls in [F_in, F_out) for any keep.
-    expr = "+".join(f"between(n\\,{fr(s)}\\,{fr(e) - 1})" for s, e in keeps)
+    enc = ["-fps_mode", "passthrough", "-c:v", "libx264", "-crf", str(crf), "-preset", "medium", "-pix_fmt", "yuv420p",
+           "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709"]
     vid = os.path.join(tmp, "v.mp4")
-    run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src, "-an", "-vf", f"select='{expr}',setpts=N/FRAME_RATE/TB",
-         "-fps_mode", "passthrough", "-c:v", "libx264", "-crf", str(crf), "-preset", "medium", "-pix_fmt", "yuv420p",
-         "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", vid])
+    runs, cur = [], []
+    for s, e in keeps:  # split into forward runs wherever the next keep starts before the previous one ends; gaps alone
+        if s == "gap" or (cur and (cur[-1][0] == "gap" or s < cur[-1][1] - 1e-6)):
+            if cur: runs.append(cur)
+            cur = []
+        cur.append((s, e))
+    runs.append(cur)
+    if len(runs) == 1:
+        # Video: keep frames whose index falls in [F_in, F_out) for any keep.
+        expr = "+".join(f"between(n\\,{fr(s)}\\,{fr(e) - 1})" for s, e in keeps)
+        run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src, "-an", "-vf", f"select='{expr}',setpts=N/FRAME_RATE/TB",
+             *enc, vid])
+    else:
+        st = float(json.loads(run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=start_time",
+                                   "-of", "json", src]).stdout)["streams"][0].get("start_time") or 0)
+        pieces = []
+        wh = json.loads(run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
+                             "-of", "json", src]).stdout)["streams"][0]
+        for i, r in enumerate(runs):
+            pv = os.path.join(tmp, f"v{i:03d}.mp4")
+            if r[0][0] == "gap":  # black frames, encoded like every other piece so the concat can stream-copy
+                run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "lavfi", "-i",
+                     f"color=c=black:s={wh['width']}x{wh['height']}:r={Fraction(fps).limit_denominator(1001)}",
+                     "-frames:v", str(round(r[0][1] * fps)), *enc, pv])
+                pieces.append(pv); continue
+            seek = max(fr(r[0][0]) - 2 * round(fps), 0) / fps + st
+            expr = "+".join(f"between(t\\,{st + (fr(s) - 0.5) / fps:.6f}\\,{st + (fr(e) - 0.5) / fps:.6f})" for s, e in r)
+            run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-ss", f"{seek:.6f}", "-copyts", "-i", src, "-an", "-vf",
+                 f"select='{expr}',setpts=N/FRAME_RATE/TB", *enc, pv])
+            pieces.append(pv)
+        lst = os.path.join(tmp, "runs.txt")
+        open(lst, "w").write("".join(f"file '{p}'\n" for p in pieces))
+        run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", vid])
+    render.runs = len(runs)
     # Audio: exact sample slices at 48 kHz.
     wav = os.path.join(tmp, "a.wav")
     run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src, "-vn", "-ac", "2", "-ar", str(SR), "-c:a", "pcm_f32le", wav])
@@ -49,6 +84,8 @@ def render(edl, out, crf, fade_ms=5):
     parts, fade = [], int(SR * fade_ms / 1000)
     ramp = np.linspace(0, 1, fade)[:, None]
     for s, e in keeps:
+        if s == "gap":  # silence for the slot
+            parts.append(np.zeros((int(round(round(e * fps) * spf)), y.shape[1]))); continue
         a0, a1 = int(round(fr(s) * spf)), int(round(fr(e) * spf))
         seg = y[a0:a1].copy()
         if len(seg) < a1 - a0:
@@ -70,7 +107,7 @@ def render(edl, out, crf, fade_ms=5):
     render.joins = joins
     run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", vid, "-i", cut_wav, "-map", "0:v", "-map", "1:a", "-c:v", "copy",
          "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", "-shortest", out])
-    frames = sum(fr(e) - fr(s) for s, e in keeps)
+    frames = sum(round(e * fps) if s == "gap" else fr(e) - fr(s) for s, e in keeps)
     return frames / fps
 
 
@@ -88,9 +125,14 @@ def fcpxml(edl, path):
     probe = json.loads(run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
                             "-of", "json", src]).stdout)["streams"][0]
     fr = lambda t: round(t * fps)
-    total = sum(fr(k["out"]) - fr(k["in"]) for k in edl["keep"])
+    total = sum(round(k["gap"] * fps) if "gap" in k else fr(k["out"]) - fr(k["in"]) for k in edl["keep"])
     clips, off = [], 0
     for i, k in enumerate(edl["keep"], 1):
+        if "gap" in k:
+            n = round(k["gap"] * fps)
+            clips.append(f'            <gap name="{k.get("label", "gap")}" offset="{rational(off, fps)}" duration="{rational(n, fps)}">'
+                         f'<marker start="0s" duration="{frame_dur}" value="{k.get("label", "gap")}"/></gap>')
+            off += n; continue
         n = fr(k["out"]) - fr(k["in"])
         clips.append(f'            <asset-clip ref="r2" name="{name} keep {i}" offset="{rational(off, fps)}" '
                      f'start="{rational(fr(k["in"]), fps)}" duration="{rational(n, fps)}" format="r1" tcFormat="NDF"/>')
@@ -141,7 +183,8 @@ def main():
         got = json.loads(run(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type,duration,nb_frames",
                               "-of", "json", a.out]).stdout)["streams"]
         v = next(s for s in got if s["codec_type"] == "video"); au = next(s for s in got if s["codec_type"] == "audio")
-        print(f"wrote {a.out}: expected {expect:.3f}s, video {float(v['duration']):.3f}s ({v.get('nb_frames')} frames), "
+        print(f"wrote {a.out} ({render.runs} forward run{'s' if render.runs > 1 else ''}): expected {expect:.3f}s, "
+              f"video {float(v['duration']):.3f}s ({v.get('nb_frames')} frames), "
               f"audio {float(au['duration']):.3f}s; {len(render.joins) - len(loud)}/{len(render.joins)} joins in silence")
         json.dump({"out": a.out, "seconds": round(expect, 3), "joins": render.joins, "loud_joins": loud},
                   open(os.path.splitext(a.out)[0] + ".render.json", "w"), indent=1)

@@ -7,7 +7,11 @@
 
 Usage:
   cut_plan.py TRANSCRIPT.json --media SOURCE.mp4 --out cut/ [--max-gap 0.7 --keep-gap 0.3] [--fillers um,uh,erm]
-              [--implicit-retakes suggest|apply|off] [--protect 12.0-15.5,...]
+              [--implicit-retakes suggest|apply|off] [--protect 12.0-15.5,...] [--selects selects.json]
+  --selects: [{"in": 100.24, "out": 106.01, "label": "intro"}, {"gap": 3.0, "label": "insert"}, ...] source ranges
+             (first word start, last word end) and gaps (a black, silent slot of exact frames for a clip placed later)
+             in OUTPUT order. Each is snapped into silence like any cut, cleaned of dead air and fillers inside, and
+             assembled in the listed order (a promo from a rambling take). The EDL is then "ordered": true.
 TRANSCRIPT: reconcile/faster-whisper JSON (segments with words [start, end, word, prob]) on the SOURCE timeline.
 Writes:
   cut/edl.json         {source, fps, duration, keep:[{in,out}], remove:[{in,out,reason,text}], stats}
@@ -77,6 +81,32 @@ class Snapper:
                 return max(j * self.hop - self.pre, 0)
         cands = [j for j in range(max(i - w, 0), min(i + w, len(self.env))) if self.silent[j]]
         return min(cands, key=lambda j: (abs(j - i), -j)) * self.hop if cands else t
+
+
+    # Select edges need direction: a select must never lose its first or last word. Nearest-silence snapping can jump
+    # forward past a soft first word, or back into the closure before a final consonant ("tourname|nt").
+    def select_in(self, t, window=0.6, min_sil=0.08):
+        """Cut before the speech that holds t: the onset after at least min_sil of silence. (time, clean)."""
+        i, w, ms = self._i(t), int(window / self.hop), max(int(min_sil / self.hop), 1)
+        if self.silent[i]:  # ASR start early: the word begins at the next onset
+            k = next((m for m in range(i, min(i + w, len(self.env))) if not self.silent[m]), None)
+            return (max(k * self.hop - self.pre, 0), True) if k is not None else (t, True)
+        k = i
+        while k > max(i - w, 0):
+            if all(self.silent[max(k - ms, 0):k]) and k - ms >= 0:
+                return max(k * self.hop - self.pre, 0), True
+            k -= 1
+        lo = max(i - w, 0)  # speech runs straight into this word: cut at the quietest moment before it, reported
+        return float(lo + min(range(i - lo + 1), key=lambda m: self.env[lo + m])) * self.hop, False
+
+    def select_out(self, t, window=0.6, min_sil=0.08):
+        """Cut after the speech that holds t: the start of the first silence of at least min_sil. (time, clean)."""
+        i, w, ms = self._i(t), int(window / self.hop), max(int(min_sil / self.hop), 1)
+        for k in range(i, min(i + w, len(self.env) - ms)):
+            if all(self.silent[k:k + ms]):
+                return k * self.hop + self.pre, True
+        hi = min(i + w, len(self.env) - 1)  # no pause after the last word: the quietest moment after it, reported
+        return float(i + min(range(hi - i + 1), key=lambda m: self.env[i + m])) * self.hop, False
 
 
 def load_words(path):
@@ -151,6 +181,7 @@ def main():
     ap.add_argument("--protect", default="", help="comma list of start-end ranges that are never cut")
     ap.add_argument("--no-snap-silence", action="store_true", help="trust word timestamps as they are")
     ap.add_argument("--silence-db", type=float, default=-45.0, help="envelope level treated as silence (dBFS)")
+    ap.add_argument("--selects", help="JSON list of {in, out, label} source ranges in output order (see above)")
     a = ap.parse_args()
 
     dur, fps = probe(a.media)
@@ -218,25 +249,57 @@ def main():
         keep.append([t, dur])
     # Tiny keeps are worse than no keep: fold them into the removal around them.
     keep = [k for k in keep if k[1] - k[0] >= a.min_keep or k[0] == 0.0]
+    # Selects: keep only what falls inside each select, in the selects' order. A select's in point is a cut that ends
+    # before the first word (snapped to its onset), its out point a cut that starts after the last word (in silence).
+    labels, sel_out = [""] * len(keep), []
+    if a.selects:
+        sel = json.load(open(a.selects)); sel = sel["selects"] if isinstance(sel, dict) else sel
+        ordered = []
+        for x in sel:
+            if "gap" in x:  # a slot for an insert (a clip, a card): black and silence of an exact frame count
+                n = max(round(float(x["gap"]) * fps), 1)
+                ordered.append(("gap", n / fps, x.get("label", "gap")))
+                sel_out.append({"gap": round(n / fps, 4), "label": x.get("label", "gap")})
+                continue
+            s0, e0, clean_in, clean_out = float(x["in"]) - a.pad, float(x["out"]) + a.pad, True, True
+            if snapper:
+                (s0, clean_in), (e0, clean_out) = snapper.select_in(float(x["in"])), snapper.select_out(float(x["out"]))
+            s0, e0 = snap(s0, up=False), snap(e0, up=True)
+            sel_out.append({"in": round(s0, 4), "out": round(e0, 4), "label": x.get("label", ""),
+                            **({} if clean_in else {"hard_in": "no silence before the first word"}),
+                            **({} if clean_out else {"hard_out": "no silence after the last word"})})
+            for ks, ke in keep:
+                lo, hi = max(ks, s0), min(ke, e0)
+                if ordered and ordered[-1][0] != "gap" and ordered[-1][0] <= lo < ordered[-1][1]:  # continuation: no repeated frames
+                    lo = ordered[-1][1]
+                if hi - lo >= a.min_keep:
+                    ordered.append((lo, hi, x.get("label", "")))
+        keep, labels = [[lo, hi] for lo, hi, _ in ordered], [lab for _, _, lab in ordered]
+    gap_of = lambda k: k[1] if k[0] == "gap" else None
     frames = lambda x: round(x * fps)
-    kept = sum(frames(e) - frames(s) for s, e in keep) / fps
+    kept = sum(frames(e) if s == "gap" else frames(e) - frames(s) for s, e in keep) / fps
 
     # Retime words onto the cut timeline.
     retimed, offset_list, acc = [], [], 0.0
     for s, e in keep:
+        if s == "gap":
+            acc += frames(e) / fps; continue
         offset_list.append((s, e, acc)); acc += (frames(e) - frames(s)) / fps
     for w in words:
         for s, e, base in offset_list:
             if w["s"] >= s - 1e-6 and w["e"] <= e + 1e-6:
                 retimed.append({"text": w["w"], "start": round(w["s"] - s + base, 3), "end": round(w["e"] - s + base, 3)})
                 break
+    retimed.sort(key=lambda w: w["start"])  # selects can put later source words earlier on the cut timeline
     os.makedirs(a.out, exist_ok=True)
     suggestions = [{"in": round(words[r["from"]]["s"], 3), "out": round(words[r["to"]]["s"], 3) if r["to"] < len(words) else dur,
                     "reason": r["reason"], "text": " ".join(w["w"] for w in words[r["from"]:r["to"]])}
                    for r in find_retakes(words, a.implicit_retakes) if not r["applied"]]
     # Store the source relative to the EDL so plans can be committed and moved; cut_render resolves it back.
     edl = {"source": os.path.relpath(os.path.abspath(a.media), os.path.abspath(a.out)), "fps": fps, "duration": round(dur, 3),
-           "keep": [{"in": round(s, 4), "out": round(e, 4)} for s, e in keep],
+           "keep": [({"gap": round(e, 4)} if s == "gap" else {"in": round(s, 4), "out": round(e, 4)}) | ({"label": lab} if lab else {})
+                    for (s, e), lab in zip(keep, labels)],
+           "ordered": bool(a.selects), "selects": sel_out,
            "remove": [{"in": round(s, 4), "out": round(e, 4), "reason": why, "text": text} for s, e, why, text in merged],
            "suggested": suggestions,
            "stats": {"source_s": round(dur, 2), "cut_s": round(kept, 2), "removed_s": round(dur - kept, 2),
@@ -250,11 +313,24 @@ def main():
              "| # | source in | source out | length | reason | words removed |", "|---|---|---|---|---|---|"]
     for n, (s, e, why, text) in enumerate(merged, 1):
         lines.append(f"| {n} | {mm(s)} | {mm(e)} | {e - s:.2f}s | {why} | {text or '(silence)'} |")
+    if sel_out:
+        lines += ["", "## Selects, in output order", "", "| # | label | source in | source out | words |", "|---|---|---|---|---|"]
+        for n, x in enumerate(sel_out, 1):
+            if "gap" in x:
+                lines.append(f"| {n} | {x['label']} | gap | {x['gap']:.2f}s | (black and silence: the slot for an insert) |"); continue
+            txt = " ".join(w["w"] for w in words if w["s"] >= x["in"] - 1e-6 and w["e"] <= x["out"] + 1e-6)
+            warn = "; ".join(v for k, v in x.items() if k.startswith("hard_"))
+            lines.append(f"| {n} | {x['label']} | {mm(x['in'])} | {mm(x['out'])} | {txt[:140]}{' **HARD CUT: ' + warn + '**' if warn else ''} |")
     if suggestions:
         lines += ["", "## Suggested, not applied (implicit retakes)", ""]
         lines += [f"- {mm(x['in'])}-{mm(x['out'])}: {x['reason']}: \"{x['text']}\"" for x in suggestions]
     open(os.path.join(a.out, "KEEP-LIST.md"), "w").write("\n".join(lines) + "\n")
-    print(f"{dur:.2f}s -> {kept:.2f}s; {len(merged)} removals, {len(keep)} keeps, {len(suggestions)} suggestions; "
+    for x in sel_out:
+        for k, v in x.items():
+            if k.startswith("hard_"):
+                print(f"warning: select '{x['label']}': {v} (a hard cut; choose a different word or let the join check judge)")
+    print(f"{dur:.2f}s -> {kept:.2f}s; {len(merged)} removals, {len(keep)} keeps"
+          + (f" from {len(sel_out)} ordered selects" if sel_out else "") + f", {len(suggestions)} suggestions; "
           f"{len(retimed)}/{len(words)} words kept")
 
 

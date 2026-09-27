@@ -31,6 +31,14 @@ and reaction beats with `--protect 12.0-15.5` and re-plan. Implicit retakes are 
 with `--implicit-retakes apply` after reading its words, or leave it. Pacing guide:
 [references/pacing.md](references/pacing.md).
 
+A piece assembled from parts of a long take in a new order (a promo from a rambling recording) uses
+`--selects selects.json`: `[{"label", "in", "out"}, {"gap": 3.0, "label": "insert"}, ...]` in output order, with
+`in`/`out` at the first word's start and the last word's end. Each select keeps its first and last word (edges snap
+to the silence around the words, never into them), dead air inside it is still removed, and a gap holds a black,
+silent slot of exact frames for an insert placed later. A select with no silence at an edge is reported as a hard
+cut: pick a neighbouring word, or let the join check judge. Take word times from the second ASR model when the first
+has drifted (compare the two around each edge).
+
 **Done when:** every removal in the keep list is either accepted or protected, and every suggestion has a decision.
 
 ## 3. Render and prove the joins
@@ -39,7 +47,9 @@ with `--implicit-retakes apply` after reading its words, or leave it. Pacing gui
 uv run $EB/tools/cut_render.py cut/edl.json --out cut/cut.mp4 --fcpxml cut/cut.fcpxml
 ```
 
-The renderer keeps frames by index and audio by sample, fades 5 ms at each join, then measures every join: a join
+The renderer keeps frames by index and audio by sample (a reordered EDL renders one forward run at a time and joins
+the runs without re-encoding; gaps become black frames and silence, and a marker in the FCPXML), fades 5 ms at each
+join, then measures every join: a join
 louder than -30 dBFS within 25 ms means a clipped word or leftover sound (exit 1). Fix by re-planning (a wider
 `--silence-db`, or protect the range), never by nudging the render.
 
