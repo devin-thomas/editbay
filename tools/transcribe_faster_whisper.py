@@ -24,7 +24,20 @@ def ts(t, sep=","):
     return f"{int(h):02d}:{int(m):02d}:{int(s):02d}{sep}{int(round((s % 1) * 1000)) % 1000:03d}"
 
 
+def unthrottle():
+    """Windows treats a process started over ssh as background work and runs it at low clocks (EcoQoS). Measured on
+    Titan (i7-12700): x264 at Normal priority 12 fps, at AboveNormal 53 fps. Raises this interpreter, which is the real
+    one even when a venv launcher started it (the launcher's child does not inherit AboveNormal)."""
+    if os.name == "nt":
+        import ctypes
+        k = ctypes.windll.kernel32
+        k.GetCurrentProcess.restype = ctypes.c_void_p            # a 64-bit pseudo-handle; untyped ctypes truncates it
+        k.SetPriorityClass.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+        k.SetPriorityClass(k.GetCurrentProcess(), 0x8000)        # ABOVE_NORMAL_PRIORITY_CLASS
+
+
 def main():
+    unthrottle()
     ap = argparse.ArgumentParser()
     ap.add_argument("audio"); ap.add_argument("--model", default="large-v3")
     ap.add_argument("--prompt-file"); ap.add_argument("--batched", action="store_true")

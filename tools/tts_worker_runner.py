@@ -63,6 +63,46 @@ def read_msg(proc):
             continue
 
 
+def raise_tree(pid):
+    """Windows runs processes started over ssh at low clocks (EcoQoS); AboveNormal priority lifts that (x264 on Titan:
+    12 fps at Normal, 53 fps at AboveNormal). A venv's python.exe is a launcher whose child is the real interpreter, and
+    that child starts at Normal whatever the launcher got, so raise the whole tree once it exists."""
+    if os.name != "nt":
+        return
+    import ctypes
+    from ctypes import wintypes
+    k = ctypes.windll.kernel32
+
+    class PE(ctypes.Structure):
+        _fields_ = [("dwSize", wintypes.DWORD), ("cntUsage", wintypes.DWORD), ("th32ProcessID", wintypes.DWORD),
+                    ("th32DefaultHeapID", ctypes.c_void_p), ("th32ModuleID", wintypes.DWORD), ("cntThreads", wintypes.DWORD),
+                    ("th32ParentProcessID", wintypes.DWORD), ("pcPriClassBase", ctypes.c_long), ("dwFlags", wintypes.DWORD),
+                    ("szExeFile", ctypes.c_char * 260)]
+    k.CreateToolhelp32Snapshot.restype = ctypes.c_void_p
+    k.Process32First.argtypes = k.Process32Next.argtypes = [ctypes.c_void_p, ctypes.POINTER(PE)]
+    k.OpenProcess.restype = ctypes.c_void_p
+    k.SetPriorityClass.argtypes = [ctypes.c_void_p, ctypes.c_uint32]
+    k.CloseHandle.argtypes = [ctypes.c_void_p]
+    for _ in range(20):                                  # the launcher starts its child a moment later
+        snap, e, kids = k.CreateToolhelp32Snapshot(2, 0), PE(), {}
+        e.dwSize = ctypes.sizeof(PE)
+        ok = k.Process32First(snap, ctypes.byref(e))
+        while ok:
+            kids.setdefault(e.th32ParentProcessID, []).append(e.th32ProcessID)
+            ok = k.Process32Next(snap, ctypes.byref(e))
+        k.CloseHandle(snap)
+        tree, todo = [], [pid]
+        while todo:
+            p = todo.pop(); tree.append(p); todo += kids.get(p, [])
+        if len(tree) > 1:
+            break
+        time.sleep(0.1)
+    for p in tree:
+        h = k.OpenProcess(0x0200, False, p)                 # PROCESS_SET_INFORMATION
+        if h:
+            k.SetPriorityClass(h, 0x8000); k.CloseHandle(h)  # ABOVE_NORMAL_PRIORITY_CLASS
+
+
 def main():
     job = json.load(open(sys.argv[1], encoding="utf-8"))
     out = job["out_dir"]; os.makedirs(out, exist_ok=True)
@@ -81,6 +121,7 @@ def main():
     err = open(os.path.join(out, "worker.log"), "a", encoding="utf-8")
     proc = subprocess.Popen([w["python"], w["script"], *w.get("args", [])], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                             stderr=err, text=True, encoding="utf-8", env=env)
+    raise_tree(proc.pid)
     atexit.register(proc.terminate)
     ready = read_msg(proc)
     if not ready or not ready.get("ready"):

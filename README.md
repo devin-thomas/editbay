@@ -47,6 +47,7 @@ Start with `video-director`: it writes the brief, picks the route, and runs the 
 | hand it off | `delivery-pack` | 4K master, review copy, vertical cut, captions, chapters, thumbnails, manifest |
 | a house style learned from a video you admire | `reference-to-style` | measurements, a breakdown, and a new style skill that keeps the principles and leaves the signature |
 | a short motion reel in the craft-reel style | `style-craft-reel` | the style's rules, motif, and acceptance table (built by reference-to-style) |
+| a funny talking-head edit where the edit answers the host (asides, counters, punch words) | `style-edit-talks-back` | the style's rules and acceptance table (built by reference-to-style from eight measured videos) |
 | the next run to go better | `skill-retro` | RETRO.md: what the creator corrected, which skill or tool changes, and who owns each change |
 
 ## Tools

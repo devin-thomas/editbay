@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- New skill `style-edit-talks-back`: a talking-head edit where the edit is a second character (monospace asides,
+  running counters, punch words, parody lower thirds, a parody-world cold open), learned with reference-to-style from
+  eight measured videos by corbin (203-235 wpm, 30-60 visual events a minute, LRA 2.3 LU). The references were studied
+  at 720p and deleted; only the text breakdown is kept. Proof piece: the Daily Combo Trials dev vlog.
+- Titan jobs run at full speed: Windows puts processes started over ssh in its efficiency mode (x264 at Normal priority
+  12 fps, at AboveNormal 53 fps; the same job 288 s vs 60 s). `transcribe_faster_whisper.py` raises its own priority
+  at start; `tts_worker_runner.py` raises the worker's whole tree, because a venv's python.exe is a launcher whose real
+  interpreter does not inherit AboveNormal. Both verified on Titan (0x20 -> 0x8000).
+
 From the Muse run's retro, folded in by CacheBrief's STEWARD desk (2026-09-27):
 - av_qa `--require-content-ends` (on by default in verify_report): fails a delivery whose first or last frame is only
   background. The Muse 9:16 and 16:9 deliveries both open empty (edge density 0.0) and now fail; a real hook frame
