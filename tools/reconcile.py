@@ -212,6 +212,23 @@ def apply_glossary(words, glossary, log):
         k += 1
 
 
+def merge_hyphenated_words(words, log):
+    """Keep ASR timing while making split compounds one caption and beat token."""
+    merged = []
+    for word in words:
+        token = word["w"].strip()
+        if merged and token.startswith("-") and token != "-":
+            previous = merged[-1]
+            before = (previous["w"] + word["w"]).strip()
+            previous["w"] = previous["w"].rstrip() + token
+            previous["e"] = word["e"]
+            log.append(("caption-normalize", previous["s"], before, previous["w"].strip(),
+                        "joined ASR hyphen suffix; spoken audio unchanged"))
+        else:
+            merged.append(dict(word))
+    return merged
+
+
 def rebuild_segments(words, n_segs, segs):
     buckets = [[] for _ in range(n_segs)]
     for w in words:
@@ -275,6 +292,7 @@ def main():
     apply_patches(A, patches.get("patches", []), log)
     if a.glossary:
         apply_glossary(A, json.load(open(a.glossary, encoding="utf-8")), log)
+    A = merge_hyphenated_words(A, log)
     out = rebuild_segments(A, len(segs), segs)
 
     chapters = json.load(open(a.chapters, encoding="utf-8")).get("chapters") or [] if a.chapters else []
@@ -308,6 +326,7 @@ def main():
         f.write(", ".join(f"{mmss(w[0])} {w[2].strip()}({w[3]:.2f})" for w in low) + "\n")
     print(f"{len(out)} segments; {len(log)} changes ({sum(1 for r in log if r[0]=='majority')} majority, "
           f"{sum(1 for r in log if r[0]=='patch')} patch, {sum(1 for r in log if r[0]=='glossary')} glossary, "
+          f"{sum(1 for r in log if r[0]=='caption-normalize')} caption-normalize, "
           f"{sum(1 for r in log if r[0]=='patch-miss')} patch misses); {len(flags)} unresolved spans")
 
 

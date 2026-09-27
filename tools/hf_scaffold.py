@@ -11,6 +11,7 @@ Usage:
   hf_scaffold.py --beats beats/beats.resolved.json --brand BRAND.json --out hf/ [--size 1920x1080] [--fps 60]
                  [--audio sound/mix.wav] [--base media/talk.mp4] [--background grid|glow|solid]
                  [--captions words.json] [--hud "EDITBAY / EXPLAINER"] [--title "..."] [--extra-css scenes.css]
+                 [--asset NAME=PATH ...]
                  [--look signal|ledger|arcade|silicon] (CacheBrief: load local look and shell CSS)
                  [--remap left=upper,right=lower]   (re-layout the same beat sheet for 1080x1920)
 Cue kinds: title, side-card, lower-third, bullet, label, step, word-highlight, image-panel, takeover, custom.
@@ -27,7 +28,8 @@ content labels never go under the brand's min_phone_readable, kickers/step numbe
 balance their lines, cards have no backdrop-filter (it forces HyperFrames into slow screenshot capture), and vertical
 layouts use a 160-1500px safe stack on a 1920px canvas with a depth plane behind it; captions sit above platform UI.
 CacheBrief scaffolds copy the selected local look/shell CSS and referenced fonts into OUT/brand/, normalize font URLs to
-/brand/fonts/, and use literal hex colors for caption tweens.
+/brand/fonts/, and use literal hex colors for caption tweens. Explicit `--asset` files are copied into OUT/assets/;
+existing project-local assets are preserved on reruns.
 """
 import argparse, html, json, os, re, shutil, subprocess
 
@@ -341,6 +343,8 @@ def main():
     ap.add_argument("--words", help="word array for word-highlight cues (defaults to the beat sheet's words)")
     ap.add_argument("--hf-version", default=os.environ.get("EDITBAY_HF_VERSION", "0.8.79"))
     ap.add_argument("--extra-css", help="a CSS file appended to the generated styles (custom scenes; rerun after edits)")
+    ap.add_argument("--asset", action="append", default=[], metavar="NAME=PATH",
+                    help="copy a project-local asset into OUT/assets/ without removing existing assets")
     ap.add_argument("--look", choices=["signal", "ledger", "arcade", "silicon"], help="CacheBrief local look CSS")
     ap.add_argument("--remap", default="", help="zone remap for a re-layout, e.g. left=upper,right=lower (vertical cuts)")
     a = ap.parse_args()
@@ -369,13 +373,29 @@ def main():
                        cwd=parent, env=env, capture_output=True)
     os.makedirs(os.path.join(a.out, "assets"), exist_ok=True)
 
-    def asset(path):
+    def asset(path, name=None):
         if not path:
             return None
-        dst = os.path.join(a.out, "assets", os.path.basename(path))
-        if os.path.abspath(path) != os.path.abspath(dst):
-            shutil.copy2(path, dst)
-        return f"assets/{os.path.basename(path)}"
+        source = os.path.abspath(path)
+        if not os.path.isfile(source):
+            raise SystemExit(f"hf_scaffold: missing asset: {path}")
+        name = (name or os.path.basename(source)).replace("\\", "/")
+        if not name or name.startswith("/") or any(part in ("", ".", "..") for part in name.split("/")):
+            raise SystemExit("hf_scaffold: asset name must be a relative path without . or .. components")
+        dst = os.path.join(a.out, "assets", *name.split("/"))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        if source != os.path.abspath(dst):
+            shutil.copy2(source, dst)
+        return f"assets/{name}"
+
+    for spec in a.asset:
+        if "=" not in spec:
+            raise SystemExit("hf_scaffold: --asset must be NAME=PATH")
+        name, path = spec.split("=", 1)
+        if not name or not path:
+            raise SystemExit("hf_scaffold: --asset must include a name and path")
+        source = path if os.path.isabs(path) else (os.path.join(base_dir, path) if os.path.isfile(os.path.join(base_dir, path)) else path)
+        asset(source, name)
 
     for c in sheet["cues"]:
         if c.get("zone") in remap:

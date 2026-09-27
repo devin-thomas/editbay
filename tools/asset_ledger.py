@@ -8,6 +8,7 @@ Usage:
   asset_ledger.py add assets/ledger.json FILE --kind capture|official|stock|generated|own --source URL_OR_NOTE
                   [--license "..."] [--label "on-screen label"] [--prompt "..."] [--tool "..."] [--cost-usd 0.12]
                   [--source-file SOURCE] [--source-start SECONDS --source-end SECONDS]
+                  [--name RELATIVE_ASSET_PATH]
   asset_ledger.py check assets/ledger.json --composition hf/ [--ignore 'brand/shell/snippets/**']
                                                                (every src/href under hf/ that points at a file has an entry;
                                                                generated and stock entries carry a licence; generated
@@ -66,6 +67,21 @@ def references(text):
     return refs + css_url_refs(text)
 
 
+def ledger_key(value):
+    """Normalize a composition-relative asset path, with legacy basename compatibility."""
+    value = str(value).replace("\\", "/").lstrip("./")
+    if value.startswith("assets/"):
+        value = value[7:]
+    return value
+
+
+def asset_name(value):
+    value = str(value).replace("\\", "/")
+    if not value or value.startswith("/") or any(part in ("", ".", "..") for part in value.split("/")):
+        raise SystemExit("asset_ledger: --name must be a non-empty relative path without . or .. components")
+    return value
+
+
 def ignored(path, composition, patterns):
     if not patterns:
         return False
@@ -80,6 +96,7 @@ def main():
     ad.add_argument("--kind", choices=KINDS, required=True); ad.add_argument("--source", required=True)
     ad.add_argument("--license", default=""); ad.add_argument("--label", default=""); ad.add_argument("--prompt", default="")
     ad.add_argument("--tool", default=""); ad.add_argument("--cost-usd", type=float, default=0.0); ad.add_argument("--note", default="")
+    ad.add_argument("--name", help="unique path relative to the composition's assets/ directory")
     ad.add_argument("--source-file", default="", help="source recording for a clip segment")
     ad.add_argument("--source-start", type=float); ad.add_argument("--source-end", type=float)
     ck = sub.add_parser("check"); ck.add_argument("ledger"); ck.add_argument("--composition", required=True)
@@ -98,7 +115,7 @@ def main():
         if a.source_start is not None and a.source_start >= a.source_end:
             raise SystemExit("asset_ledger: source segment end must be after its start")
         digest = sha(a.file)
-        entry = {"file": os.path.basename(a.file), "sha256": digest, "sha256_16": digest[:16], "kind": a.kind, "source": a.source, "license": a.license,
+        entry = {"file": asset_name(a.name or os.path.basename(a.file)), "sha256": digest, "sha256_16": digest[:16], "kind": a.kind, "source": a.source, "license": a.license,
                  "label": a.label, "prompt": a.prompt, "tool": a.tool, "cost_usd": a.cost_usd, "note": a.note,
                  "added": datetime.date.today().isoformat()}
         if a.source_file:
@@ -115,7 +132,13 @@ def main():
             print(f"{e['kind']:9} {e['file']:40} {e['license'] or '-':22} {e['source']}")
         print(f"{len(led['assets'])} assets; generation spend ${sum(e.get('cost_usd', 0) for e in led['assets']):.2f}")
     else:
-        known = {e["file"]: e for e in led["assets"]}
+        known = {}
+        duplicate_keys = set()
+        for entry in led["assets"]:
+            key = ledger_key(entry.get("file", ""))
+            if key in known:
+                duplicate_keys.add(key)
+            known[key] = entry
         used, gaps = set(), []
         ignored_files = 0
         for root, dirs, files in os.walk(a.composition):
@@ -137,9 +160,18 @@ def main():
                     text = open(path, encoding="utf-8", errors="ignore").read()
                     for ref in references(text):
                         if ref and not ref.startswith(("http", "data:", "//", "#")) and not ref.endswith((".html", ".css")):
-                            used.add(os.path.basename(ref))
+                            used.add(ledger_key(ref))
+        for key in sorted(duplicate_keys):
+            gaps.append(f"{key}: duplicate ledger path")
         for u in sorted(used):
             e = known.get(u)
+            if not e and "/" not in u:
+                matches = [entry for key, entry in known.items() if os.path.basename(key) == os.path.basename(u)]
+                if len(matches) == 1:
+                    e = matches[0]
+                elif len(matches) > 1:
+                    gaps.append(f"{u}: ambiguous basename; add ledger entries with unique --name paths")
+                    continue
             if not e:
                 gaps.append(f"{u}: used in the composition, not in the ledger")
             elif e["kind"] in ("stock", "generated", "official") and not e["license"]:

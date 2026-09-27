@@ -71,3 +71,13 @@ Gotchas that each cost a re-render:
   time.
 - **Rule 9 — local brand paths:** when CSS is copied into a local HyperFrames root, normalize `../fonts` references to
   `/brand/fonts/...` (or another path inside the root) and fail on missing local stylesheets before rendering.
+- **Rule 10 — custom-scene eyebrows:** when raw HTML includes an eyebrow, declare its position for each orientation
+  instead of relying on flow layout, then run the full browser check after the final scaffold.
+- **Rule 11 — caption layering:** when burned captions intentionally sit over a scene card, allow overlap only on the
+  caption text nodes or their caption zone; do not waive the whole scene or root.
+- **Rule 12 — portrait reflow:** after late portrait CSS changes, rerun the transition layout check, not just a hero
+  snapshot; sampled transitions catch caption-to-artwork and inter-scene overlaps.
+- **Rule 13 — readable utility type:** run the brand text gate before delivery; design portrait utility labels and
+  diagram nodes at the full 36 px minimum, using two lines or wider nodes instead of marking factual text decorative.
+- **Rule 14 — persistent shell lanes:** after widening a source chip, inspect frame 0 and every persistent-bug hold;
+  reserve a separate upper-right chip lane and keep the bug at its brand anchor so opaque cards cannot cover shell art.

@@ -13,6 +13,7 @@
 | encoded-tail | the exact encoded last frame is an end card carrying the voice disclosure | `verify_report.py --require-end-card --end-card-proof qa/end-card.json` extracts `qa/encoded-last-frame.png`; inspect that exact frame and record `{"frame":"encoded-last-frame.png","is_end_card":true,"voice_disclosure":"Narrated with a voice model trained on the creator's own voice."}`; anything missing fails |
 | logo-fidelity | every official logo in the encoded video matches its ledger/source file in colour, proportions, and clear space | compare a frame crop with the source SVG/PNG; animate the wrapper or replace the incorrect asset |
 | duration-ledger | real footage/captures, generated media, and the final encoded duration are separately accounted for | list each source segment and generated clip; reconcile the sum against the render instead of hiding a missing or repeated segment |
+| persistent-shell | frame 0 and each persistent-bug hold keep the source chip, bug, lockup, and kicker in separate readable lanes | reserve a chip lane after long credits wrap; inspect exact frames because opaque shell layers can hide collisions from DOM checks |
 
 Planned holds: pass every intentional interval in one comma-separated value, for example
 `--allow-freeze 12.0:15.5,40.2:44.0`; the literal separator is `:` (`start:end`), and each range must match the plan.

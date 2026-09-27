@@ -17,7 +17,7 @@ Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`..
 ```bash
 uv run $EB/tools/hf_scaffold.py --beats beats/beats.resolved.json --brand BRAND.json --out hf/ \
   --audio sound/mix.wav [--base media/talk.mp4] [--background grid] [--captions cut/words.cut.json] [--hud "LABEL"] \
-  [--look signal|ledger|arcade|silicon]  # CacheBrief only: local look + shell links
+  [--look signal|ledger|arcade|silicon] [--asset NAME=PATH ...]  # CacheBrief: local look + shell links
 ```
 
 It runs `hyperframes init` if needed, copies media into `hf/assets/`, writes `hf/index.html` (one element per cue,
@@ -27,7 +27,8 @@ sound-bed (the base video is muted), so loudness is decided in one place.
 
 For a local CacheBrief project, resolve the look and shell styles to files copied under the render root and fail before
 rendering if either stylesheet is missing; local font URLs must stay inside that root (use `/brand/fonts/...` or a
-normalized copy, never an unresolved `../fonts` path).
+normalized copy, never an unresolved `../fonts` path). Pass approved evidence or logo files with repeatable
+`--asset NAME=PATH`; rerunning the scaffold preserves existing project-local assets.
 
 **Done when:** `hf/index.html` exists and `uv run $EB/tools/hf.py lint hf/` reports no errors.
 

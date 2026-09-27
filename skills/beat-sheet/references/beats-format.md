@@ -47,6 +47,9 @@ Curiosity is a timing obligation, not a vague note. Keep `beats/OPEN-LOOPS.json`
 piece, and any payoff at two seconds or less after its setup. Keep the question short enough to review against the
 opening and name the beat that pays it off in the adjacent cue's `why`.
 
+Beat anchors use the reconciled lexical form. If ASR splits a compound, use the joined token (`Large-scale`, not a
+separate `Large`/`-scale` display) after transcript reconciliation so beat timing and captions agree.
+
 The open-loop contract is adapted from `nateherkai/hyperframes-student-kit` (`.claude/skills/short-form-edit/`), under
 its MIT license and pipeline-use permission. Preserve that attribution when reusing the wording or checker rule.
 

@@ -10,6 +10,9 @@
   require credit.
 - **Generated stills:** keep the prompt, model, seed, and cost in the ledger. Photoreal people and places are the
   highest risk of being mistaken for real: label them.
+- **Native asset fidelity:** inspect every generated or stock file at full native resolution before placing it, then
+  inspect both rendered ratios. A macro image that looks generic in the edit can still expose visible brand marks such
+  as `OLYMPUS` or `CH-2` and must be replaced or explicitly cleared before the ledger gate.
 - **Generated clips:** Kling returns 24 fps. Re-encode for seek-safe placement:
   `ffmpeg -i raw.mp4 -an -vf "fps=60" -c:v libx264 -crf 16 -g 1 -keyint_min 1 -bf 0 -pix_fmt yuv420p clip-60.mp4`
   (speed changes, if any, before the fps filter with `setpts`).

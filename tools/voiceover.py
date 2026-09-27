@@ -19,7 +19,9 @@ Engines:
   hyperframes   `npx hyperframes tts` (Kokoro-82M, local).
 
 Script format: plain text or Markdown. Blank line = paragraph (longer gap). Lines starting with `#`, `>`, `<!--`,
-or `~~~` blocks are skipped (headings, notes, cue blocks). An optional `[B03]` prefix on a paragraph tags its beat.
+table pipes, or `~~~` blocks are skipped (headings, notes, metadata, cue blocks). Lines beginning `On-screen:`,
+`Pronunciation:`, or `Metadata:` are also skipped and copied to `script-metadata.md`. An optional `[B03]` prefix on a
+paragraph tags its beat.
 
 Usage:
   voiceover.py script.md --out narration/ --engine qwen3-worker --voice aiden --python P --worker W --ckpt C --device mps
@@ -27,7 +29,8 @@ Usage:
   voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1 --story-slug STORY --producer-callsign CALLSIGN
   voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1 --dry-run --story-slug STORY --producer-callsign CALLSIGN
                 [--glossary transcript/glossary.json]
-Writes narration/narration.wav (48 kHz mono, 24-bit), narration/sentences/*.wav, narration/narration.json
+Writes narration/narration.wav (48 kHz mono, 24-bit), narration/sentences/*.wav, narration/narration.json, and when
+present narration/script-metadata.md for skipped production notes
 ({sentences:[{i, beat, text, start, end, file, seed}], gap, paragraph_gap, duration, engine, voice}).
 Re-running reuses sentence WAVs whose text is unchanged; --redo 4,7 regenerates those with a new seed.
 Remote jobs use the namespace STORY--PRODUCER (inferred from --out and EDITBAY_* when omitted); --dry-run prints it
@@ -82,11 +85,25 @@ def validate_glossary(path):
 
 def parse_script(path):
     text = open(path, encoding="utf-8").read()
+    metadata = []
+    for match in re.finditer(r"~~~(?:metadata|production[- ]?note|pronunciation)\b(.*?)~~~", text, flags=re.I | re.S):
+        metadata.extend(line.strip() for line in match.group(1).splitlines() if line.strip())
     text = re.sub(r"~~~.*?~~~", "", text, flags=re.S)
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     paras = []
     for block in re.split(r"\n\s*\n", text):
-        lines = [l.strip() for l in block.splitlines() if l.strip() and not l.strip().startswith(("#", ">", "|", "- [", "```"))]
+        lines = []
+        for line in block.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            if line.startswith(("#", ">", "|", "- [", "```")):
+                metadata.append(line)
+                continue
+            if line.casefold().startswith(("on-screen:", "pronunciation:", "metadata:", "production note:")):
+                metadata.append(line)
+                continue
+            lines.append(line)
         if not lines:
             continue
         body = " ".join(lines)
@@ -97,7 +114,7 @@ def parse_script(path):
         # Sentence split that keeps abbreviations like "e.g." and decimals like "5.5" intact.
         sents = [s.strip() for s in re.split(r"(?<=[.!?])\s+(?=[A-Z\"'(])", body) if s.strip()]
         paras.append((beat, sents))
-    return paras
+    return paras, metadata
 
 
 class QwenWorker:
@@ -210,8 +227,11 @@ def main():
     mpath = os.path.join(a.out, "narration.json")
     if os.path.exists(mpath):
         old = {m["i"]: m for m in json.load(open(mpath))["sentences"]}
-    paras = parse_script(a.script)
+    paras, metadata = parse_script(a.script)
     os.makedirs(os.path.join(a.out, "sentences"), exist_ok=True)
+    if metadata:
+        with open(os.path.join(a.out, "script-metadata.md"), "w", encoding="utf-8") as f:
+            f.write("# Non-spoken production notes\n\n" + "\n".join(f"- {line}" for line in metadata) + "\n")
     if a.engine == "remote":
         if not a.voice_config:
             raise SystemExit("voiceover: --voice-config is required for --engine remote")

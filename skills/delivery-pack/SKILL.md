@@ -36,14 +36,16 @@ anything but size gets its own look (a sheet at the hero moments).
 ```bash
 uv run $EB/tools/deliver.py --out deliver/ --slug SLUG --file master-4k=... --file review-1080p=... --file vertical=... \
   --words FINAL_WORDS.json --beats beats/beats.resolved.json --thumb-from renders/review.mp4 --thumb-at T1,T2,T3 \
+  --asset designed-thumb=thumb.jpg --asset cover=cover.jpg \
   --title "..." --summary "..." --disclosure "..." --credit "Music: ..."
 ```
 
 Captions come from the verified word timings (never a raw pass). Chapters are written only when they meet YouTube's
 rules (first at 0:00, at least three, each at least 10 s); otherwise the tool says why. Thumbnails are three frame
 candidates, A/B/C, with no pick: the creator picks, or a designed thumbnail replaces them. The description draft
-carries the voice disclosure when a cloned voice narrates, and credits for music and generated media. Platform
-details: [references/platform-specs.md](references/platform-specs.md).
+carries the voice disclosure when a cloned voice narrates, and credits for music and generated media. Use repeatable
+`--asset VARIANT=PATH` for designed thumbs, covers, and other first-class image deliverables; the tool records their
+hashes and pixel dimensions. Platform details: [references/platform-specs.md](references/platform-specs.md).
 
 **Done when:** `deliver/DELIVERY.md` lists every file with its spec and measured loudness, and `manifest.json` has a
 SHA-256 for each.
@@ -60,4 +62,5 @@ stop. Media stays out of git; the records (`DELIVERY.md`, `manifest.json`, capti
 - [ ] Variants rendered as the profile asks; vertical re-laid out, not cropped
 - [ ] Every delivered file measured (spec and loudness) as delivered
 - [ ] Captions from verified words; chapters valid or explained; disclosure and credits in the description
-- [ ] Manifest with hashes; publishing left to the creator
+- [ ] Caption lines are checked after assembly; hyphenated compounds remain joined
+- [ ] Designed image assets are copied, dimensioned, and hashed in the manifest; publishing left to the creator

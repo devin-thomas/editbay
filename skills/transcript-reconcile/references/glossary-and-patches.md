@@ -36,3 +36,13 @@
 
 A patch without evidence is a guess. Good evidence: a frame showing the word (save it under `transcript/evidence/`),
 agreement of two other sources, or a listen at the timestamp with the reason written down.
+
+## Normalization before another voice take
+
+- Treat stable currency punctuation and proper-name splits as transcript normalization when the audio is intelligible:
+  reconcile `$5,499`, `M5 Ultra Mac Studio`, or `Di Benedetto` against the script, glossary, and secondary ASR, then
+  record the patch instead of rerolling the voice.
+- Join an ASR hyphen suffix into the preceding caption/beat token (`one` + `-time` -> `one-time`; `Large` + `-scale`
+  -> `Large-scale`). Preserve the first token's start, the suffix's end, and the spoken audio.
+- After reconciliation, compare every company, product, and person name in final captions against the script and
+  glossary. A sentence-level WER pass does not clear a caption-only proper-noun error.

@@ -10,10 +10,12 @@ Usage:
     --file master=renders/master-4k.mp4 --file review=renders/review.mp4 --file vertical=renders/vertical.mp4 \
     --words narration/words.words.json [--beats beats/beats.resolved.json --chapter-kinds step,chapter] \
     [--chapter "0:00 Intro"] [--thumb-from renders/review.mp4 --thumb-at 6.6,45.8,57.5] \
+    [--asset designed-thumb=PATH] [--asset cover=PATH]
     [--title "..."] [--summary "..."] [--disclosure "..."] [--credit "Music: ..."]
 Captions: SRT and VTT from the verified word timings (7 words / 34 characters per line, breaks at pauses and sentence
-ends). Chapters follow YouTube's rules (first at 0:00, at least three, each at least 10 s); invalid chapter lists are
-reported, not written. Thumbnails are frame candidates (A/B/C, no pick); designed thumbnails are a separate job.
+ends). Hyphenated ASR tokens such as `one` + `-time` are joined before cue assembly, and overlong assembled lines fail.
+Chapters follow YouTube's rules (first at 0:00, at least three, each at least 10 s); invalid chapter lists are reported,
+not written. Thumbnails are frame candidates (A/B/C, no pick); designed assets are copied and measured as first-class files.
 """
 import argparse, hashlib, json, os, re, shutil, subprocess, tempfile
 
@@ -36,15 +38,40 @@ def load_words(path):
     return [{"text": w[2].strip(), "start": w[0], "end": w[1]} for s in d["segments"] for w in s["words"]]
 
 
+def merge_hyphenated(words):
+    """Join ASR's split `word` + `-suffix` tokens without changing their timing span."""
+    merged = []
+    for word in words:
+        token = word["text"].strip()
+        if merged and token.startswith("-") and token != "-":
+            merged[-1]["text"] = merged[-1]["text"].rstrip() + token
+            merged[-1]["end"] = word["end"]
+        else:
+            merged.append(dict(word))
+    return merged
+
+
+def line_text(line):
+    return " ".join(w["text"] for w in line)
+
+
 def caption_lines(words, max_words=7, max_chars=34, gap=0.35):
+    words = merge_hyphenated(words)
     lines, cur = [], []
     for i, w in enumerate(words):
+        if cur and (len(cur) >= max_words or len(line_text(cur + [w])) > max_chars):
+            lines.append(cur)
+            cur = []
         cur.append(w)
         nxt = words[i + 1] if i + 1 < len(words) else None
-        text = " ".join(x["text"] for x in cur)
-        if (nxt is None or len(cur) >= max_words or len(text) >= max_chars or re.search(r"[.!?]$", w["text"])
+        text = line_text(cur)
+        if (nxt is None or re.search(r"[.!?]$", w["text"])
                 or (nxt and nxt["start"] - w["end"] > gap)):
             lines.append(cur); cur = []
+    too_wide = [(i + 1, line_text(line), len(line_text(line))) for i, line in enumerate(lines) if len(line_text(line)) > max_chars]
+    if too_wide:
+        details = "; ".join(f"cue {i} is {n} chars" for i, _, n in too_wide)
+        raise SystemExit(f"deliver: assembled caption line exceeds {max_chars} characters ({details})")
     return lines
 
 
@@ -62,6 +89,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", required=True); ap.add_argument("--slug", required=True)
     ap.add_argument("--file", action="append", default=[], help="variant=path (master, review, vertical, ...)")
+    ap.add_argument("--asset", action="append", default=[], help="designed asset variant=path (for example cover=cover.jpg)")
     ap.add_argument("--words"); ap.add_argument("--beats"); ap.add_argument("--chapter-kinds", default="step,chapter")
     ap.add_argument("--chapter", action="append", default=[], help='"0:00 Title" (overrides chapters from the beat sheet)')
     ap.add_argument("--thumb-from"); ap.add_argument("--thumb-at", default="")
@@ -74,6 +102,15 @@ def main():
         variant, path = spec.split("=", 1)
         dst = os.path.join(a.out, f"{a.slug}-{variant}{os.path.splitext(path)[1]}")
         shutil.copy2(path, dst); delivered.append((variant, dst))
+    for spec in a.asset:
+        if "=" not in spec:
+            raise SystemExit("deliver: --asset must be VARIANT=PATH")
+        variant, path = spec.split("=", 1)
+        if not variant or not path:
+            raise SystemExit("deliver: --asset must include a variant and path")
+        dst = os.path.join(a.out, os.path.basename(path))
+        shutil.copy2(path, dst)
+        delivered.append((variant, dst))
     if a.words:
         lines = caption_lines(load_words(a.words))
         with open(os.path.join(a.out, f"{a.slug}.en.srt"), "w") as f:
@@ -132,12 +169,21 @@ def main():
                 item["loudness"] = {"lufs": lu["integrated_lufs"], "true_peak_dbtp": lu["true_peak_dbtp"]}
             except (OSError, ValueError, KeyError, IndexError):
                 item["loudness"] = None
+        elif path.lower().endswith((".jpg", ".jpeg", ".png", ".webp")):
+            media = json.loads(subprocess.run(
+                ["ffprobe", "-v", "error", "-print_format", "json", "-show_streams", path],
+                capture_output=True, text=True, check=True).stdout)
+            video = next((s for s in media["streams"] if s.get("codec_type") == "video"), {})
+            item["dimensions"] = f"{video.get('width')}x{video.get('height')}"
+            item["media"] = "image"
         manifest.append(item)
     json.dump(manifest, open(os.path.join(a.out, "manifest.json"), "w"), indent=1)
     lines = [f"# Delivery: {a.title or a.slug}", "", "## Files", "", "| variant | file | size | spec | loudness |", "|---|---|---|---|---|"]
     for m in manifest:
         lu = m.get("loudness") or {}
-        lines.append(f"| {m['variant']} | {m['file']} | {m['bytes'] / 1e6:.1f} MB | {m.get('video', '')} {m.get('duration', '')} |"
+        spec = m.get("video") or m.get("dimensions", "")
+        duration = m.get("duration", "")
+        lines.append(f"| {m['variant']} | {m['file']} | {m['bytes'] / 1e6:.1f} MB | {spec} {duration} |"
                      f" {str(lu.get('lufs', '')) + ' LUFS / ' + str(lu.get('true_peak_dbtp', '')) + ' dBTP' if lu else ''} |")
     lines += ["", "SHA-256 for every file: manifest.json.", ""]
     if notes:

@@ -30,7 +30,8 @@ uv run $EB/tools/verify_report.py --render renders/review.mp4 --out qa/ --profil
   --brand BRAND.json --expect-duration 15 --allow-black 0:0.3 --allow-freeze 13.5:15,40:44.5 \
   --grid beats/grid.json --half \                                   # music-led pieces
   --faces media/talk.faces.json --source media/talk.mp4 \           # footage under overlays
-  --expected transcript/words.json --heard qa/heard.json            # voice or captions present
+  --expected transcript/words.json --heard transcript/reconciled.words.json --heard-kind reconciled \
+  --heard-patch transcript/final.corrections.md                    # voice or captions present
   --require-end-card --end-card-proof qa/end-card.json              # exact encoded tail, inspected as the end card
 ```
 
@@ -49,9 +50,10 @@ never widen them to make a failure go away.
 ## 3. Look
 
 Read the overview sheet(s) and the cut strips in one go, at this phase boundary: an attached image re-prices the
-whole context, so batch them. Then render a phone-size preview (`ffmpeg -i review.mp4 -vf scale=390:-2 phone.mp4`)
-and read the smallest text on its sheet. Write what you saw in the report's visual section: overview, cuts and
-transitions, legibility at phone size, anything off-brand.
+whole context, so batch them. Inspect exact frame 0 and every persistent-shell hold after any source-chip or kicker
+reflow, then render a phone-size preview (`ffmpeg -i review.mp4 -vf scale=390:-2 phone.mp4`) and read the smallest text
+on its sheet. Write what you saw in the report's visual section: overview, cuts and transitions, shell collisions,
+legibility at phone size, anything off-brand.
 
 **Done when:** the visual section is filled in with specific timestamps, not impressions.
 

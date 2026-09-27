@@ -14,10 +14,11 @@ TTS engines and their paths come from `~/.config/editbay/config.json` (`tts`).
 
 ## 1. Write the spoken layer
 
-Keep what is said separate from what is shown: cue blocks (`~~~cue ... ~~~`), notes (`>`), and headings are skipped
-by the generator. One paragraph per beat, tagged `[B01]`. Write numbers, times, and symbols the way they are said
-("five point five", "three P M"), spell out acronyms the voice would mangle, and keep sentences under about 25
-words. Pronunciation notes belong in `transcript/glossary.json` or a skipped metadata block, never as plain text in a
+Keep what is said separate from what is shown: cue blocks (`~~~cue ... ~~~`), notes (`>`), headings, table metadata,
+and lines beginning `On-screen:`, `Pronunciation:`, or `Metadata:` are skipped by the generator and copied to
+`narration/script-metadata.md`. One paragraph per beat, tagged `[B01]`. Write numbers, times, and symbols the way they
+are said ("five point five", "three P M"), spell out acronyms the voice would mangle, and keep sentences under about
+25 words. Pronunciation notes belong in `transcript/glossary.json` or a skipped metadata block, never as plain text in a
 spoken paragraph. When a glossary is supplied, validate every term before starting TTS: it must include a `variants`
 array, even when the canonical form is the only accepted spelling. Voice and tone rules come from the brand profile
 (`voice`). Guide: [references/script-craft.md](references/script-craft.md).
@@ -83,7 +84,7 @@ Reconcile the narration transcript with the script as the third source
 ## Checklist
 
 - [ ] Spoken layer written with beat tags; pace counted
-- [ ] Glossary entries validated with `variants`; pronunciation metadata is not spoken
+- [ ] Glossary entries validated with `variants`; pronunciation and on-screen metadata are not spoken and are filed separately
 - [ ] Voice chosen; clone consent and disclosure placement recorded when used
 - [ ] One seed per beat; pace 140-165 wpm on the real script
 - [ ] Shared GPU lock evidence recorded; any fallback is timing-only and labelled

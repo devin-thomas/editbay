@@ -13,6 +13,7 @@ Usage:
       [--grid beats/grid.json --half]            cuts on the beat grid (music-led pieces)
       [--faces media/x.faces.json --source SRC [--face-mode diff|detect] [--face-offset 0] [--face-skip a-b,...]]
       [--expected words.json --heard heard.json] words on screen / in the mix vs what should be there
+      [--heard-kind raw|reconciled --heard-patch transcript/final.corrections.md]
       [--sheet-every 0.5]                        overview sheet interval (default: 0.5 s under 60 s, else 5 s)
       [--require-end-card --end-card-proof qa/end-card.json]  exact encoded last frame must be checked as the end card
 Profiles come from the config's delivery_profiles (size, fps, lufs, true_peak). The av-qa gate also checks the first
@@ -85,7 +86,9 @@ def main():
     ap.add_argument("--tolerance-ms", type=float)
     ap.add_argument("--faces"); ap.add_argument("--source"); ap.add_argument("--face-mode", default="diff")
     ap.add_argument("--face-offset", type=float, default=0.0); ap.add_argument("--face-skip", default="")
-    ap.add_argument("--expected"); ap.add_argument("--heard"); ap.add_argument("--sheet-every", type=float)
+    ap.add_argument("--expected"); ap.add_argument("--heard"); ap.add_argument("--heard-kind", choices=["raw", "reconciled"], default="raw")
+    ap.add_argument("--heard-patch", help="patch/evidence file for a reconciled --heard artifact")
+    ap.add_argument("--sheet-every", type=float)
     ap.add_argument("--require-end-card", action="store_true")
     ap.add_argument("--end-card-proof", help="JSON proof for qa/encoded-last-frame.png")
     ap.add_argument("--voice-disclosure", default=DEFAULT_VOICE_DISCLOSURE)
@@ -176,10 +179,23 @@ def main():
 
     # 5. Words
     if a.expected and a.heard:
-        gate("words", *tool("transcript_diff.py", a.expected, a.heard, "--json", os.path.join(a.out, "words.json")),
-             os.path.join(a.out, "words.json"))
+        words_code, words_detail = tool("transcript_diff.py", a.expected, a.heard, "--json", os.path.join(a.out, "words.json"))
+        trace = f"expected={a.expected}; heard={a.heard}; heard_kind={a.heard_kind}"
+        if a.heard_kind == "reconciled":
+            if not a.heard_patch:
+                words_code, words_detail = 1, "reconciled --heard requires --heard-patch"
+            elif not os.path.isfile(a.heard_patch):
+                words_code, words_detail = 1, f"reconciled --heard patch not found: {a.heard_patch}"
+            else:
+                trace += f"; patch={a.heard_patch}"
+        elif a.heard_patch:
+            if not os.path.isfile(a.heard_patch):
+                words_code, words_detail = 1, f"--heard-patch not found: {a.heard_patch}"
+            else:
+                trace += f"; audit_patch={a.heard_patch}"
+        gate("words", words_code, f"{words_detail}; {trace}", os.path.join(a.out, "words.json"))
     else:
-        gates.append({"gate": "words", "status": "PENDING", "detail": "no --expected/--heard"})
+        gates.append({"gate": "words", "status": "PENDING", "detail": "both --expected and --heard are required for the words gate"})
 
     # 6. Sheets for the visual gate
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", a.render],

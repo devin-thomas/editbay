@@ -56,6 +56,11 @@ most names), listen if needed, then add a patch with the evidence in `why`, or l
 patterns (inventions after pauses, prompt-induced phrases, dropped sentences, split compounds):
 [references/failure-modes.md](references/failure-modes.md).
 
+Before another voice reroll, normalize stable currency punctuation and glossary product/person tokens against the script
+and secondary ASR; an intelligible split such as `$5,499` is a transcript patch, not a reason to regenerate audio. After
+any punctuation or timestamp reconciliation, rebuild the composition and rerender before packaging so burned captions
+and external SRT/VTT come from the same final word array.
+
 If the script has a bare numeral but the rendered speech clearly says its ordinal form (for example, `13` heard as
 `13th`), patch the final caption token to the heard form with a timestamp-safe evidence note. Do not change the spoken
 script unless the fact itself changed; log the wording correction so the timing decision is reproducible.
@@ -76,4 +81,6 @@ array), `final.srt`, `final.vtt`, `final.md` (readable, by chapter), `final.corr
 - [ ] Two passes from different models, plus a third source when one exists
 - [ ] Glossary covers every name seen on screen, in the title, and in the brief
 - [ ] Corrections log read in full; 0 patch misses; every unresolved span decided with evidence
+- [ ] Stable numeric/proper-name splits are patched with evidence; hyphenated caption tokens stay joined
+- [ ] Any timing or punctuation repair was rebuilt and rerendered before packaging
 - [ ] Captions and cuts built from `final.*`, never from a raw pass
