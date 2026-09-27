@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+From the Muse run's retro, folded in by CacheBrief's STEWARD desk (2026-09-27):
+- av_qa `--require-content-ends` (on by default in verify_report): fails a delivery whose first or last frame is only
+  background. The Muse 9:16 and 16:9 deliveries both open empty (edge density 0.0) and now fail; a real hook frame
+  (0.074) passes.
+- hf_scaffold: burned captions animate opacity and colour on word spans only (transforms on the `.cap-line` wrapper),
+  so they coexist with custom GSAP motion; portrait layouts use a 160-1500 px safe stack on a 1920 px canvas.
+- motion-build notes: no `backdrop-filter` (screenshot-capture fallback); vertical re-layout is a new layout, not the
+  16:9 cards stacked at the top.
+- verify_report and gates.md: `--allow-freeze` takes several comma-separated `start:end` ranges, with an example.
+- PROVIDERS: Antigravity CLI (`agy`, gemini-3.8-flash-high) for generic stock images (about 30 s per image, 768x1376),
+  and X API v2 posting (pay-per-use).
+
 From the first real talking-head edit (an 8.5-minute single-take promo recording):
 - cut_plan `--selects`: assemble parts of a long take in any order, with gaps for inserts. Select edges snap to the
   silence around the words, never into them: nearest-silence snapping had dropped a soft first word and clipped a

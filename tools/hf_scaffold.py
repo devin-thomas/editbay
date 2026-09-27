@@ -20,12 +20,17 @@ Writes OUT/index.html (+ OUT/index.motion.json from the beat sheet's sidecar whe
 OUT/assets/. Runs `hyperframes init` first when OUT has no project (skills install skipped).
 Rules baked in: data-fps on the root, one paused timeline registered as window.__timelines["main"], every timed
 element has data-start/data-duration and class "clip", footage is muted with the mix as the only audio, animation
-touches transform and opacity only, no clocks or randomness. Legibility defaults pass text_check.py: content labels
-never go under the brand's min_phone_readable, kickers/step numbers/HUD are data-decorative, headings balance their
-lines, cards have no backdrop-filter (it forces HyperFrames into slow screenshot capture), and vertical captions sit
-above the platform UI band (bottom 26%).
+touches transform and opacity only, except burned caption word spans which animate opacity and colour; transforms for
+captions belong on the .cap-line wrapper. There are no clocks or randomness. Legibility defaults pass text_check.py:
+content labels never go under the brand's min_phone_readable, kickers/step numbers/HUD are data-decorative, headings
+balance their lines, cards have no backdrop-filter (it forces HyperFrames into slow screenshot capture), and vertical
+layouts use a 160-1500px safe stack on a 1920px canvas with a depth plane behind it; captions sit above platform UI.
 """
 import argparse, html, json, os, re, shutil, subprocess
+
+PORTRAIT_SAFE_TOP = 160 / 1920
+PORTRAIT_SAFE_BOTTOM = 1500 / 1920
+PORTRAIT_CAPTION_FLOOR = 0.70
 
 ZONES = {  # fractions of the canvas: x0, y0, x1, y1, flex alignment (justify, align)
     "left": (0.05, 0.08, 0.40, 0.92, "flex-start", "center"),
@@ -39,8 +44,8 @@ ZONES = {  # fractions of the canvas: x0, y0, x1, y1, flex alignment (justify, a
     "pip-bl": (0.03, 0.64, 0.33, 0.96, "flex-start", "flex-end"),
     "pip-br": (0.67, 0.64, 0.97, 0.96, "flex-end", "flex-end"),
     # portrait zones for vertical cuts (--remap left=upper,right=lower); see zone_box for the vertical safe area
-    "upper": (0.06, 0.10, 0.88, 0.40, "center", "center"),
-    "lower": (0.06, 0.42, 0.88, 0.74, "center", "center"),
+    "upper": (0.06, PORTRAIT_SAFE_TOP, 0.88, 0.40, "center", "center"),
+    "lower": (0.06, 0.42, 0.88, PORTRAIT_SAFE_BOTTOM, "center", "center"),
 }
 ENTER_BY_ZONE = {"left": "slide-from-left", "right": "slide-from-right", "bottom": "rise", "top": "drop",
                  "center": "pop", "full": "fade", "upper": "drop", "lower": "rise"}
@@ -118,11 +123,12 @@ def css(brand, W, H, background):
       .panel img, .panel video {{ display: block; width: 100%; border-radius: var(--radius-sm); }}
       .panel .cap {{ font-family: var(--font-mono); font-size: var(--small); color: var(--muted); margin-top: {px(10)}; }}
       .band {{ font-family: var(--font-display); font-weight: 700; font-size: var(--headline); letter-spacing: -0.02em; text-wrap: balance; }}
-      .band .w, .cap-line .w {{ position: relative; display: inline-block; margin: 0 .16em; isolation: isolate; }}
+      .band .w {{ position: relative; display: inline-block; margin: 0 .16em; isolation: isolate; }}
+      .cap-line .w {{ display: inline-block; margin: 0 .16em; color: var(--muted); opacity: .72; }}
       /* the highlight sits under the word (z 0 < 1) without a negative z-index; GSAP owns its scaleX (no CSS transform) */
-      .band .w .hl, .cap-line .w .hl {{ position: absolute; left: -0.08em; right: -0.08em; bottom: .06em; height: .30em;
+      .band .w .hl {{ position: absolute; left: -0.08em; right: -0.08em; bottom: .06em; height: .30em;
               background: var(--accent); border-radius: 3px; z-index: 0; transform-origin: left center; }}
-      .band .w .tx, .cap-line .w .tx {{ position: relative; z-index: 1; }}
+      .band .w .tx {{ position: relative; z-index: 1; }}
       .takeover {{ position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
               align-items: center; justify-content: center; text-align: center; }}
       .cap-line {{ position: absolute; left: 6%; right: {cap_right}; bottom: {cap_bottom}; text-align: center; font-family: var(--font-display);
@@ -145,8 +151,8 @@ def zone_box(zone, W, H, captions):
         return x0, y0, x1, y1, just, align
     portrait = H > W
     if portrait and zone == "center":
-        x0, y0, x1, y1 = 0.06, 0.10, 0.88, 0.74
-    floor = (0.64 if captions else 0.74) if portrait else (0.86 if captions else 1.0)
+        x0, y0, x1, y1 = 0.06, PORTRAIT_SAFE_TOP, 0.88, PORTRAIT_SAFE_BOTTOM
+    floor = (PORTRAIT_CAPTION_FLOOR if captions else PORTRAIT_SAFE_BOTTOM) if portrait else (0.86 if captions else 1.0)
     if y1 > floor:
         y1 = floor
         if y1 - y0 < 0.12:
@@ -322,10 +328,18 @@ def main():
         cw = cw if isinstance(cw, list) else [{"text": w[2].strip(), "start": w[0], "end": w[1]} for s in cw["segments"] for w in s["words"]]
         for k, line in enumerate(caption_lines(cw)):
             s, e = line[0]["start"], max(line[-1]["end"], line[0]["start"] + 0.6)
-            spans = "".join(f'<span class="w" data-t="{w["start"]}"><span class="hl"></span><span class="tx">{esc(w["text"])}</span></span>' for w in line)
+            spans = "".join(f'<span class="w" data-t="{w["start"]}"><span class="tx">{esc(w["text"])}</span></span>' for w in line)
             body.append(f'<div id="cap{k}" class="clip cap-line" data-start="{round(s, 3)}" data-duration="{round(e - s, 3)}" '
                         f'data-layout-allow-caption-zone>{spans}</div>')
-            js += [f'tl.fromTo("#cap{k} .w[data-t=\\"{w["start"]}\\"] .hl", {{scaleX: 0}}, {{scaleX: 1, duration: 0.12}}, {w["start"]});' for w in line]
+            caption_js = []
+            for i, w in enumerate(line):
+                if i:
+                    previous = line[i - 1]
+                    previous_selector = f'#cap{k} .w[data-t=\\"{previous["start"]}\\"]'
+                    caption_js.append(f'tl.to("{previous_selector}", {{opacity: 0.72, color: "var(--muted)", duration: 0.12, ease: "none"}}, {w["start"]});')
+                selector = f'#cap{k} .w[data-t=\\"{w["start"]}\\"]'
+                caption_js.append(f'tl.to("{selector}", {{opacity: 1, color: "var(--accent)", duration: 0.12, ease: "none"}}, {w["start"]});')
+            js += caption_js
     if a.hud:
         body.append(f'<div id="hud" class="clip" data-decorative data-start="0" data-duration="{dur}"><div class="c tl"></div><div class="c tr"></div>'
                     f'<div class="c bl"></div><div class="c br"></div><div class="lab">{esc(a.hud)}</div>'

@@ -27,6 +27,8 @@ quality and, for some jobs, speed of setup.
 | Generated video | HyperFrames motion on stills (parallax, camera moves); local Wan 2.2 / LTX-Video (to set up) | Kling v3 turbo, Veo 3.1, Seedance, Hailuo, Sora 2 via kie.ai | a photoreal moving shot that must look filmed |
 | Background removal, upscale, interpolation | HyperFrames remove-background; rembg/BiRefNet, Real-ESRGAN, RIFE on the 4090 | Recraft remove-bg, Topaz upscale via kie.ai | rarely |
 | Rendering | local: M5 Max renders a 60 s 1080p60 explainer in about 57 s | HyperFrames cloud (HeyGen), AWS Lambda, Cloud Run | long pieces on a deadline |
+| Generic stock images | local models on the GPU host | Antigravity CLI `agy` with `gemini-3.8-flash-high` | when the local route is not ready and the plan covers the provider |
+| X posting | manual posting | X API v2 | approved automated posting needs a measured per-post estimate |
 | Frame descriptions | the agent reads batched contact sheets | Gemini via `hyperframes snapshot --describe` | never by default (sends frames out; descriptions were wrong in testing) |
 
 ## Details
@@ -87,6 +89,10 @@ quality and, for some jobs, speed of setup.
   image), mflux (FLUX on MLX) on the M5 Max (est.).
 - **Honesty rule:** generated images are illustrations and are labelled; never present them as captures.
 
+- **Antigravity CLI `agy` with `gemini-3.8-flash-high` (measured, 2026-09-27):** generic stock-image tests took
+  34 s and 29 s per image and returned 768x1376 PNGs natively. No per-call charge was seen under the Antigravity
+  plan; treat that as plan-dependent, not a guarantee. **Free alternative:** local models on the GPU host.
+
 ### Generated video
 - **kie.ai (doc):** Kling v3 turbo image-to-video (3-15 s, 720p/1080p; returns 24 fps: re-encode all-intra at 60 fps
   for seek-safe HyperFrames use), Veo 3.1 (16:9 or 9:16, 1080p/4K, audio), Seedance, Hailuo, Wan 3.0, Sora 2. kie.ai's
@@ -101,6 +107,12 @@ quality and, for some jobs, speed of setup.
   4 s test at 1080p60 in 9.6 s including setup. Titan adds NVENC encoding and a second render box.
 - **Paid (doc):** HyperFrames cloud rendering through HeyGen, AWS Lambda, Google Cloud Run. Useful for long 4K
   pieces on a deadline; not needed at our current lengths.
+
+### Posting
+
+- **X API v2 (doc, 2026-09-27):** pay-per-use posting was listed at about $0.015 per post or $0.20 with a URL;
+  recheck the [X API v2 pricing](https://docs.x.com/x-api/getting-started/pricing) before spending. **Free
+  alternative:** manual posting.
 
 ## Estimating a paid run
 

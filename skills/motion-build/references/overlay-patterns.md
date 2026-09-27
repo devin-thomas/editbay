@@ -16,3 +16,9 @@
 
 Legibility over footage: text never sits on moving footage without a card, a shadow band, or a dim behind it.
 Phone check: the smallest text must still read on a 390 px wide preview.
+
+## Vertical re-layout
+
+1. Treat 9:16 as a new layout: with a 1920px-tall canvas, stack content between y=160 and y=1500 (about 8.3%-78.1%),
+   scale type for a phone, and leave the bottom ~20% clear for platform UI. Example: `--remap left=upper,right=lower`
+   uses the portrait safe stack; keep a background plane with a slow gradient or glow for depth instead of a flat void.

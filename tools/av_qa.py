@@ -9,8 +9,12 @@ Checks: container/stream facts against expectations; black frames; frozen frames
 (sample jumps far above the local norm, typical at bad joins); audio/video duration mismatch.
 
 Usage:
-  av_qa.py RENDER.mp4 [--expect-fps 60] [--expect-size 1920x1080] [--expect-duration 15.0]
-           [--allow-black 0:0.5] [--allow-freeze 12.0:14.5] [--min-silence 0.8] [--json qa.json] [--md qa.md]
+           av_qa.py RENDER.mp4 [--expect-fps 60] [--expect-size 1920x1080] [--expect-duration 15.0]
+           [--allow-black 0:0.5] [--allow-freeze 12.0:14.5] [--require-content-ends]
+           [--min-silence 0.8] [--json qa.json] [--md qa.md]
+Content ends (measured 2026-09-27): the Muse run's 9:16 and 16:9 deliveries open on a bare background (edge density
+0.0, foreground share 0.0) and fail; a CacheBrief hook frame measures edge density 0.074 and passes. Floors: 0.0005 edge
+density and 0.005 foreground share.
 --allow-* take start:end ranges (comma-separated) where black/freeze is intentional (a fade-from-black open,
 a held end card). Black frames, pops, and spec mismatches are errors (exit 1); long holds and silences are
 warnings; short holds are notes. Dark designs: keep --black-ratio at 0.998+ or every minimalist frame reads black.
@@ -55,6 +59,54 @@ def intervals(err, key):
     return list(zip(s, e + [None] * (len(s) - len(e))))
 
 
+def read_frame(path, timestamp, width=256):
+    """Read one scaled RGB frame so the content gate stays independent of image packages."""
+    r = subprocess.run(
+        ["ffmpeg", "-nostdin", "-hide_banner", "-v", "error", "-ss", f"{timestamp:.3f}", "-i", path,
+         "-an", "-frames:v", "1", "-vf", f"scale={width}:-2", "-pix_fmt", "rgb24", "-f", "rawvideo", "pipe:1"],
+        capture_output=True,
+    )
+    if r.returncode:
+        detail = r.stderr.decode(errors="replace").strip()
+        raise RuntimeError(detail or f"ffmpeg exited {r.returncode}")
+    raw = np.frombuffer(r.stdout, dtype=np.uint8)
+    row = width * 3
+    if raw.size == 0 or raw.size % row:
+        raise RuntimeError(f"ffmpeg returned an incomplete RGB frame ({raw.size} bytes)")
+    return raw.reshape((-1, width, 3))
+
+
+def frame_content(frame):
+    """Measure sharp detail, separating a foreground hook from a smooth background plane."""
+    gray = np.dot(frame[..., :3].astype(np.float32), [0.299, 0.587, 0.114])
+    if gray.shape[0] < 3 or gray.shape[1] < 3:
+        return {"edge_density": 0.0, "foreground_share": 0.0}
+    gx, gy = np.abs(np.diff(gray, axis=1)), np.abs(np.diff(gray, axis=0))
+    edge_density = float((np.count_nonzero(gx > 18) + np.count_nonzero(gy > 18)) / (gx.size + gy.size))
+    center = gray[1:-1, 1:-1]
+    local = (gray[:-2, 1:-1] + gray[2:, 1:-1] + gray[1:-1, :-2] + gray[1:-1, 2:]) / 4
+    foreground_share = float(np.mean(np.abs(center - local) > 10))
+    return {"edge_density": edge_density, "foreground_share": foreground_share}
+
+
+def content_end_report(path, duration, fps, edge_floor, foreground_floor):
+    """Check the opening and final decoded frames against the measured minimum detail floors."""
+    step = max(1.0 / fps, 0.05) if fps else 0.05
+    points = [("opening", 0.0), ("closing", max(0.0, duration - step))]
+    result = {"thresholds": {"edge_density": edge_floor, "foreground_share": foreground_floor}, "frames": []}
+    for label, timestamp in points:
+        metrics = frame_content(read_frame(path, timestamp))
+        failures = []
+        if metrics["edge_density"] < edge_floor:
+            failures.append(f"edge density {metrics['edge_density']:.5f} < {edge_floor:.5f}")
+        if metrics["foreground_share"] < foreground_floor:
+            failures.append(f"foreground share {metrics['foreground_share']:.5f} < {foreground_floor:.5f}")
+        result["frames"].append({"frame": label, "time": round(timestamp, 3), **metrics,
+                                 "ok": not failures, "detail": "; ".join(failures) or "content detail present"})
+    result["ok"] = all(item["ok"] for item in result["frames"])
+    return result
+
+
 def pops(path, ratio=6.0):
     """Sample-to-sample jumps far above the file's 99.9th percentile step: clicks at joins."""
     import soundfile as sf
@@ -80,6 +132,10 @@ def main():
     ap.add_argument("video"); ap.add_argument("--expect-fps", type=float); ap.add_argument("--expect-size")
     ap.add_argument("--expect-duration", type=float); ap.add_argument("--allow-black"); ap.add_argument("--allow-freeze")
     ap.add_argument("--allow-silence"); ap.add_argument("--min-silence", type=float, default=0.8)
+    ap.add_argument("--require-content-ends", action="store_true",
+                    help="fail when the opening or closing frame is only a smooth background")
+    ap.add_argument("--content-edge-floor", type=float, default=0.0005)
+    ap.add_argument("--content-share-floor", type=float, default=0.005)
     ap.add_argument("--black-ratio", type=float, default=0.998,
                     help="share of near-black pixels that makes a frame 'black' (dark designs need >= 0.998)")
     ap.add_argument("--max-hold", type=float, default=2.0, help="freezes longer than this are warnings")
@@ -103,6 +159,21 @@ def main():
         if info["audio"] and not allowed(s, fix(e), ranges(a.allow_silence)):
             warnings.append(f"silence {s:.2f}-{fix(e):.2f}s")
     v, au = info["video"], info["audio"]
+    content_ends = {"required": a.require_content_ends, "ok": None}
+    if a.require_content_ends:
+        if not v:
+            content_ends.update({"ok": False, "error": "no video stream"})
+            issues.append("content ends unavailable: no video stream")
+        else:
+            try:
+                content_ends = {"required": True, **content_end_report(
+                    a.video, info["duration"], v["fps"], a.content_edge_floor, a.content_share_floor)}
+                for item in content_ends["frames"]:
+                    if not item["ok"]:
+                        issues.append(f"{item['frame']} frame is background-only: {item['detail']}")
+            except RuntimeError as exc:
+                content_ends.update({"ok": False, "error": str(exc)})
+                issues.append(f"content ends unavailable: {exc}")
     if a.expect_fps and v and abs(v["fps"] - a.expect_fps) > 0.01:
         issues.append(f"fps {v['fps']} != {a.expect_fps}")
     if a.expect_size and v and v["size"] != a.expect_size:
@@ -116,12 +187,13 @@ def main():
     p = pops(a.video) if au else []
     issues += [f"audio click/pop near {t:.3f}s" for t in p]
     report = {"file": a.video, "probe": info, "black": black, "freeze": freeze, "silence": silence, "pops": p,
-              "errors": issues, "warnings": warnings, "notes": notes, "ok": not issues}
+              "content_ends": content_ends, "errors": issues, "warnings": warnings, "notes": notes, "ok": not issues}
     if a.json:
         json.dump(report, open(a.json, "w"), indent=1)
+    content_status = "not required" if not a.require_content_ends else ("PASS" if content_ends.get("ok") else "FAIL")
     md = [f"# AV QA: {os.path.basename(a.video)}", "", f"- probe: {json.dumps(info)}",
           f"- black: {black or 'none'}", f"- freeze: {freeze or 'none'}", f"- silence (>{a.min_silence}s): {silence or 'none'}",
-          f"- pops: {p or 'none'}", "", "## Verdict", "", "PASS" if not issues else "FAIL", ""] + \
+          f"- pops: {p or 'none'}", f"- content ends: {content_status}", "", "## Verdict", "", "PASS" if not issues else "FAIL", ""] + \
          [f"- ERROR {i}" for i in issues] + [f"- WARN {w}" for w in warnings] + [f"- note {n}" for n in notes]
     if a.md:
         open(a.md, "w").write("\n".join(md) + "\n")

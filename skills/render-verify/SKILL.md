@@ -33,9 +33,10 @@ uv run $EB/tools/verify_report.py --render renders/review.mp4 --out qa/ --profil
   --expected transcript/words.json --heard qa/heard.json            # voice or captions present
 ```
 
-Each gate is PASS, FAIL, or PENDING (not run, with the reason). What each gate proves and how to fix its common
-failures: [references/gates.md](references/gates.md). `--allow-*` ranges must match the plan (a fade from black, a
-held end card); never widen them to make a failure go away.
+Each gate is PASS, FAIL, or PENDING (not run, with the reason). The av-qa gate also checks that the first and last
+frames contain detail rather than only a smooth background. What each gate proves and how to fix its common failures:
+[references/gates.md](references/gates.md). `--allow-*` ranges must match the plan (a fade from black, a held end card);
+never widen them to make a failure go away.
 
 **Done when:** every applicable gate has run; PENDING remains only for gates that do not apply, with the reason.
 

@@ -18,8 +18,11 @@ Gotchas that each cost a re-render:
 - `hyperframes snapshot` and `check --snapshots` describe frames through Gemini whenever GEMINI_API_KEY or
   GOOGLE_API_KEY is set, and `check` has no `--describe` flag. The CLI also reads HeyGen, HyperFrames cloud,
   OpenRouter and ElevenLabs keys. Run it through `tools/hf.py`, which removes those keys (probed in 0.8.79's cli.js).
-- `backdrop-filter` makes HyperFrames fall back to screenshot capture, which is much slower (a Codex run's 4K render
-  took ~3 min with blurred cards). Use a dense surface colour instead; hf_scaffold no longer blurs cards.
+- **Rule 1 — no `backdrop-filter`:** it makes HyperFrames fall back to screenshot capture (a Codex run's 4K render
+  took ~3 min with blurred cards versus ~80 s at 1080p). Use a solid or semi-opaque surface colour instead; the
+  scaffold must not emit `backdrop-filter: blur(...)`.
+- **Rule 2 — burned captions:** animate each `.cap-line .w` span with opacity and colour only. Put any x/y/scale
+  motion on the `.cap-line` wrapper so custom GSAP motion cannot overwrite a word's caption state.
 - `check` skips the layout pass while lint has errors: re-run it once lint is clean, or overlaps stay hidden.
 - Maximum render rate is 240 fps. Motion blur: render two 240 fps passes offset by half a frame (`--variables`) and
   blend 8 samples per output frame with `tmix`, then master to ProRes 4444.

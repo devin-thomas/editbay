@@ -6,14 +6,15 @@
 
 Usage:
   verify_report.py --render renders/review.mp4 --out qa/ [--profile reel] [--config ~/.config/editbay/config.json]
-      [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 13.5:15,40:44.5]   (comma-separated start:end ranges)
+      [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 12.0:15.5,40.2:44.0]   (comma-separated start:end ranges)
       [--hf-project hf/]                         hyperframes check (DOM: layout, contrast, motion sidecars), through hf.py
       [--brand BRAND.json]                       with --hf-project: text_check.py (phone-size text, words split across lines)
       [--grid beats/grid.json --half]            cuts on the beat grid (music-led pieces)
       [--faces media/x.faces.json --source SRC [--face-mode diff|detect] [--face-offset 0] [--face-skip a-b,...]]
       [--expected words.json --heard heard.json] words on screen / in the mix vs what should be there
       [--sheet-every 0.5]                        overview sheet interval (default: 0.5 s under 60 s, else 5 s)
-Profiles come from the config's delivery_profiles (size, fps, lufs, true_peak). Exit 1 when any gate fails.
+Profiles come from the config's delivery_profiles (size, fps, lufs, true_peak). The av-qa gate also checks the first
+and last video frames for background-only emptiness. Exit 1 when any gate fails.
 """
 import argparse, datetime, json, os, subprocess, sys
 
@@ -84,6 +85,7 @@ def main():
         args += ["--allow-black", a.allow_black]
     if a.allow_freeze:
         args += ["--allow-freeze", a.allow_freeze]
+    args += ["--require-content-ends"]
     gate("av-qa", *tool("av_qa.py", *args), os.path.join(a.out, "av_qa.json"))
     lu = ["--target", prof["lufs"], "--tp", prof.get("true_peak", -1.0)] if prof.get("lufs") is not None else []
     gate("loudness", *tool("loudness.py", a.render, *lu, "--json", os.path.join(a.out, "loudness.json"), uv=False),
