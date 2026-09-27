@@ -4,6 +4,7 @@ Agent skills for editing and making videos with a coding agent (Claude Code or C
 [HyperFrames](https://github.com/heygen-com/hyperframes). One method, measured from real runs: **transcribe, cut, plan
 the beats, build, verify**, with two loops that make it better with use: **reference to style** and **feedback into
 the skill**. Design: [docs/DESIGN.md](docs/DESIGN.md). Paid services vs free/local routes: [docs/PROVIDERS.md](docs/PROVIDERS.md).
+The research behind it: [docs/research/ANALYSIS.md](docs/research/ANALYSIS.md).
 
 ## Install
 
