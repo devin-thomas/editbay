@@ -52,8 +52,8 @@ least 18 LU under the voice at sentence starts (listen to three).
 
 ## 4. Hand to the build
 
-The composition plays `sound/mix.wav` as its only audio. HyperFrames normalises rendered audio to about -16 LUFS, so
-for any other target put the mastered mix back after each render:
+The composition plays `sound/mix.wav` as its only audio. HyperFrames changes the rendered audio level (by -1.4 to
+-1.8 dB in our measurements, sometimes not at all), so put the mastered mix back after each render, whatever the target:
 `uv run $EB/tools/remux_audio.py renders/review.mp4 sound/mix.wav --out renders/final.mp4 --target -14 --tp -1.0`
 (the video is copied; AAC true-peak overshoot is trimmed). Render-verify then measures the delivered file.
 

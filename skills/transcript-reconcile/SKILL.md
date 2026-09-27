@@ -24,17 +24,16 @@ visible so far.
 
 ## 2. Transcribe twice on the GPU host
 
-Copy `$EB/tools/transcribe_faster_whisper.py` and the WAV to the GPU host, then run it twice:
-
 ```bash
-python transcribe_faster_whisper.py audio.wav --model large-v3 --prompt-file vocab.txt --out t.v3
-python transcribe_faster_whisper.py audio.wav --model large-v3-turbo --batched --out t.turbo
+uv run $EB/tools/asr_remote.py audio.wav --out-dir transcript/ --prompt-file vocab.txt
 ```
 
-`vocab.txt` is a comma list of the glossary's canonical names (spelling bias, not an instruction). Copy the four
-outputs back. Remote mechanics (ssh, PowerShell, venv): [references/remote-gpu.md](references/remote-gpu.md). With
-no GPU host, run the same script locally with `--device cpu --compute int8` (slow), or `npx hyperframes transcribe
-audio.wav --model large-v3` for a single pass.
+It copies the audio and `transcribe_faster_whisper.py` to the configured GPU host, runs large-v3 (sequential, with
+the prompt) and turbo (batched), brings back `t.v3.*` and `t.turbo.*`, and prints both word counts and whether they
+agree within 5%. `vocab.txt` is a comma list of the glossary's canonical names (spelling bias, not an instruction).
+Remote mechanics, for debugging: [references/remote-gpu.md](references/remote-gpu.md). With no GPU host, run
+`$EB/tools/transcribe_faster_whisper.py` locally with `--device cpu --compute int8` (slow), or
+`uv run $EB/tools/hf.py transcribe audio.wav --model large-v3` for a single pass.
 
 **Done when:** both JSON files are back and their word counts are within 5% of each other (a bigger gap means a
 dropped or hallucinated stretch: find it before continuing).

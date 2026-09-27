@@ -1,0 +1,75 @@
+{
+ "duration": 12.0,
+ "fps": 60,
+ "words": "words.json",
+ "cues": [
+  {
+   "id": "C01",
+   "kind": "title",
+   "start": 0.3,
+   "end": 2.8,
+   "zone": "center",
+   "content": {
+    "title": "Identity before action",
+    "subtitle": "A scaffold smoke test for every cue kind"
+   }
+  },
+  {
+   "id": "C02",
+   "kind": "side-card",
+   "start": 2.9,
+   "end": 5.4,
+   "zone": "left",
+   "content": {
+    "kicker": "Step one",
+    "title": "Name the agent",
+    "subtitle": "Say who is acting, and for whom."
+   }
+  },
+  {
+   "id": "C03",
+   "kind": "step",
+   "start": 5.5,
+   "end": 7.4,
+   "zone": "right",
+   "content": {
+    "number": "02",
+    "title": "Ask the user",
+    "subtitle": "Consent is a record you can show."
+   }
+  },
+  {
+   "id": "C04",
+   "kind": "bullet",
+   "start": 7.5,
+   "end": 9.4,
+   "zone": "center",
+   "content": {
+    "title": "Checklist",
+    "items": [
+     "Identity",
+     "Permission",
+     "Policy"
+    ]
+   }
+  },
+  {
+   "id": "C05",
+   "kind": "label",
+   "start": 7.6,
+   "end": 8.3,
+   "zone": "top",
+   "content": {
+    "title": "Source: editbay fixture"
+   }
+  },
+  {
+   "id": "C06",
+   "kind": "word-highlight",
+   "start": 8.37,
+   "end": 12.0,
+   "zone": "bottom",
+   "content": {}
+  }
+ ]
+}

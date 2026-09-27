@@ -13,10 +13,12 @@ Delivery profiles (size, fps, loudness) come from `~/.config/editbay/config.json
 
 ## 1. Gate the composition
 
-Before rendering a HyperFrames project: `npx hyperframes check hf/ --json --snapshots --at-transitions`. Layout
-overlaps, contrast failures, runtime errors, and `*.motion.json` assertions (entrances land by their beat, order
-holds, nothing leaves frame, nothing freezes) are fixed in the HTML now; they are cheap here and expensive after a
-render. Snapshots always with `--describe false` (describe mode sends frames to a vision API when a key is set).
+Before rendering a HyperFrames project: `uv run $EB/tools/hf.py check hf/ --json --snapshots --at-transitions` and
+`uv run $EB/tools/text_check.py hf/ --brand BRAND.json`. Layout overlaps, contrast failures, runtime errors, text
+under the brand's phone minimum, words split across lines, and `*.motion.json` assertions (entrances land by their
+beat, order holds, nothing leaves frame, nothing freezes) are fixed in the HTML now; they are cheap here and
+expensive after a render. Run HyperFrames only through `hf.py`: with a Gemini key set, `snapshot` and even
+`check --snapshots` (which has no `--describe` flag) send frames to a vision API; hf.py removes the keys.
 
 **Done when:** `check` exits 0, or each remaining finding is marked intentional in the HTML with its escape-hatch
 attribute and a comment saying why.
@@ -25,7 +27,7 @@ attribute and a comment saying why.
 
 ```bash
 uv run $EB/tools/verify_report.py --render renders/review.mp4 --out qa/ --profile reel --hf-project hf/ \
-  --expect-duration 15 --allow-black 0:0.3 --allow-freeze 13.5:15 \
+  --brand BRAND.json --expect-duration 15 --allow-black 0:0.3 --allow-freeze 13.5:15,40:44.5 \
   --grid beats/grid.json --half \                                   # music-led pieces
   --faces media/talk.faces.json --source media/talk.mp4 \           # footage under overlays
   --expected transcript/words.json --heard qa/heard.json            # voice or captions present

@@ -6,8 +6,9 @@
 
 Usage:
   verify_report.py --render renders/review.mp4 --out qa/ [--profile reel] [--config ~/.config/editbay/config.json]
-      [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 13.5:15]
-      [--hf-project hf/]                         hyperframes check (DOM: layout, contrast, motion sidecars)
+      [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 13.5:15,40:44.5]   (comma-separated start:end ranges)
+      [--hf-project hf/]                         hyperframes check (DOM: layout, contrast, motion sidecars), through hf.py
+      [--brand BRAND.json]                       with --hf-project: text_check.py (phone-size text, words split across lines)
       [--grid beats/grid.json --half]            cuts on the beat grid (music-led pieces)
       [--faces media/x.faces.json --source SRC [--face-mode diff|detect] [--face-offset 0] [--face-skip a-b,...]]
       [--expected words.json --heard heard.json] words on screen / in the mix vs what should be there
@@ -29,7 +30,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--render", required=True); ap.add_argument("--out", required=True)
     ap.add_argument("--profile"); ap.add_argument("--config", default=os.path.expanduser("~/.config/editbay/config.json"))
-    ap.add_argument("--expect-duration", type=float); ap.add_argument("--allow-black"); ap.add_argument("--allow-freeze")
+    ap.add_argument("--expect-duration", type=float); ap.add_argument("--allow-black")
+    ap.add_argument("--allow-freeze", help="intentional holds as comma-separated start:end ranges, e.g. 12:15,40:44.5")
+    ap.add_argument("--brand", help="brand profile JSON: gates on-screen text against its phone minimum")
     ap.add_argument("--hf-project"); ap.add_argument("--grid"); ap.add_argument("--half", action="store_true")
     ap.add_argument("--tolerance-ms", type=float)
     ap.add_argument("--faces"); ap.add_argument("--source"); ap.add_argument("--face-mode", default="diff")
@@ -51,7 +54,8 @@ def main():
 
     # 1. Composition (DOM)
     if a.hf_project:
-        r = subprocess.run(["npx", "-y", "hyperframes", "check", a.hf_project, "--json"], capture_output=True, text=True)
+        r = subprocess.run(["uv", "run", "-q", os.path.join(HERE, "hf.py"), "check", a.hf_project, "--json"],
+                           capture_output=True, text=True)
         try:
             d = json.loads(r.stdout)
             summary = ", ".join(f"{k} {'ok' if v.get('ok') else 'FAIL'}" for k, v in d.items()
@@ -62,6 +66,11 @@ def main():
             gate("hyperframes-check", 1, (r.stdout + r.stderr)[-2000:])
     else:
         gates.append({"gate": "hyperframes-check", "status": "PENDING", "detail": "no --hf-project given"})
+    if a.hf_project and a.brand:
+        gate("text", *tool("text_check.py", a.hf_project, "--brand", a.brand, "--json", os.path.join(a.out, "text.json")),
+             os.path.join(a.out, "text.json"))
+    else:
+        gates.append({"gate": "text", "status": "PENDING", "detail": "no --hf-project/--brand: phone-size text not checked"})
 
     # 2. Encoded file
     args = [a.render, "--json", os.path.join(a.out, "av_qa.json")]

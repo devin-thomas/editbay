@@ -1,0 +1,127 @@
+[
+ {
+  "text": "Agents",
+  "start": 0.4,
+  "end": 0.79
+ },
+ {
+  "text": "need",
+  "start": 0.85,
+  "end": 1.17
+ },
+ {
+  "text": "permission",
+  "start": 1.23,
+  "end": 1.76
+ },
+ {
+  "text": "before",
+  "start": 1.82,
+  "end": 2.21
+ },
+ {
+  "text": "they",
+  "start": 2.27,
+  "end": 2.59
+ },
+ {
+  "text": "act",
+  "start": 2.65,
+  "end": 2.935
+ },
+ {
+  "text": "on",
+  "start": 2.995,
+  "end": 3.245
+ },
+ {
+  "text": "someone",
+  "start": 3.305,
+  "end": 3.73
+ },
+ {
+  "text": "else's",
+  "start": 3.79,
+  "end": 4.18
+ },
+ {
+  "text": "platform.",
+  "start": 4.24,
+  "end": 4.735
+ },
+ {
+  "text": "Name",
+  "start": 5.085,
+  "end": 5.405
+ },
+ {
+  "text": "the",
+  "start": 5.465,
+  "end": 5.75
+ },
+ {
+  "text": "agent,",
+  "start": 5.81,
+  "end": 6.2
+ },
+ {
+  "text": "ask",
+  "start": 6.26,
+  "end": 6.545
+ },
+ {
+  "text": "the",
+  "start": 6.605,
+  "end": 6.89
+ },
+ {
+  "text": "user,",
+  "start": 6.95,
+  "end": 7.305
+ },
+ {
+  "text": "and",
+  "start": 7.365,
+  "end": 7.65
+ },
+ {
+  "text": "write",
+  "start": 7.71,
+  "end": 8.065
+ },
+ {
+  "text": "the",
+  "start": 8.125,
+  "end": 8.41
+ },
+ {
+  "text": "policy",
+  "start": 8.47,
+  "end": 8.86
+ },
+ {
+  "text": "down.",
+  "start": 8.92,
+  "end": 9.275
+ },
+ {
+  "text": "Identity",
+  "start": 9.625,
+  "end": 10.085
+ },
+ {
+  "text": "comes",
+  "start": 10.145,
+  "end": 10.5
+ },
+ {
+  "text": "before",
+  "start": 10.56,
+  "end": 10.95
+ },
+ {
+  "text": "action.",
+  "start": 11.01,
+  "end": 11.435
+ }
+]

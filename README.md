@@ -53,10 +53,11 @@ Start with `video-director`: it writes the brief, picks the route, and runs the 
 
 `tools/` holds the measurements and generators the skills call; each runs with `uv run tools/<name>.py --help`.
 Probe and look: `media_probe`, `contact_sheet`, `scene_cuts`, `palette`, `faces`, `reference_report`. Words:
-`transcribe_faster_whisper` (GPU host), `reconcile`, `transcript_diff`. Cutting: `cut_plan`, `cut_render`. Voice:
+`transcribe_faster_whisper` and `asr_remote` (GPU host), `reconcile`, `transcript_diff`. Cutting: `cut_plan`, `cut_render`. Voice:
 `voiceover`, `voiceover_check`, `tts_worker_runner` (GPU host). Planning: `beats_check`. Sourcing: `asset_ledger`.
-Sound: `beat_grid`, `beat_bed`, `sfx_synth`, `mix`, `loudness`, `remux_audio`. Build, verify, deliver: `hf_scaffold`,
-`av_qa`, `face_clear`, `verify_report`, `deliver`.
+Sound: `beat_grid`, `beat_bed`, `sfx_synth`, `mix`, `loudness`, `remux_audio`. Build, verify, deliver: `hf` (the
+HyperFrames CLI with paid-service keys removed), `hf_scaffold`, `text_check`, `av_qa`, `face_clear`, `verify_report`,
+`deliver`.
 
 ## Examples
 

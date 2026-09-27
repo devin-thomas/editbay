@@ -15,8 +15,12 @@ Gotchas that each cost a re-render:
 - A reveal that finishes early and then holds a static frame fails `sweep_static` in check: keep one element alive
   (a slow background drift is enough).
 - Tag footage plates matrix-only (`-colorspace bt709`): full colour tags make Chrome colour-manage them darker.
-- `hyperframes snapshot` and `check --snapshots` with a Gemini key in the environment describe frames through the
-  API unless you pass `--describe false`.
+- `hyperframes snapshot` and `check --snapshots` describe frames through Gemini whenever GEMINI_API_KEY or
+  GOOGLE_API_KEY is set, and `check` has no `--describe` flag. The CLI also reads HeyGen, HyperFrames cloud,
+  OpenRouter and ElevenLabs keys. Run it through `tools/hf.py`, which removes those keys (probed in 0.8.79's cli.js).
+- `backdrop-filter` makes HyperFrames fall back to screenshot capture, which is much slower (a Codex run's 4K render
+  took ~3 min with blurred cards). Use a dense surface colour instead; hf_scaffold no longer blurs cards.
+- `check` skips the layout pass while lint has errors: re-run it once lint is clean, or overlaps stay hidden.
 - Maximum render rate is 240 fps. Motion blur: render two 240 fps passes offset by half a frame (`--variables`) and
   blend 8 samples per output frame with `tmix`, then master to ProRes 4444.
 - Alpha overlays: `--format mov` (ProRes 4444) or `webm`; 4:2:2 dims saturated footage at seams, use 4:4:4.
@@ -25,9 +29,9 @@ Gotchas that each cost a re-render:
 - Kill leftover `chrome-headless-shell` processes after an interrupted render (check what they belong to first).
 - Fonts: Google Fonts links load before capture; for renders that must match elsewhere, vendor the fonts into the
   project (the package ships `hyperframes-localize-fonts`) or use `--docker`.
-- Studio for humans: `npx hyperframes preview --background` (agent-safe), `--status`, `--stop`.
-- **Render audio is normalised to about -16 LUFS** with one static gain (0.8.79, measured: a -14.3 LUFS mix came
-  out at -16.1 with a constant -1.79 dB and zero lag; a -16.0 mix stayed at -16.1). For any other loudness target,
+- Studio for humans: `uv run $EB/tools/hf.py preview --background` (agent-safe), `--status`, `--stop`.
+- **Render audio changes level, and not by a fixed rule** (0.8.79, measured: a -14.3 LUFS mix came out at -16.1, a
+  constant -1.79 dB with zero lag; one -16.0 mix stayed at -16.1, another came out at -17.4). Whatever the target,
   master the mix in sound-bed and put it back after every render with `tools/remux_audio.py` (video copied untouched).
 - `--resolution landscape-4k` renders the same composition at 2x device scale: the way to make a 4K master from a
   1080p layout (fixed-pixel CSS stays correct).

@@ -20,7 +20,10 @@ Writes OUT/index.html (+ OUT/index.motion.json from the beat sheet's sidecar whe
 OUT/assets/. Runs `hyperframes init` first when OUT has no project (skills install skipped).
 Rules baked in: data-fps on the root, one paused timeline registered as window.__timelines["main"], every timed
 element has data-start/data-duration and class "clip", footage is muted with the mix as the only audio, animation
-touches transform and opacity only, no clocks or randomness.
+touches transform and opacity only, no clocks or randomness. Legibility defaults pass text_check.py: content labels
+never go under the brand's min_phone_readable, kickers/step numbers/HUD are data-decorative, headings balance their
+lines, cards have no backdrop-filter (it forces HyperFrames into slow screenshot capture), and vertical captions sit
+above the platform UI band (bottom 26%).
 """
 import argparse, html, json, os, re, shutil, subprocess
 
@@ -35,9 +38,9 @@ ZONES = {  # fractions of the canvas: x0, y0, x1, y1, flex alignment (justify, a
     "pip-tr": (0.67, 0.04, 0.97, 0.36, "flex-end", "flex-start"),
     "pip-bl": (0.03, 0.64, 0.33, 0.96, "flex-start", "flex-end"),
     "pip-br": (0.67, 0.64, 0.97, 0.96, "flex-end", "flex-end"),
-    # portrait zones for vertical cuts (--remap left=upper,right=lower)
-    "upper": (0.06, 0.15, 0.94, 0.47, "center", "center"),
-    "lower": (0.06, 0.49, 0.94, 0.84, "center", "center"),
+    # portrait zones for vertical cuts (--remap left=upper,right=lower); see zone_box for the vertical safe area
+    "upper": (0.06, 0.10, 0.88, 0.40, "center", "center"),
+    "lower": (0.06, 0.42, 0.88, 0.74, "center", "center"),
 }
 ENTER_BY_ZONE = {"left": "slide-from-left", "right": "slide-from-right", "bottom": "rise", "top": "drop",
                  "center": "pop", "full": "fade", "upper": "drop", "lower": "rise"}
@@ -69,6 +72,9 @@ def css(brand, W, H, background):
                    " linear-gradient(color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px) 0 0 / 32px 32px,"
                    " linear-gradient(90deg, color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px) 0 0 / 32px 32px,"
                    " var(--bg)")}[background]
+    # Vertical: keep captions above the bottom band that Shorts, Reels and TikTok cover with their own UI.
+    cap_bottom = f"{round(0.26 * H)}px" if H > W else px(56)
+    cap_right = "12%" if H > W else "6%"
     return f"""
       :root {{
         --bg: {p.get('background', '#0e1014')}; --surface: {p.get('surface', '#171a21')}; --text: {p.get('text', '#f2f4f8')};
@@ -77,11 +83,12 @@ def css(brand, W, H, background):
         --font-display: {fam('display', 'Inter, sans-serif')}; --font-body: {fam('body', 'Inter, sans-serif')};
         --font-mono: {fam('mono', 'ui-monospace, monospace')};
         --hero: {px(sc.get('hero', 120))}; --headline: {px(sc.get('headline', 72))}; --body: {px(sc.get('body', 44))};
-        --label: {px(sc.get('label', 28))};
+        --label: {px(sc.get('label', 28))}; --small: {px(max(sc.get('label', 28), sc.get('min_phone_readable', 36)))};
       }}
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
       html, body {{ width: {W}px; height: {H}px; overflow: hidden; background: var(--bg); }}
-      #root {{ position: relative; width: {W}px; height: {H}px; overflow: hidden; color: var(--text); font-family: var(--font-body); }}
+      #root {{ position: relative; width: {W}px; height: {H}px; overflow: hidden; color: var(--text); font-family: var(--font-body);
+               overflow-wrap: normal; word-break: normal; hyphens: manual; }}
       #bg {{ position: absolute; inset: 0; background: {bg}; }}
       #bg-glow {{ position: absolute; inset: -10%; background: radial-gradient(800px 500px at 30% 70%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); }}
       #base-wrap {{ position: absolute; inset: 0; }}
@@ -89,36 +96,38 @@ def css(brand, W, H, background):
       .zone {{ position: absolute; display: flex; pointer-events: none; }}
       .zone > .clip {{ position: relative; }}
       .z-full > .clip {{ width: 100%; height: 100%; }}
-      .card {{ background: color-mix(in srgb, var(--surface) 80%, transparent); backdrop-filter: blur(18px) saturate(1.15);
+      .card {{ background: color-mix(in srgb, var(--surface) 94%, transparent);
               border: 1px solid color-mix(in srgb, var(--text) 13%, transparent); border-radius: var(--radius);
               box-shadow: 0 {px(18)} {px(60)} rgba(0,0,0,.38); padding: {px(28)} {px(36)}; max-width: 100%; }}
       .card .row {{ display: flex; align-items: center; gap: {px(24)}; }}
       .card img.icon {{ width: {px(96)}; height: {px(96)}; object-fit: contain; }}
       .kicker {{ font-family: var(--font-mono); font-size: var(--label); letter-spacing: .11em; text-transform: uppercase;
                 color: var(--accent); margin-bottom: {px(10)}; }}
-      .t-title {{ font-family: var(--font-display); font-weight: 750; font-size: var(--headline); letter-spacing: -0.035em; line-height: 1.02; }}
-      .t-sub {{ font-size: var(--body); color: var(--muted); margin-top: {px(10)}; line-height: 1.25; }}
-      .hero {{ font-family: var(--font-display); font-weight: 800; font-size: var(--hero); letter-spacing: -0.045em; line-height: .98; text-align: center; }}
+      .t-title {{ font-family: var(--font-display); font-weight: 750; font-size: var(--headline); letter-spacing: -0.035em; line-height: 1.02; text-wrap: balance; }}
+      .t-sub {{ font-size: var(--body); color: var(--muted); margin-top: {px(10)}; line-height: 1.25; text-wrap: pretty; }}
+      .hero {{ font-family: var(--font-display); font-weight: 800; font-size: var(--hero); letter-spacing: -0.045em; line-height: .98; text-align: center; text-wrap: balance; }}
       .hero .w {{ display: inline-block; margin-right: .22em; }}
       .lt {{ display: flex; gap: {px(18)}; align-items: stretch; }}
       .lt .bar {{ width: {px(8)}; background: var(--accent); border-radius: 4px; }}
       .bullets {{ list-style: none; }}
-      .bullets li {{ font-size: var(--body); line-height: 1.3; margin: {px(8)} 0; display: flex; gap: {px(16)}; }}
+      .bullets li {{ font-size: var(--body); line-height: 1.3; margin: {px(8)} 0; display: flex; gap: {px(16)}; text-wrap: pretty; }}
       .bullets li::before {{ content: ""; width: {px(12)}; height: {px(12)}; margin-top: {px(18)}; border-radius: 50%; background: var(--accent); flex: none; }}
-      .pill {{ font-family: var(--font-mono); font-size: var(--label); padding: {px(10)} {px(18)}; border-radius: 999px;
+      .pill {{ font-family: var(--font-mono); font-size: var(--small); padding: {px(10)} {px(18)}; border-radius: 999px;
               border: 1px solid var(--accent); color: var(--text); background: color-mix(in srgb, var(--bg) 70%, transparent); }}
       .step .num {{ font-family: var(--font-mono); font-size: var(--label); color: var(--accent); letter-spacing: .12em; }}
       .panel {{ padding: {px(12)}; }}
       .panel img, .panel video {{ display: block; width: 100%; border-radius: var(--radius-sm); }}
-      .panel .cap {{ font-family: var(--font-mono); font-size: var(--label); color: var(--muted); margin-top: {px(10)}; }}
-      .band {{ font-family: var(--font-display); font-weight: 700; font-size: var(--headline); letter-spacing: -0.02em; }}
+      .panel .cap {{ font-family: var(--font-mono); font-size: var(--small); color: var(--muted); margin-top: {px(10)}; }}
+      .band {{ font-family: var(--font-display); font-weight: 700; font-size: var(--headline); letter-spacing: -0.02em; text-wrap: balance; }}
       .band .w, .cap-line .w {{ position: relative; display: inline-block; margin: 0 .16em; isolation: isolate; }}
+      /* the highlight sits under the word (z 0 < 1) without a negative z-index; GSAP owns its scaleX (no CSS transform) */
       .band .w .hl, .cap-line .w .hl {{ position: absolute; left: -0.08em; right: -0.08em; bottom: .06em; height: .30em;
-              background: var(--accent); border-radius: 3px; z-index: -1; transform: scaleX(0); transform-origin: left center; }}
+              background: var(--accent); border-radius: 3px; z-index: 0; transform-origin: left center; }}
+      .band .w .tx, .cap-line .w .tx {{ position: relative; z-index: 1; }}
       .takeover {{ position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
               align-items: center; justify-content: center; text-align: center; }}
-      .cap-line {{ position: absolute; left: 6%; right: 6%; bottom: {px(56)}; text-align: center; font-family: var(--font-display);
-              font-weight: 700; font-size: {px(54)}; line-height: 1.15; text-shadow: 0 2px 12px rgba(0,0,0,.65); }}
+      .cap-line {{ position: absolute; left: 6%; right: {cap_right}; bottom: {cap_bottom}; text-align: center; font-family: var(--font-display);
+              font-weight: 700; font-size: {px(60 if H > W else 54)}; line-height: 1.15; text-shadow: 0 2px 12px rgba(0,0,0,.65); text-wrap: balance; }}
       #hud {{ position: absolute; inset: {px(28)}; pointer-events: none; font-family: var(--font-mono); font-size: {px(18)};
               letter-spacing: .12em; color: color-mix(in srgb, var(--text) 62%, transparent); text-transform: uppercase; }}
       #hud .c {{ position: absolute; width: {px(26)}; height: {px(26)}; border-color: color-mix(in srgb, var(--text) 45%, transparent); border-style: solid; }}
@@ -128,8 +137,28 @@ def css(brand, W, H, background):
 """
 
 
-def zone_div(cid, zone, W, H, inner, extra_cls=""):
+def zone_box(zone, W, H, captions):
+    """Zone fractions, kept inside the safe area. Vertical: the bottom 26% and the right 12% stay clear for the
+    Shorts/Reels/TikTok UI, and with captions on the zones stop above the caption band (0.64-0.74). Landscape with
+    captions: zones stop at 0.86, above the caption line."""
     x0, y0, x1, y1, just, align = ZONES.get(zone, ZONES["center"])
+    if zone == "full":
+        return x0, y0, x1, y1, just, align
+    portrait = H > W
+    if portrait and zone == "center":
+        x0, y0, x1, y1 = 0.06, 0.10, 0.88, 0.74
+    floor = (0.64 if captions else 0.74) if portrait else (0.86 if captions else 1.0)
+    if y1 > floor:
+        y1 = floor
+        if y1 - y0 < 0.12:
+            y0 = max(0.02, y1 - 0.18)
+    if portrait:
+        x1 = min(x1, 0.88)
+    return x0, y0, x1, y1, just, align
+
+
+def zone_div(cid, zone, W, H, inner, extra_cls="", captions=False):
+    x0, y0, x1, y1, just, align = zone_box(zone, W, H, captions)
     style = (f"left:{x0 * W:.0f}px;top:{y0 * H:.0f}px;width:{(x1 - x0) * W:.0f}px;height:{(y1 - y0) * H:.0f}px;"
              f"justify-content:{just};align-items:{align};")
     return f'<div class="zone {extra_cls}" style="{style}">{inner}</div>'
@@ -139,11 +168,11 @@ def words_in(words, s, e):
     return [w for w in words if w["start"] >= s - 0.05 and w["start"] < e]
 
 
-def cue_html(c, W, H, words):
+def cue_html(c, W, H, words, captions=False):
     cid, kind, ct = c["id"], c.get("kind", "title"), c.get("content") or {}
     dur = round(c["end"] - c["start"], 4)
     timing = f'class="clip" data-start="{c["start"]}" data-duration="{dur}"'
-    kicker = f'<div class="kicker">{esc(ct.get("kicker"))}</div>' if ct.get("kicker") else ""
+    kicker = f'<div class="kicker" data-decorative>{esc(ct.get("kicker"))}</div>' if ct.get("kicker") else ""
     title = f'<div class="t-title">{esc(ct.get("title"))}</div>' if ct.get("title") else ""
     sub = f'<div class="t-sub">{esc(ct.get("subtitle"))}</div>' if ct.get("subtitle") else ""
     icon = f'<img class="icon" src="{esc(ct["icon"])}" alt="" />' if ct.get("icon") else ""
@@ -152,7 +181,7 @@ def cue_html(c, W, H, words):
         spans = "".join(f'<span class="w">{esc(w)}</span>' for w in str(ct.get("title", "")).split())
         inner = f'<div id="{cid}" {timing}><div class="hero">{spans}</div>{sub}</div>'
     elif kind in ("side-card", "step"):
-        num = f'<div class="num">{esc(ct.get("number"))}</div>' if ct.get("number") else ""
+        num = f'<div class="num" data-decorative>{esc(ct.get("number"))}</div>' if ct.get("number") else ""
         inner = f'<div id="{cid}" {timing} class="card {kind}"><div class="row">{icon}<div>{num}{kicker}{title}{sub}</div></div></div>'
         inner = inner.replace(f'{timing} class="card', f'data-start="{c["start"]}" data-duration="{dur}" class="clip card')
     elif kind == "lower-third":
@@ -166,7 +195,7 @@ def cue_html(c, W, H, words):
         inner = f'<div id="{cid}" class="clip pill" data-start="{c["start"]}" data-duration="{dur}">{esc(ct.get("title"))}</div>'
     elif kind == "word-highlight":
         ws = words_in(words, c["start"], c["end"])
-        spans = "".join(f'<span class="w" data-t="{w["start"]}">{esc(w["text"])}<span class="hl"></span></span>' for w in ws)
+        spans = "".join(f'<span class="w" data-t="{w["start"]}"><span class="hl"></span><span class="tx">{esc(w["text"])}</span></span>' for w in ws)
         inner = f'<div id="{cid}" class="clip card band" data-start="{c["start"]}" data-duration="{dur}">{spans}</div>'
     elif kind == "image-panel":
         src = ct.get("src", "")
@@ -182,7 +211,7 @@ def cue_html(c, W, H, words):
         inner = f'<div id="{cid}" class="clip" data-start="{c["start"]}" data-duration="{dur}">{ct.get("html", "")}</div>'
     else:
         inner = f'<div id="{cid}" class="clip card" data-start="{c["start"]}" data-duration="{dur}">{title}{sub}</div>'
-    return zone_div(cid, zone, W, H, inner, extra_cls=f"z-{zone}")
+    return zone_div(cid, zone, W, H, inner, extra_cls=f"z-{zone}", captions=captions)
 
 
 def cue_js(c, words):
@@ -210,7 +239,7 @@ def cue_js(c, words):
         lines.append(f'tl.fromTo("#{cid} .it", {{opacity: 0, x: -24}}, {{opacity: 1, x: 0, duration: 0.35, stagger: 0.28, ease: "power2.out"}}, {s + 0.25});')
     if kind == "word-highlight":
         for w in words_in(words, s, e):
-            lines.append(f'tl.to("#{cid} .w[data-t=\\"{w["start"]}\\"] .hl", {{scaleX: 1, duration: 0.14, ease: "power2.out"}}, {w["start"]});')
+            lines.append(f'tl.fromTo("#{cid} .w[data-t=\\"{w["start"]}\\"] .hl", {{scaleX: 0}}, {{scaleX: 1, duration: 0.14, ease: "power2.out"}}, {w["start"]});')
     if c.get("zone") != "full" or kind != "takeover":
         lines.append(f'tl.to("#{cid}", {{opacity: 0, y: {"-16" if c.get("zone") != "top" else "16"}, duration: 0.3, ease: "power2.in"}}, {max(s + 0.6, e - 0.32)});')
     else:
@@ -253,7 +282,7 @@ def main():
         words = d if isinstance(d, list) else [{"text": w[2].strip(), "start": w[0], "end": w[1]} for s in d["segments"] for w in s["words"]]
     if not os.path.exists(os.path.join(a.out, "hyperframes.json")):
         parent, name = os.path.split(os.path.abspath(a.out))
-        env = {**os.environ, "HYPERFRAMES_SKIP_SKILLS": "1"}
+        env = {k: v for k, v in os.environ.items() if not k.endswith("_API_KEY")} | {"HYPERFRAMES_SKIP_SKILLS": "1"}
         subprocess.run(["npx", "-y", f"hyperframes@{a.hf_version}", "init", name, "--example", "blank", "--non-interactive"],
                        cwd=parent, env=env, capture_output=True)
     os.makedirs(os.path.join(a.out, "assets"), exist_ok=True)
@@ -280,7 +309,14 @@ def main():
         body.append(f'<div id="base-wrap" class="clip" data-start="0" data-duration="{dur}"><video id="base" src="{base}" muted '
                     f'playsinline data-start="0" data-duration="{dur}" class="clip"></video></div>')
     shown = [c for c in sheet["cues"] if c.get("kind") != "sfx"]  # sfx cues only drive the mix
-    body += [cue_html(c, W, H, words) for c in shown]
+    # Two cues in one zone at once overlap on screen; common when a 16:9 sheet is re-laid out with --remap for 9:16.
+    for i, c1 in enumerate(shown):
+        for c2 in shown[i + 1:]:
+            z = c1.get("zone", "center")
+            if z != "full" and z == c2.get("zone", "center") and c1["start"] < c2["end"] - 0.05 and c2["start"] < c1["end"] - 0.05:
+                print(f"warning: {c1['id']} and {c2['id']} share zone {z} at {max(c1['start'], c2['start']):g}s; "
+                      f"move one (beat sheet zone or --remap)")
+    body += [cue_html(c, W, H, words, captions=bool(a.captions)) for c in shown]
     js = [cue_js(c, words) for c in shown]
     js.append(f'tl.fromTo("#bg-glow", {{x: -60, y: 30}}, {{x: 60, y: -30, duration: {dur}, ease: "none"}}, 0);')
     if a.captions:
@@ -288,12 +324,12 @@ def main():
         cw = cw if isinstance(cw, list) else [{"text": w[2].strip(), "start": w[0], "end": w[1]} for s in cw["segments"] for w in s["words"]]
         for k, line in enumerate(caption_lines(cw)):
             s, e = line[0]["start"], max(line[-1]["end"], line[0]["start"] + 0.6)
-            spans = "".join(f'<span class="w" data-t="{w["start"]}">{esc(w["text"])}<span class="hl"></span></span>' for w in line)
+            spans = "".join(f'<span class="w" data-t="{w["start"]}"><span class="hl"></span><span class="tx">{esc(w["text"])}</span></span>' for w in line)
             body.append(f'<div id="cap{k}" class="clip cap-line" data-start="{round(s, 3)}" data-duration="{round(e - s, 3)}" '
                         f'data-layout-allow-caption-zone>{spans}</div>')
-            js += [f'tl.to("#cap{k} .w[data-t=\\"{w["start"]}\\"] .hl", {{scaleX: 1, duration: 0.12}}, {w["start"]});' for w in line]
+            js += [f'tl.fromTo("#cap{k} .w[data-t=\\"{w["start"]}\\"] .hl", {{scaleX: 0}}, {{scaleX: 1, duration: 0.12}}, {w["start"]});' for w in line]
     if a.hud:
-        body.append(f'<div id="hud" class="clip" data-start="0" data-duration="{dur}"><div class="c tl"></div><div class="c tr"></div>'
+        body.append(f'<div id="hud" class="clip" data-decorative data-start="0" data-duration="{dur}"><div class="c tl"></div><div class="c tr"></div>'
                     f'<div class="c bl"></div><div class="c br"></div><div class="lab">{esc(a.hud)}</div>'
                     f'<div class="tc" id="hud-tc">TC 00:00:00:00</div></div>')
         js.append(f'const tc = document.getElementById("hud-tc"); const pad = (n) => String(n).padStart(2, "0");'

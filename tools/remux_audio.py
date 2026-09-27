@@ -4,9 +4,10 @@
 # ///
 """Put the mastered mix back into a render: the video stream is copied untouched, the audio is the mix, re-encoded once.
 
-Why: HyperFrames normalises the audio it renders to about -16 LUFS with one static gain (measured 2026-09-26 on
-0.8.79: a -14.3 LUFS mix came out at -16.1 with a constant -1.79 dB, zero lag; a -16.0 mix stayed at -16.1). For any
-other target (reels and shorts at -14), master the mix with mix.py, then run this after every render.
+Why: HyperFrames 0.8.79 changes the level of the audio it renders, and not by a fixed rule (measured 2026-09-26: a
+-14.3 LUFS mix came out at -16.1, a constant -1.79 dB with zero lag; one -16.0 mix stayed at -16.1, another came out
+at -17.4 with its true peak barely moving). Master the mix with mix.py, then run this after every render, whatever
+the target.
 
 Usage:
   remux_audio.py RENDER.mp4 MIX.wav --out FINAL.mp4 [--target -14 --tp -1.0] [--bitrate 320k]

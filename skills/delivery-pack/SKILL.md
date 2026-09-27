@@ -14,7 +14,7 @@ Delivery profiles come from `~/.config/editbay/config.json` (`delivery_profiles`
 ## 1. Render the variants
 
 - **Master above 1080p:** render the same composition at a higher device scale; the layout does not change:
-  `npx hyperframes render --fps 60 --quality delivery --resolution landscape-4k -o renders/master-4k.mp4`.
+  `uv run $EB/tools/hf.py render --fps 60 --quality delivery --resolution landscape-4k -o renders/master-4k.mp4`.
 - **Vertical (9:16):** re-lay out, never crop a designed piece. Scaffold a second project from the same resolved beat
   sheet: `hf_scaffold.py ... --out hf-vertical --size 1080x1920 --remap left=upper,right=lower` plus a vertical CSS
   override (rails wrap, cards widen), then `hyperframes check` and render. Footage-led pieces can reframe on the face

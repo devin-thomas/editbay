@@ -24,7 +24,7 @@ id = cue id, timed with `data-start`/`data-duration`), and copies the beat sheet
 tokens become CSS variables; `--hud` only when the brand allows HUD numbers. Audio is the finished mix from
 sound-bed (the base video is muted), so loudness is decided in one place.
 
-**Done when:** `hf/index.html` exists and `npx hyperframes lint hf/` reports no errors.
+**Done when:** `hf/index.html` exists and `uv run $EB/tools/hf.py lint hf/` reports no errors.
 
 ## 2. Dress the scenes
 
@@ -40,21 +40,26 @@ frames, end cards): [references/overlay-patterns.md](references/overlay-patterns
 ## 3. Check before rendering
 
 ```bash
-npx hyperframes check hf/ --json --at-transitions
-npx hyperframes snapshot hf/ --at 1.2,4.8,9.5 --describe false
+uv run $EB/tools/hf.py check hf/ --json --at-transitions
+uv run $EB/tools/text_check.py hf/ --brand BRAND.json
+uv run $EB/tools/hf.py snapshot hf/ --at 1.2,4.8,9.5
 ```
 
-`check` runs lint, runtime, layout, contrast, and the motion sidecar in one pass. Fix errors in the HTML; mark
-intentional overlaps with the escape-hatch attributes and a comment. Snapshots at hero moments are the cheap look
-before a render; read them together.
+Run HyperFrames only through `hf.py`: it pins the version and removes paid-service keys from the environment, so no
+frame can go to a vision API (it also adds `--describe false` to snapshots). `check` runs lint, runtime, layout,
+contrast, and the motion sidecar in one pass; when lint fails it skips layout, so re-run it after lint is clean. Fix
+errors in the HTML; mark intentional overlaps with the escape-hatch attributes and a comment. `text_check` fails
+text under the brand's phone minimum and words split across lines, and warns on one-word last lines in headings;
+mark only purely decorative text `data-decorative` (never put information only there). Snapshots at hero moments
+are the cheap look before a render; read them together.
 
-**Done when:** `check` exits 0 and the hero snapshots look like the plan.
+**Done when:** `check` exits 0, `text_check` passes, and the hero snapshots look like the plan.
 
 ## 4. Render drafts, then the master
 
 ```bash
-cd hf && npx hyperframes render --fps 60 --quality draft -o ../renders/draft.mp4       # iterate
-cd hf && npx hyperframes render --fps 60 --quality high -o ../renders/review.mp4       # to render-verify
+cd hf && uv run $EB/tools/hf.py render --fps 60 --quality draft -o ../renders/draft.mp4       # iterate
+cd hf && uv run $EB/tools/hf.py render --fps 60 --quality high -o ../renders/review.mp4       # to render-verify
 ```
 
 Drafts for iteration, `high` for review and delivery; `--docker` when the render must match another machine
@@ -67,5 +72,5 @@ downscaling, never the reverse. Motion blur, ProRes 4444, and alpha overlays: se
 
 - [ ] Scaffolded from the resolved beat sheet; motion sidecar beside the composition
 - [ ] Scenes dressed; agent flourishes recorded in the beat sheet
-- [ ] `hyperframes check` clean; hero snapshots read (with `--describe false`)
+- [ ] `hf.py check` clean and `text_check.py` passing; hero snapshots read (hf.py adds `--describe false`)
 - [ ] Review render at the delivery profile handed to render-verify

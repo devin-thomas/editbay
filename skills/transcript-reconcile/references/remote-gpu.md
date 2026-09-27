@@ -1,5 +1,7 @@
 # Running transcription on the GPU host
 
+`tools/asr_remote.py` does this whole round trip; the manual steps below are for debugging it.
+
 The config names the host: `gpu_host.ssh` (an ssh alias), `shell` (bash or pwsh), `work_root`, and `python` (a
 Python with CUDA torch and faster-whisper; load torch before faster_whisper so ctranslate2 finds cuBLAS/cuDNN).
 

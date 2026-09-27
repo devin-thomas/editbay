@@ -80,9 +80,9 @@ Two moves in the video matter more than any single prompt:
 - **Paid defaults.** ElevenLabs Scribe, kie.ai, Kling, and ElevenLabs sound effects are the easy path in the kit.
   With a 4090 and an M5 Max, local routes cover most of it: faster-whisper for words, the Qwen3-TTS clone for
   narration, synthesised effects and beds on an exact grid. Costs and alternatives: [PROVIDERS.md](../PROVIDERS.md).
-- **Render loudness.** The kit masters to -14 LUFS / -1.2 dBTP, but HyperFrames 0.8.79 normalises render audio to
-  about -16 LUFS (a constant -1.79 dB on a -14.3 LUFS mix, measured). A -14 reel needs its mix put back after every
-  render: `tools/remux_audio.py`.
+- **Render loudness.** The kit masters to -14 LUFS / -1.2 dBTP, but HyperFrames 0.8.79 changes the level of the
+  audio it renders (measured -1.8 dB on a -14.3 LUFS mix, and -1.4 dB on one of two -16.0 LUFS mixes). Every render
+  needs the mastered mix put back and measured again: `tools/remux_audio.py`.
 - **Provenance.** Product photos, logos, and generated clips of people in a brand's clothing are fine for a private
   test and a problem in anything published. broll-sourcing records every asset's kind, source, and licence, labels
   generated media, and fails the build when something on screen has no record.

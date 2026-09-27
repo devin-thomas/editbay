@@ -21,7 +21,7 @@ holds, and whether it is a capture of something real or an illustration. Write t
 
 ## 2. Capture the real things
 
-- Websites and apps: `npx hyperframes capture URL --skip-vision -o assets/capture/NAME` (screenshots, assets,
+- Websites and apps: `uv run $EB/tools/hf.py capture URL --skip-vision -o assets/capture/NAME` (screenshots, assets,
   video manifest; `--skip-vision` keeps frames from being sent to an AI captioner). A "screen recording" of a page is
   usually better built than recorded: pan a full-page capture in the composition (seek-safe, sharp, re-timeable).
 - Real screen recordings (a terminal, an app flow): record at the delivery size or larger, 60 fps, a tight viewport so
