@@ -1,0 +1,32 @@
+1
+00:00:00,000 --> 00:00:02,400
+Editing with an agent starts with one habit.
+
+2
+00:00:02,600 --> 00:00:04,800
+You give it the words first.
+
+3
+00:00:06,870 --> 00:00:09,290
+So the first step is to cut the video.
+
+4
+00:00:09,630 --> 00:00:11,530
+Sorry, let me start that again.
+
+5
+00:00:13,600 --> 00:00:16,720
+So the first step is to transcribe the video.
+
+6
+00:00:16,940 --> 00:00:19,400
+Every word gets a timestamp.
+
+7
+00:00:21,610 --> 00:00:25,670
+Um, then the agent cuts the mistakes and the dead air.
+
+8
+00:00:27,800 --> 00:00:32,920
+After that, it plans the beats, builds the graphics, and checks its own work.
+

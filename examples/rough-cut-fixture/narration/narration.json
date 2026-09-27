@@ -1,0 +1,85 @@
+{
+ "engine": "qwen3-worker",
+ "voice": "aiden",
+ "seed": 7,
+ "gap": 0.4,
+ "paragraph_gap": 2.2,
+ "duration": 33.546,
+ "words": 68,
+ "wpm_speech_only": 179.4,
+ "wpm_overall": 121.6,
+ "sentences": [
+  {
+   "i": 1,
+   "beat": "B01",
+   "text": "Editing with an agent starts with one habit.",
+   "start": 0.3,
+   "end": 2.534,
+   "file": "sentences/s001.wav",
+   "seed": 7
+  },
+  {
+   "i": 2,
+   "beat": "B01",
+   "text": "You give it the words first.",
+   "start": 2.934,
+   "end": 5.134,
+   "file": "sentences/s002.wav",
+   "seed": 7
+  },
+  {
+   "i": 3,
+   "beat": "B02",
+   "text": "So the first step is to cut the video.",
+   "start": 7.334,
+   "end": 9.54,
+   "file": "sentences/s003.wav",
+   "seed": 7
+  },
+  {
+   "i": 4,
+   "beat": "B02",
+   "text": "Sorry, let me start that again.",
+   "start": 9.94,
+   "end": 11.852,
+   "file": "sentences/s004.wav",
+   "seed": 1007
+  },
+  {
+   "i": 5,
+   "beat": "B03",
+   "text": "So the first step is to transcribe the video.",
+   "start": 14.052,
+   "end": 16.975,
+   "file": "sentences/s005.wav",
+   "seed": 7
+  },
+  {
+   "i": 6,
+   "beat": "B03",
+   "text": "Every word gets a timestamp.",
+   "start": 17.375,
+   "end": 19.592,
+   "file": "sentences/s006.wav",
+   "seed": 7
+  },
+  {
+   "i": 7,
+   "beat": "B04",
+   "text": "Um, then the agent cuts the mistakes and the dead air.",
+   "start": 21.792,
+   "end": 25.854,
+   "file": "sentences/s007.wav",
+   "seed": 7
+  },
+  {
+   "i": 8,
+   "beat": "B05",
+   "text": "After that, it plans the beats, builds the graphics, and checks its own work.",
+   "start": 28.054,
+   "end": 33.046,
+   "file": "sentences/s008.wav",
+   "seed": 7
+  }
+ ]
+}

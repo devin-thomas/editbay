@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>The five-step edit loop</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@650;800&family=Geist+Mono:wght@500&display=block" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #111419; --surface: #171b21; --text: #f3f6fa;
+        --muted: #a6b0bf; --accent: #2f80ed; --line: #2b323c;
+        --radius: 12px; --radius-sm: 6px;
+        --font-display: 'Geist', Inter, sans-serif; --font-body: 'Geist', Inter, sans-serif;
+        --font-mono: 'Geist Mono', ui-monospace, monospace;
+        --hero: 124px; --headline: 76px; --body: 44px;
+        --label: 26px;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; color: var(--text); font-family: var(--font-body); }
+      #bg { position: absolute; inset: 0; background: radial-gradient(1100px 650px at 72% 28%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%), linear-gradient(color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px) 0 0 / 32px 32px, linear-gradient(90deg, color-mix(in srgb, var(--text) 5%, transparent) 1px, transparent 1px) 0 0 / 32px 32px, var(--bg); }
+      #bg-glow { position: absolute; inset: -10%; background: radial-gradient(800px 500px at 30% 70%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); }
+      #base-wrap { position: absolute; inset: 0; }
+      #base-wrap video { width: 100%; height: 100%; object-fit: cover; }
+      .zone { position: absolute; display: flex; pointer-events: none; }
+      .zone > .clip { position: relative; }
+      .z-full > .clip { width: 100%; height: 100%; }
+      .card { background: color-mix(in srgb, var(--surface) 80%, transparent); backdrop-filter: blur(18px) saturate(1.15);
+              border: 1px solid color-mix(in srgb, var(--text) 13%, transparent); border-radius: var(--radius);
+              box-shadow: 0 18px 60px rgba(0,0,0,.38); padding: 28px 36px; max-width: 100%; }
+      .card .row { display: flex; align-items: center; gap: 24px; }
+      .card img.icon { width: 96px; height: 96px; object-fit: contain; }
+      .kicker { font-family: var(--font-mono); font-size: var(--label); letter-spacing: .11em; text-transform: uppercase;
+                color: var(--accent); margin-bottom: 10px; }
+      .t-title { font-family: var(--font-display); font-weight: 750; font-size: var(--headline); letter-spacing: -0.035em; line-height: 1.02; }
+      .t-sub { font-size: var(--body); color: var(--muted); margin-top: 10px; line-height: 1.25; }
+      .hero { font-family: var(--font-display); font-weight: 800; font-size: var(--hero); letter-spacing: -0.045em; line-height: .98; text-align: center; }
+      .hero .w { display: inline-block; margin-right: .22em; }
+      .lt { display: flex; gap: 18px; align-items: stretch; }
+      .lt .bar { width: 8px; background: var(--accent); border-radius: 4px; }
+      .bullets { list-style: none; }
+      .bullets li { font-size: var(--body); line-height: 1.3; margin: 8px 0; display: flex; gap: 16px; }
+      .bullets li::before { content: ""; width: 12px; height: 12px; margin-top: 18px; border-radius: 50%; background: var(--accent); flex: none; }
+      .pill { font-family: var(--font-mono); font-size: var(--label); padding: 10px 18px; border-radius: 999px;
+              border: 1px solid var(--accent); color: var(--text); background: color-mix(in srgb, var(--bg) 70%, transparent); }
+      .step .num { font-family: var(--font-mono); font-size: var(--label); color: var(--accent); letter-spacing: .12em; }
+      .panel { padding: 12px; }
+      .panel img, .panel video { display: block; width: 100%; border-radius: var(--radius-sm); }
+      .panel .cap { font-family: var(--font-mono); font-size: var(--label); color: var(--muted); margin-top: 10px; }
+      .band { font-family: var(--font-display); font-weight: 700; font-size: var(--headline); letter-spacing: -0.02em; }
+      .band .w, .cap-line .w { position: relative; display: inline-block; margin: 0 .16em; isolation: isolate; }
+      .band .w .hl, .cap-line .w .hl { position: absolute; left: -0.08em; right: -0.08em; bottom: .06em; height: .30em;
+              background: var(--accent); border-radius: 3px; z-index: -1; transform: scaleX(0); transform-origin: left center; }
+      .takeover { position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column;
+              align-items: center; justify-content: center; text-align: center; }
+      .cap-line { position: absolute; left: 6%; right: 6%; bottom: 56px; text-align: center; font-family: var(--font-display);
+              font-weight: 700; font-size: 54px; line-height: 1.15; text-shadow: 0 2px 12px rgba(0,0,0,.65); }
+      #hud { position: absolute; inset: 28px; pointer-events: none; font-family: var(--font-mono); font-size: 18px;
+              letter-spacing: .12em; color: color-mix(in srgb, var(--text) 62%, transparent); text-transform: uppercase; }
+      #hud .c { position: absolute; width: 26px; height: 26px; border-color: color-mix(in srgb, var(--text) 45%, transparent); border-style: solid; }
+      #hud .tl { left: 0; top: 0; border-width: 2px 0 0 2px; } #hud .tr { right: 0; top: 0; border-width: 2px 2px 0 0; }
+      #hud .bl { left: 0; bottom: 0; border-width: 0 0 2px 2px; } #hud .br { right: 0; bottom: 0; border-width: 0 2px 2px 0; }
+      #hud .lab { position: absolute; left: 40px; top: 4px; } #hud .tc { position: absolute; left: 40px; bottom: 4px; }
+
+/* Custom scenes for the five-step explainer (starter-pack brand tokens come from the scaffold's :root). */
+.demo { width: 720px; }
+.demo .kicker { margin-bottom: 18px; }
+.ts-row { display: flex; gap: 28px; font-family: var(--font-mono); font-size: 44px; padding: 10px 0;
+          border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+.ts-t { color: var(--accent); min-width: 150px; }
+.ts-w { color: var(--text); }
+.wave { display: flex; align-items: center; gap: 6px; height: 150px; }
+.wb { display: block; width: 10px; border-radius: 3px; background: color-mix(in srgb, var(--text) 70%, transparent); transform-origin: center; }
+.wb.dead { background: #8a94a6; } .wb.filler { background: #e8bd7c; } .wb.retake { background: #f08678; }
+.wave-key { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-family: var(--font-mono); font-size: 24px; color: var(--muted); }
+.wave-key .k { display: inline-block; width: 16px; height: 16px; border-radius: 4px; margin-left: 14px; }
+.wave-key .k.dead { background: #8a94a6; margin-left: 0; } .wave-key .k.filler { background: #e8bd7c; } .wave-key .k.retake { background: #f08678; }
+.need { display: flex; align-items: baseline; gap: 22px; padding: 14px 0; border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+.need-k { font-family: var(--font-mono); font-size: 26px; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; min-width: 110px; }
+.need-v { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; }
+.code .cl { font-family: var(--font-mono); font-size: 34px; line-height: 1.5; white-space: pre; color: #cfd8e6; }
+.code .frames { margin-top: 20px; font-family: var(--font-mono); font-size: 30px; color: var(--muted); }
+.code .frames span { color: var(--accent); font-size: 40px; }
+.chk { display: flex; align-items: center; gap: 20px; font-size: 42px; padding: 12px 0; }
+.chk .tick { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%;
+             background: color-mix(in srgb, #71d3a2 25%, transparent); color: #71d3a2; font-size: 30px; font-weight: 700; }
+.rail { display: flex; gap: 14px; }
+.chip { font-family: var(--font-body); font-size: 32px; font-weight: 600; padding: 14px 24px; border-radius: 999px; color: var(--muted);
+        background: color-mix(in srgb, var(--surface) 85%, transparent); border: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
+.chip .n { font-family: var(--font-mono); font-size: 26px; margin-right: 10px; color: color-mix(in srgb, var(--accent) 70%, var(--muted)); }
+.chip.on { color: var(--text); background: color-mix(in srgb, var(--accent) 28%, var(--surface)); border-color: var(--accent); }
+.chip.on .n { color: var(--text); }
+.loop { display: flex; flex-direction: column; align-items: center; margin-top: 140px; }
+.loop-labels { display: flex; justify-content: space-between; width: 900px; margin-top: -20px; font-family: var(--font-mono); font-size: 34px;
+               color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+.endcard { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+           background: radial-gradient(900px 520px at 50% 40%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), var(--bg); }
+.endcard .brand { font-family: var(--font-display); font-weight: 800; font-size: 150px; letter-spacing: -0.05em; }
+.endcard .by { font-size: 40px; color: var(--muted); margin-top: 10px; }
+.endcard .disc { position: absolute; bottom: 56px; font-size: 28px; color: var(--muted); }
+.chip { position: relative; overflow: hidden; }
+.chip .glow { position: absolute; inset: 0; border-radius: 999px; opacity: 0; z-index: -1;
+              background: color-mix(in srgb, var(--accent) 34%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+.chip { isolation: isolate; }
+
+    </style>
+  </head>
+  <body>
+    <!-- scaffolded by editbay hf_scaffold.py from beats.resolved.json; brand starter-pack -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="59.78" data-fps="60" data-width="1920" data-height="1080">
+      <div id="bg" class="clip" data-start="0" data-duration="59.78"></div>
+      <div id="bg-glow" class="clip" data-start="0" data-duration="59.78"></div>
+      <div class="zone z-top" style="left:96px;top:65px;width:1728px;height:259px;justify-content:center;align-items:flex-start;"><div id="C00" class="clip pill" data-start="0.0" data-duration="3.7833">EDITING WITH AN AGENT</div></div>
+      <div class="zone z-center" style="left:154px;top:108px;width:1613px;height:864px;justify-content:center;align-items:center;"><div id="C01" class="clip" data-start="0.0" data-duration="2.1167"><div class="hero"><span class="w">Hand</span><span class="w">it</span><span class="w">a</span><span class="w">video.</span></div></div></div>
+      <div class="zone z-center" style="left:154px;top:108px;width:1613px;height:864px;justify-content:center;align-items:center;"><div id="C02" class="clip" data-start="2.2167" data-duration="2.2"><div class="hero"><span class="w">Get</span><span class="w">a</span><span class="w">real</span><span class="w">edit</span><span class="w">back.</span></div></div></div>
+      <div class="zone z-center" style="left:154px;top:108px;width:1613px;height:864px;justify-content:center;align-items:center;"><div id="C03" class="clip" data-start="4.8833" data-duration="2.7"><div class="hero"><span class="w">A</span><span class="w">loop,</span><span class="w">not</span><span class="w">a</span><span class="w">lucky</span><span class="w">prompt.</span></div></div></div>
+      <div class="zone z-top" style="left:96px;top:65px;width:1728px;height:259px;justify-content:center;align-items:flex-start;"><div id="R0" class="clip" data-start="7.5333" data-duration="40.7667"><div class="rail"><div class="chip" id="chip0"><span class="glow"></span><span class="n">01</span>Transcribe</div><div class="chip" id="chip1"><span class="glow"></span><span class="n">02</span>Cut</div><div class="chip" id="chip2"><span class="glow"></span><span class="n">03</span>Plan the beats</div><div class="chip" id="chip3"><span class="glow"></span><span class="n">04</span>Build</div><div class="chip" id="chip4"><span class="glow"></span><span class="n">05</span>Verify</div></div></div></div>
+      <div class="zone z-left" style="left:96px;top:86px;width:672px;height:907px;justify-content:flex-start;align-items:center;"><div id="C10" data-start="7.9333" data-duration="8.2334" class="clip card step"><div class="row"><div><div class="num">STEP 01</div><div class="t-title">Transcribe</div><div class="t-sub">every word gets a timestamp</div></div></div></div></div>
+      <div class="zone z-right" style="left:1152px;top:86px;width:672px;height:907px;justify-content:flex-end;align-items:center;"><div id="C11" class="clip" data-start="9.9167" data-duration="6.25"><div class="card demo"><div class="kicker">word · start (s)</div><div class="ts-row" id="ts0"><span class="ts-t">10.21</span><span class="ts-w">Every</span></div><div class="ts-row" id="ts1"><span class="ts-t">10.73</span><span class="ts-w">word</span></div><div class="ts-row" id="ts2"><span class="ts-t">11.03</span><span class="ts-w">gets</span></div><div class="ts-row" id="ts3"><span class="ts-t">11.25</span><span class="ts-w">a</span></div><div class="ts-row" id="ts4"><span class="ts-t">11.39</span><span class="ts-w">timestamp</span></div></div></div></div>
+      <div class="zone z-left" style="left:96px;top:86px;width:672px;height:907px;justify-content:flex-start;align-items:center;"><div id="C20" data-start="16.2833" data-duration="7.85" class="clip card step"><div class="row"><div><div class="num">STEP 02</div><div class="t-title">Cut</div><div class="t-sub">dead air · filler · retakes</div></div></div></div></div>
+      <div class="zone z-right" style="left:1152px;top:86px;width:672px;height:907px;justify-content:flex-end;align-items:center;"><div id="C21" class="clip" data-start="16.5833" data-duration="7.55"><div class="card demo"><div class="kicker">waveform · before the cut</div><div class="wave"><i class="wb " style="height:36px"></i><i class="wb " style="height:68px"></i><i class="wb " style="height:104px"></i><i class="wb " style="height:80px"></i><i class="wb " style="height:128px"></i><i class="wb " style="height:60px"></i><i class="wb " style="height:92px"></i><i class="wb " style="height:116px"></i><i class="wb " style="height:52px"></i><i class="wb dead" style="height:12px"></i><i class="wb dead" style="height:10px"></i><i class="wb dead" style="height:14px"></i><i class="wb dead" style="height:10px"></i><i class="wb " style="height:88px"></i><i class="wb " style="height:124px"></i><i class="wb " style="height:76px"></i><i class="wb " style="height:100px"></i><i class="wb " style="height:56px"></i><i class="wb " style="height:84px"></i><i class="wb filler" style="height:48px"></i><i class="wb filler" style="height:44px"></i><i class="wb " style="height:96px"></i><i class="wb " style="height:120px"></i><i class="wb " style="height:72px"></i><i class="wb " style="height:108px"></i><i class="wb " style="height:60px"></i><i class="wb " style="height:80px"></i><i class="wb retake" style="height:92px"></i><i class="wb retake" style="height:104px"></i><i class="wb retake" style="height:76px"></i><i class="wb retake" style="height:88px"></i><i class="wb retake" style="height:100px"></i><i class="wb " style="height:68px"></i><i class="wb " style="height:116px"></i><i class="wb " style="height:84px"></i><i class="wb " style="height:56px"></i><i class="wb " style="height:96px"></i><i class="wb " style="height:124px"></i><i class="wb " style="height:72px"></i><i class="wb " style="height:60px"></i></div><div class="wave-key"><b class="k dead"></b>dead air<b class="k filler"></b>filler<b class="k retake"></b>retake</div></div></div></div>
+      <div class="zone z-bottom" style="left:96px;top:756px;width:1728px;height:259px;justify-content:center;align-items:flex-end;"><div id="C22" class="clip pill" data-start="21.5167" data-duration="2.4">every cut lands in silence</div></div>
+      <div class="zone z-left" style="left:96px;top:86px;width:672px;height:907px;justify-content:flex-start;align-items:center;"><div id="C30" data-start="24.25" data-duration="8.1667" class="clip card step"><div class="row"><div><div class="num">STEP 03</div><div class="t-title">Plan the beats</div><div class="t-sub">a word, a place, a reason</div></div></div></div></div>
+      <div class="zone z-right" style="left:1152px;top:86px;width:672px;height:907px;justify-content:flex-end;align-items:center;"><div id="C31" class="clip" data-start="26.6333" data-duration="5.7834"><div class="card demo"><div class="kicker">one cue</div><div class="need" id="nd0"><span class="need-k">anchor</span><span class="need-v">a word to land on</span></div><div class="need" id="nd1"><span class="need-k">zone</span><span class="need-v">a place on screen</span></div><div class="need" id="nd2"><span class="need-k">why</span><span class="need-v">a reason to exist</span></div></div></div></div>
+      <div class="zone z-left" style="left:96px;top:86px;width:672px;height:907px;justify-content:flex-start;align-items:center;"><div id="C40" data-start="32.5333" data-duration="6.5" class="clip card step"><div class="row"><div><div class="num">STEP 04</div><div class="t-title">Build</div><div class="t-sub">motion as a web page</div></div></div></div></div>
+      <div class="zone z-right" style="left:1152px;top:86px;width:672px;height:907px;justify-content:flex-end;align-items:center;"><div id="C41" class="clip" data-start="34.2833" data-duration="4.75"><div class="card demo code"><div class="kicker">index.html</div><div class="cl" id="cl0">&lt;div id="C10" class="clip"</div><div class="cl" id="cl1">     data-start="12.40"</div><div class="cl" id="cl2">     data-duration="4.80"&gt;</div><div class="cl" id="cl3">  Transcribe</div><div class="cl" id="cl4">&lt;/div&gt;</div><div class="frames">frame <span id="fc">0000</span></div></div></div></div>
+      <div class="zone z-left" style="left:96px;top:86px;width:672px;height:907px;justify-content:flex-start;align-items:center;"><div id="C50" data-start="39.1667" data-duration="9.1333" class="clip card step"><div class="row"><div><div class="num">STEP 05</div><div class="t-title">Verify</div><div class="t-sub">measure, check, fix</div></div></div></div></div>
+      <div class="zone z-right" style="left:1152px;top:86px;width:672px;height:907px;justify-content:flex-end;align-items:center;"><div id="C51" class="clip" data-start="41.1667" data-duration="7.1333"><div class="card demo"><div class="kicker">render-verify</div><div class="chk" id="ck0"><span class="tick">✓</span>−16 LUFS · −1 dBTP</div><div class="chk" id="ck1"><span class="tick">✓</span>149 of 149 words heard</div><div class="chk" id="ck2"><span class="tick">✓</span>every card on its word</div><div class="chk" id="ck3"><span class="tick">✓</span>repair, then hand over</div></div></div></div>
+      <div class="zone z-top" style="left:96px;top:65px;width:1728px;height:259px;justify-content:center;align-items:flex-start;"><div id="C60" class="clip" data-start="48.8667" data-duration="7.2666"><div class="hero"><span class="w">The</span><span class="w">loop</span><span class="w">feeds</span><span class="w">itself.</span></div></div></div>
+      <div class="zone z-center" style="left:154px;top:108px;width:1613px;height:864px;justify-content:center;align-items:center;"><div id="C61" class="clip" data-start="50.4833" data-duration="5.65"><div class="loop"><svg viewBox="0 0 900 260" width="900" height="260"><path id="loop-path" d="M 90 130 C 90 20, 810 20, 810 130 C 810 240, 90 240, 90 130" fill="none" stroke="var(--accent)" stroke-width="4" stroke-dasharray="1400" stroke-dashoffset="1400"/></svg><div class="loop-labels"><span>edit</span><span>feedback</span><span>skills</span><span>next edit</span></div></div></div></div>
+      <div class="zone z-full" style="left:0px;top:0px;width:1920px;height:1080px;justify-content:center;align-items:center;"><div id="C62" class="clip" data-start="55.9333" data-duration="3.6"><div class="endcard"><div class="brand">editbay</div><div class="by">Starter Pack · Devin Thomas</div><div class="disc">Narrated with a voice model trained on the creator's own voice.</div></div></div></div>
+      <audio id="mix" src="assets/mix.wav" data-start="0" data-duration="59.78" data-volume="1"></audio>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#C00", {"y": -34, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 0.0);
+      tl.to("#C00", {opacity: 0, y: 16, duration: 0.3, ease: "power2.in"}, 3.4633000000000003);
+      tl.fromTo("#C01 .w", {opacity: 0, y: 46}, {opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.07}, 0.0);
+      tl.to("#C01", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 1.7966999999999997);
+      tl.fromTo("#C02 .w", {opacity: 0, y: 46}, {opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.07}, 2.2167);
+      tl.to("#C02", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 4.096699999999999);
+      tl.fromTo("#C03 .w", {opacity: 0, y: 46}, {opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.07}, 4.8833);
+      tl.to("#C03", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 7.2633);
+      tl.fromTo("#R0", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 7.5333);
+      { const S = 7.5333, E = 48.3; tl.to("#chip0 .glow", {opacity: 1, duration: 0.25}, 7.84); tl.to("#chip0 .glow", {opacity: 0, duration: 0.25}, 16.18); tl.to("#chip1 .glow", {opacity: 1, duration: 0.25}, 16.18); tl.to("#chip1 .glow", {opacity: 0, duration: 0.25}, 24.15); tl.to("#chip2 .glow", {opacity: 1, duration: 0.25}, 24.15); tl.to("#chip2 .glow", {opacity: 0, duration: 0.25}, 32.43); tl.to("#chip3 .glow", {opacity: 1, duration: 0.25}, 32.43); tl.to("#chip3 .glow", {opacity: 0, duration: 0.25}, 39.06); tl.to("#chip4 .glow", {opacity: 1, duration: 0.25}, 39.06); tl.to("#chip4 .glow", {opacity: 0, duration: 0.25}, 47.9);  }
+      tl.to("#R0", {opacity: 0, y: 16, duration: 0.3, ease: "power2.in"}, 47.98);
+      tl.fromTo("#C10", {"x": -90, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 7.9333);
+      tl.to("#C10", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 15.846699999999998);
+      tl.fromTo("#C11", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 9.9167);
+      { const S = 9.9167, E = 16.1667; tl.fromTo("#ts0", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: "power2.out"}, 10.21); tl.fromTo("#ts1", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: "power2.out"}, 10.73); tl.fromTo("#ts2", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: "power2.out"}, 11.03); tl.fromTo("#ts3", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: "power2.out"}, 11.25); tl.fromTo("#ts4", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: "power2.out"}, 11.39); }
+      tl.to("#C11", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 15.846699999999998);
+      tl.fromTo("#C20", {"x": -90, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 16.2833);
+      tl.to("#C20", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 23.813299999999998);
+      tl.fromTo("#C21", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 16.5833);
+      { const S = 16.5833, E = 24.1333; tl.to("#C21 .wb.dead", {scaleY: 0.02, opacity: 0.25, duration: 0.35, ease: "power2.in", stagger: 0.03}, 18.3); tl.to("#C21 .wb.filler", {scaleY: 0.02, opacity: 0.25, duration: 0.35, ease: "power2.in", stagger: 0.03}, 19.26); tl.to("#C21 .wb.retake", {scaleY: 0.02, opacity: 0.25, duration: 0.35, ease: "power2.in", stagger: 0.03}, 20.18); }
+      tl.to("#C21", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 23.813299999999998);
+      tl.fromTo("#C22", {"y": 40, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 21.5167);
+      tl.to("#C22", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 23.5967);
+      tl.fromTo("#C30", {"x": -90, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 24.25);
+      tl.to("#C30", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 32.0967);
+      tl.fromTo("#C31", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 26.6333);
+      { const S = 26.6333, E = 32.4167; tl.fromTo("#nd0", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.3, ease: "power2.out"}, 27.79); tl.fromTo("#nd1", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.3, ease: "power2.out"}, 28.91); tl.fromTo("#nd2", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.3, ease: "power2.out"}, 30.65); }
+      tl.to("#C31", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 32.0967);
+      tl.fromTo("#C40", {"x": -90, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 32.5333);
+      tl.to("#C40", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 38.7133);
+      tl.fromTo("#C41", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 34.2833);
+      { const S = 34.2833, E = 39.0333; tl.fromTo("#cl0", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 34.91); tl.fromTo("#cl1", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.19); tl.fromTo("#cl2", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.47); tl.fromTo("#cl3", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.75); tl.fromTo("#cl4", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 36.03); const fcEl = document.getElementById("fc"); const fco = {n: 0}; tl.to(fco, {n: 3587, duration: 1.4, ease: "power1.out", onUpdate: () => { fcEl.textContent = String(Math.round(fco.n)).padStart(4, "0"); }}, 37.61); }
+      tl.to("#C41", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 38.7133);
+      tl.fromTo("#C50", {"x": -90, "opacity": 0}, {opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "power3.out"}, 39.1667);
+      tl.to("#C50", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 47.98);
+      tl.fromTo("#C51", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 41.1667);
+      { const S = 41.1667, E = 48.3; tl.fromTo("#ck0", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 42.2); tl.fromTo("#ck0 .tick", {scale: 0}, {scale: 1, duration: 0.3, ease: "back.out(2)"}, 42.2); tl.fromTo("#ck1", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 21.52); tl.fromTo("#ck1 .tick", {scale: 0}, {scale: 1, duration: 0.3, ease: "back.out(2)"}, 21.52); tl.fromTo("#ck2", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 44.5); tl.fromTo("#ck2 .tick", {scale: 0}, {scale: 1, duration: 0.3, ease: "back.out(2)"}, 44.5); tl.fromTo("#ck3", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 45.66); tl.fromTo("#ck3 .tick", {scale: 0}, {scale: 1, duration: 0.3, ease: "back.out(2)"}, 45.66); }
+      tl.to("#C51", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 47.98);
+      tl.fromTo("#C60 .w", {opacity: 0, y: 46}, {opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.07}, 48.8667);
+      tl.to("#C60", {opacity: 0, y: 16, duration: 0.3, ease: "power2.in"}, 55.8133);
+      tl.fromTo("#C61", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 50.4833);
+      { const S = 50.4833, E = 56.1333; tl.to("#loop-path", {strokeDashoffset: 0, duration: 1.6, ease: "power2.inOut"}, 52.6); }
+      tl.to("#C61", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 55.8133);
+      tl.fromTo("#C62", {opacity: 0}, {opacity: 1, duration: 0.35, ease: "power2.out"}, 55.9333);
+      tl.to("#C62", {opacity: 0, y: -16, duration: 0.3, ease: "power2.in"}, 59.2133);
+      tl.fromTo("#bg-glow", {x: -60, y: 30}, {x: 60, y: -30, duration: 59.78, ease: "none"}, 0);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

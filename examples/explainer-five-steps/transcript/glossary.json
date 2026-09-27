@@ -1,0 +1,7 @@
+{"terms": [
+  {"canonical": "one", "variants": ["1"], "why": "narration script spells numbers the way they are spoken"},
+  {"canonical": "two", "variants": ["2"], "why": "narration script spells numbers the way they are spoken"},
+  {"canonical": "three", "variants": ["3"], "why": "narration script spells numbers the way they are spoken"},
+  {"canonical": "four", "variants": ["4"], "why": "narration script spells numbers the way they are spoken"},
+  {"canonical": "five", "variants": ["5"], "why": "narration script spells numbers the way they are spoken"}
+]}

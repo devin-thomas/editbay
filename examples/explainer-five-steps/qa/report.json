@@ -1,0 +1,56 @@
+{
+ "render": "renders/review.mp4",
+ "gates": [
+  {
+   "gate": "hyperframes-check",
+   "status": "PASS",
+   "detail": "lint ok, runtime ok, layout ok, motion ok, contrast ok"
+  },
+  {
+   "gate": "av-qa",
+   "status": "PASS",
+   "detail": "- note static picture 50.00-50.90s (0.9s; allow intentional holds with --allow-freeze)"
+  },
+  {
+   "gate": "loudness",
+   "status": "PASS",
+   "detail": "renders/review.mp4: -16.1 LUFS, LRA 3.9 LU, TP -1.4 dBTP  OK (target -16.0 \u00b11 LU, TP <= -1.0)"
+  },
+  {
+   "gate": "beat-align",
+   "status": "PENDING",
+   "detail": "no --grid (not music-led, or not given)"
+  },
+  {
+   "gate": "face-clear",
+   "status": "PENDING",
+   "detail": "no --faces/--source (no talking head?)"
+  },
+  {
+   "gate": "words",
+   "status": "PASS",
+   "detail": "149 expected words, 149 heard; 0 findings, 0 insertions to review"
+  },
+  {
+   "gate": "visual",
+   "status": "PENDING",
+   "detail": "read 8 sheet(s) at this phase boundary and record what you saw below"
+  }
+ ],
+ "evidence": [
+  "qa/hyperframes-check.json",
+  "qa/av_qa.json",
+  "qa/loudness.json",
+  "qa/words.json"
+ ],
+ "sheets": [
+  "qa/overview_01.jpg",
+  "qa/overview_02.jpg",
+  "qa/overview_03.jpg",
+  "qa/overview_04.jpg",
+  "qa/overview_05.jpg",
+  "qa/overview_06.jpg",
+  "qa/overview_07.jpg",
+  "qa/overview_08.jpg"
+ ]
+}

@@ -1,0 +1,6 @@
+{
+  "patches": [
+    {"at": "00:20", "find": "Wait, um,", "replace": "Um,", "window": 5,
+     "why": "Whisper large-v3 insertion after a 2.2 s pause, inside a 'timestamp'/'time stamp' split block; turbo and the script have no 'Wait'"}
+  ]
+}

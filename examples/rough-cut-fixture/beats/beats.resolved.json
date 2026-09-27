@@ -1,0 +1,76 @@
+{
+ "timeline": "cut",
+ "words": "../cut/words.cut.json",
+ "fps": 30,
+ "duration": 19.467,
+ "min_read": 2.0,
+ "cues": [
+  {
+   "id": "C01",
+   "anchor": "one habit",
+   "offset": -0.1,
+   "hold": 2.2,
+   "kind": "title",
+   "zone": "center",
+   "content": {
+    "title": "One habit"
+   },
+   "why": "name the idea as it is said",
+   "start": 1.7,
+   "end": 3.9,
+   "anchor_time": 1.8
+  },
+  {
+   "id": "C02",
+   "anchor": "transcribe",
+   "hold": 2.4,
+   "kind": "side-card",
+   "zone": "left",
+   "content": {
+    "title": "1 \u00b7 Transcribe"
+   },
+   "start": 6.7,
+   "end": 9.1,
+   "anchor_time": 6.7
+  },
+  {
+   "id": "C03",
+   "anchor": "timestamp",
+   "hold": 1.2,
+   "kind": "label",
+   "zone": "left",
+   "content": {
+    "title": "word \u00b7 start \u00b7 end"
+   },
+   "start": 9.5667,
+   "end": 10.7667,
+   "anchor_time": 9.56
+  },
+  {
+   "id": "C04",
+   "anchor": "cuts the mistakes",
+   "until": "dead air",
+   "kind": "side-card",
+   "zone": "right",
+   "content": {
+    "title": "2 \u00b7 Cut"
+   },
+   "start": 12.0,
+   "end": 14.2667,
+   "anchor_time": 11.99
+  },
+  {
+   "id": "C05",
+   "anchor": "plans the beats",
+   "hold": 2.5,
+   "kind": "bullet",
+   "zone": "bottom",
+   "content": {
+    "title": "3 \u00b7 Plan the beats"
+   },
+   "start": 15.4667,
+   "end": 17.9667,
+   "anchor_time": 15.473
+  }
+ ]
+}

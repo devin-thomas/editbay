@@ -1,0 +1,33 @@
+14/14 items to generate
+worker ready on NVIDIA GeForce RTX 4090 (torch.bfloat16)
+[ok] s001 16.4s  You can hand a video to a coding agent and get a real edit back.
+[ok] s002 15.8s  What makes it work is a loop, not a lucky prompt.
+[ok] s003 9.9s  Step one is transcribe.
+[ok] s004 25.1s  Every word gets a timestamp, so every graphic can land on the word it 
+[ok] s005 8.3s  Step two is cut.
+[ok] s006 23.0s  Dead air, filler, and retakes come out, and every cut lands in silence
+[ok] s007 10.0s  Step three is plan the beats.
+[ok] s008 25.3s  Each graphic gets a word to land on, a place on screen, and a reason t
+[ok] s009 7.9s  Step four is build.
+[ok] s010 17.7s  The agent writes the motion as a web page and renders it frame by fram
+[ok] s011 9.2s  Step five is verify.
+[ok] s012 28.1s  It measures the loudness, checks every cut and every card, and fixes w
+[ok] s013 8.3s  Then the loop feeds itself.
+[ok] s014 26.9s  What you liked and what you didn't goes back into the skills, so the n
+remote job on titan: exit 0 in 254s
+[001]    0.30-   3.58  You can hand a video to a coding agent and get a real edit back.
+[002]    3.98-   6.82  What makes it work is a loop, not a lucky prompt.
+[003]    7.62-   9.39  Step one is transcribe.
+[004]    9.79-  14.53  Every word gets a timestamp, so every graphic can land on the word it belongs to.
+[005]   15.33-  16.95  Step two is cut.
+[006]   17.35-  22.11  Dead air, filler, and retakes come out, and every cut lands in silence.
+[007]   22.91-  24.70  Step three is plan the beats.
+[008]   25.10-  29.77  Each graphic gets a word to land on, a place on screen, and a reason to exist.
+[009]   30.57-  31.95  Step four is build.
+[010]   32.35-  35.99  The agent writes the motion as a web page and renders it frame by frame.
+[011]   36.79-  38.58  Step five is verify.
+[012]   38.98-  44.87  It measures the loudness, checks every cut and every card, and fixes what fails before you watch.
+[013]   45.67-  47.39  Then the loop feeds itself.
+[014]   47.79-  52.77  What you liked and what you didn't goes back into the skills, so the next edit starts smarter.
+14 sentences, 53.275s, 167.8 wpm overall (199.2 while speaking) -> narration/narration.wav
+exit 0

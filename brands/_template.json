@@ -1,0 +1,36 @@
+{
+  "id": "template",
+  "name": "Brand name",
+  "status": "draft | provisional | locked",
+  "source": "where these tokens came from (site CSS, design doc, style guide) and when",
+  "palette": {
+    "background": "#000000",
+    "surface": "#111111",
+    "text": "#ffffff",
+    "text_muted": "#aaaaaa",
+    "accent": "#3366ff",
+    "accent_2": null,
+    "success": null,
+    "danger": null
+  },
+  "fonts": {
+    "display": {"family": "", "weights": [], "source": "google-fonts | local file | npm package"},
+    "body": {"family": "", "weights": []},
+    "mono": {"family": "", "weights": [], "use": "code and machine labels only"}
+  },
+  "type_scale_px_1080p": {"hero": 120, "headline": 72, "body": 44, "label": 28, "min_phone_readable": 36},
+  "shape": {"radius_px": [8, 12], "stroke_px": 2, "grid_px": null},
+  "motion": {
+    "eases": {"enter": "cubic-bezier(.2,.8,.2,1)", "exit": "cubic-bezier(.4,0,1,1)"},
+    "min_read_hold_s": 2.5,
+    "default_enter_s": 0.4
+  },
+  "devices": {
+    "allowed": ["kinetic type", "glass or solid cards behind text over footage"],
+    "forbidden": []
+  },
+  "logo": {"files": [], "clear_space": "", "never": []},
+  "audio": {"lufs_explainer": -16, "lufs_reel": -14, "true_peak": -1.0, "music_policy": ""},
+  "voice": {"tone": "", "never_say": []},
+  "notes": ""
+}

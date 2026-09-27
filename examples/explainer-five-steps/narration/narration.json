@@ -1,0 +1,140 @@
+{
+ "engine": "remote",
+ "voice": "devin-v1",
+ "seed": 7,
+ "gap": 0.4,
+ "paragraph_gap": 1.0,
+ "disclosure": "Narrated with a voice model trained on the creator's own voice.",
+ "duration": 56.437,
+ "words": 149,
+ "wpm_speech_only": 190.9,
+ "wpm_overall": 158.4,
+ "sentences": [
+  {
+   "i": 1,
+   "beat": "B01",
+   "text": "You can hand a video to a coding agent and get a real edit back.",
+   "start": 0.3,
+   "end": 3.66,
+   "file": "sentences/s001.wav",
+   "seed": 7
+  },
+  {
+   "i": 2,
+   "beat": "B01",
+   "text": "What makes it work is a loop, not a lucky prompt.",
+   "start": 4.06,
+   "end": 7.1,
+   "file": "sentences/s002.wav",
+   "seed": 7
+  },
+  {
+   "i": 3,
+   "beat": "B02",
+   "text": "Step one is transcribe.",
+   "start": 8.1,
+   "end": 10.178,
+   "file": "sentences/s003.wav",
+   "seed": 107
+  },
+  {
+   "i": 4,
+   "beat": "B02",
+   "text": "Every word gets a timestamp, so every graphic can land on the word it belongs to.",
+   "start": 10.578,
+   "end": 15.577,
+   "file": "sentences/s004.wav",
+   "seed": 107
+  },
+  {
+   "i": 5,
+   "beat": "B03",
+   "text": "Step two is cut.",
+   "start": 16.577,
+   "end": 18.257,
+   "file": "sentences/s005.wav",
+   "seed": 207
+  },
+  {
+   "i": 6,
+   "beat": "B03",
+   "text": "Dead air, filler, and retakes come out, and every cut lands in silence.",
+   "start": 18.657,
+   "end": 23.457,
+   "file": "sentences/s006.wav",
+   "seed": 207
+  },
+  {
+   "i": 7,
+   "beat": "B04",
+   "text": "Step three is plan the beats.",
+   "start": 24.457,
+   "end": 26.537,
+   "file": "sentences/s007.wav",
+   "seed": 307
+  },
+  {
+   "i": 8,
+   "beat": "B04",
+   "text": "Each graphic gets a word to land on, a place on screen, and a reason to exist.",
+   "start": 26.937,
+   "end": 31.897,
+   "file": "sentences/s008.wav",
+   "seed": 307
+  },
+  {
+   "i": 9,
+   "beat": "B05",
+   "text": "Step four is build.",
+   "start": 32.897,
+   "end": 34.497,
+   "file": "sentences/s009.wav",
+   "seed": 407
+  },
+  {
+   "i": 10,
+   "beat": "B05",
+   "text": "The agent writes the motion as a web page and renders it frame by frame.",
+   "start": 34.897,
+   "end": 38.577,
+   "file": "sentences/s010.wav",
+   "seed": 407
+  },
+  {
+   "i": 11,
+   "beat": "B06",
+   "text": "Step five is verify.",
+   "start": 39.577,
+   "end": 41.417,
+   "file": "sentences/s011.wav",
+   "seed": 507
+  },
+  {
+   "i": 12,
+   "beat": "B06",
+   "text": "It measures the loudness, checks every cut and every card, and fixes what fails before you watch.",
+   "start": 41.817,
+   "end": 47.737,
+   "file": "sentences/s012.wav",
+   "seed": 507
+  },
+  {
+   "i": 13,
+   "beat": "B07",
+   "text": "Then the loop feeds itself.",
+   "start": 48.737,
+   "end": 50.497,
+   "file": "sentences/s013.wav",
+   "seed": 607
+  },
+  {
+   "i": 14,
+   "beat": "B07",
+   "text": "What you liked and what you didn't goes back into the skills, so the next edit starts smarter.",
+   "start": 50.897,
+   "end": 55.937,
+   "file": "sentences/s014.wav",
+   "seed": 607
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+# AV QA: cut.mp4
+
+- probe: {"duration": 19.466667, "video": {"codec": "h264", "size": "1280x720", "fps": 30.0, "pix_fmt": "yuv420p", "duration": 19.466667, "color_primaries": null}, "audio": {"codec": "aac", "sample_rate": 48000, "channels": 2, "duration": 19.466667}}
+- black: none
+- freeze: none
+- silence (>0.8s): none
+- pops: none
+
+## Verdict
+
+PASS

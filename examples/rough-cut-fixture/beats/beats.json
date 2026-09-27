@@ -1,0 +1,11 @@
+{
+  "timeline": "cut", "words": "../cut/words.cut.json", "fps": 30, "duration": 19.467, "min_read": 2.0,
+  "cues": [
+    {"id": "C01", "anchor": "one habit", "offset": -0.1, "hold": 2.2, "kind": "title", "zone": "center", "content": {"title": "One habit"}, "why": "name the idea as it is said"},
+    {"id": "C02", "anchor": "transcribe", "hold": 2.4, "kind": "side-card", "zone": "left", "content": {"title": "1 · Transcribe"}},
+    {"id": "C03", "anchor": "timestamp", "hold": 1.2, "kind": "label", "zone": "left", "content": {"title": "word · start · end"}},
+    {"id": "C04", "anchor": "cuts the mistakes", "until": "dead air", "kind": "side-card", "zone": "right", "content": {"title": "2 · Cut"}},
+    {"id": "C05", "anchor": "plans the beats", "hold": 2.5, "kind": "bullet", "zone": "bottom", "content": {"title": "3 · Plan the beats"}},
+    {"id": "C06", "anchor": "checks its own wok", "hold": 2.0, "kind": "title", "zone": "center", "content": {"title": "5 · Verify"}}
+  ]
+}

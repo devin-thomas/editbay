@@ -1,0 +1,50 @@
+{
+ "render": "cut/cut.mp4",
+ "gates": [
+  {
+   "gate": "hyperframes-check",
+   "status": "PENDING",
+   "detail": "no --hf-project given"
+  },
+  {
+   "gate": "av-qa",
+   "status": "PASS",
+   "detail": "PASS"
+  },
+  {
+   "gate": "loudness",
+   "status": "PASS",
+   "detail": "cut/cut.mp4: -20.1 LUFS, LRA 5.1 LU, TP -6.1 dBTP"
+  },
+  {
+   "gate": "beat-align",
+   "status": "PENDING",
+   "detail": "no --grid (not music-led, or not given)"
+  },
+  {
+   "gate": "face-clear",
+   "status": "PENDING",
+   "detail": "no --faces/--source (no talking head?)"
+  },
+  {
+   "gate": "words",
+   "status": "PASS",
+   "detail": "52 expected words, 55 heard; 0 findings, 3 insertions to review"
+  },
+  {
+   "gate": "visual",
+   "status": "PENDING",
+   "detail": "read 3 sheet(s) at this phase boundary and record what you saw below"
+  }
+ ],
+ "evidence": [
+  "qa/av_qa.json",
+  "qa/loudness.json",
+  "qa/words.json"
+ ],
+ "sheets": [
+  "qa/overview_01.jpg",
+  "qa/overview_02.jpg",
+  "qa/overview_03.jpg"
+ ]
+}

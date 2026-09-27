@@ -1,0 +1,70 @@
+---
+name: render-verify
+description: Verify a rendered video before anyone watches it. Runs the automated gates (hyperframes check on the composition; spec, black, freeze, silence, pops, loudness, beat alignment, face keep-clear, and words on the encoded file), reads one overview sheet and a strip at every cut, repairs up to twice per finding, and writes qa/REPORT.md with evidence. Use after every render and before delivery, and whenever asked to check, QA, verify, proof, or review a video. The loop that turns a first draft into the fifth.
+---
+
+# Render verify
+
+The first render is a draft. The agent watches its own output the way an editor would, fixes what it finds, and
+only then hands it over, with a report that separates what passed from what was never checked.
+
+Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Delivery profiles (size, fps, loudness) come from `~/.config/editbay/config.json`.
+
+## 1. Gate the composition
+
+Before rendering a HyperFrames project: `npx hyperframes check hf/ --json --snapshots --at-transitions`. Layout
+overlaps, contrast failures, runtime errors, and `*.motion.json` assertions (entrances land by their beat, order
+holds, nothing leaves frame, nothing freezes) are fixed in the HTML now; they are cheap here and expensive after a
+render. Snapshots always with `--describe false` (describe mode sends frames to a vision API when a key is set).
+
+**Done when:** `check` exits 0, or each remaining finding is marked intentional in the HTML with its escape-hatch
+attribute and a comment saying why.
+
+## 2. Gate the file
+
+```bash
+uv run $EB/tools/verify_report.py --render renders/review.mp4 --out qa/ --profile reel --hf-project hf/ \
+  --expect-duration 15 --allow-black 0:0.3 --allow-freeze 13.5:15 \
+  --grid beats/grid.json --half \                                   # music-led pieces
+  --faces media/talk.faces.json --source media/talk.mp4 \           # footage under overlays
+  --expected transcript/words.json --heard qa/heard.json            # voice or captions present
+```
+
+Each gate is PASS, FAIL, or PENDING (not run, with the reason). What each gate proves and how to fix its common
+failures: [references/gates.md](references/gates.md). `--allow-*` ranges must match the plan (a fade from black, a
+held end card); never widen them to make a failure go away.
+
+**Done when:** every applicable gate has run; PENDING remains only for gates that do not apply, with the reason.
+
+## 3. Look
+
+Read the overview sheet(s) and the cut strips in one go, at this phase boundary: an attached image re-prices the
+whole context, so batch them. Then render a phone-size preview (`ffmpeg -i review.mp4 -vf scale=390:-2 phone.mp4`)
+and read the smallest text on its sheet. Write what you saw in the report's visual section: overview, cuts and
+transitions, legibility at phone size, anything off-brand.
+
+**Done when:** the visual section is filled in with specific timestamps, not impressions.
+
+## 4. Repair, twice at most
+
+For each finding: fix the cause (the plan, the HTML, the mix), re-render only what changed when possible, and re-run
+the failing gate plus a strip around the fix. Log each pass in the report's Repairs table. After two passes on the
+same finding, stop: add it to `HUMAN_QUEUE.md` with the timestamp, the evidence file, and what you tried.
+
+**Done when:** every finding is fixed (gate re-run shows PASS) or queued for a human with evidence.
+
+## 5. Hand over
+
+The report leads with the verdict: automated gates, the visual read, repairs made, and anything pending or queued.
+Say "not checked" for what was not checked. The render goes to delivery-pack only when no gate is FAIL.
+
+**Done when:** `qa/REPORT.md` reads true on its own, and a reviewer could find every claim's evidence file.
+
+## Checklist
+
+- [ ] `hyperframes check` clean (or intentional findings marked) before the render
+- [ ] `verify_report.py` run with every gate that applies; PENDING only where it does not
+- [ ] Sheets and strips read once, in a batch; phone-size legibility checked
+- [ ] At most two repair passes per finding; the rest queued with evidence
+- [ ] Report states what was not checked

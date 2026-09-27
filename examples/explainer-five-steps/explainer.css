@@ -1,0 +1,40 @@
+/* Custom scenes for the five-step explainer (starter-pack brand tokens come from the scaffold's :root). */
+.demo { width: 720px; }
+.demo .kicker { margin-bottom: 18px; }
+.ts-row { display: flex; gap: 28px; font-family: var(--font-mono); font-size: 44px; padding: 10px 0;
+          border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+.ts-t { color: var(--accent); min-width: 150px; }
+.ts-w { color: var(--text); }
+.wave { display: flex; align-items: center; gap: 6px; height: 150px; }
+.wb { display: block; width: 10px; border-radius: 3px; background: color-mix(in srgb, var(--text) 70%, transparent); transform-origin: center; }
+.wb.dead { background: #8a94a6; } .wb.filler { background: #e8bd7c; } .wb.retake { background: #f08678; }
+.wave-key { display: flex; align-items: center; gap: 10px; margin-top: 18px; font-family: var(--font-mono); font-size: 24px; color: var(--muted); }
+.wave-key .k { display: inline-block; width: 16px; height: 16px; border-radius: 4px; margin-left: 14px; }
+.wave-key .k.dead { background: #8a94a6; margin-left: 0; } .wave-key .k.filler { background: #e8bd7c; } .wave-key .k.retake { background: #f08678; }
+.need { display: flex; align-items: baseline; gap: 22px; padding: 14px 0; border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent); }
+.need-k { font-family: var(--font-mono); font-size: 26px; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; min-width: 110px; }
+.need-v { font-size: 46px; font-weight: 600; letter-spacing: -0.02em; }
+.code .cl { font-family: var(--font-mono); font-size: 34px; line-height: 1.5; white-space: pre; color: #cfd8e6; }
+.code .frames { margin-top: 20px; font-family: var(--font-mono); font-size: 30px; color: var(--muted); }
+.code .frames span { color: var(--accent); font-size: 40px; }
+.chk { display: flex; align-items: center; gap: 20px; font-size: 42px; padding: 12px 0; }
+.chk .tick { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%;
+             background: color-mix(in srgb, #71d3a2 25%, transparent); color: #71d3a2; font-size: 30px; font-weight: 700; }
+.rail { display: flex; gap: 14px; }
+.chip { font-family: var(--font-body); font-size: 32px; font-weight: 600; padding: 14px 24px; border-radius: 999px; color: var(--muted);
+        background: color-mix(in srgb, var(--surface) 85%, transparent); border: 1px solid color-mix(in srgb, var(--text) 12%, transparent); }
+.chip .n { font-family: var(--font-mono); font-size: 26px; margin-right: 10px; color: color-mix(in srgb, var(--accent) 70%, var(--muted)); }
+.chip.on { color: var(--text); background: color-mix(in srgb, var(--accent) 28%, var(--surface)); border-color: var(--accent); }
+.chip.on .n { color: var(--text); }
+.loop { display: flex; flex-direction: column; align-items: center; margin-top: 140px; }
+.loop-labels { display: flex; justify-content: space-between; width: 900px; margin-top: -20px; font-family: var(--font-mono); font-size: 34px;
+               color: var(--muted); text-transform: uppercase; letter-spacing: .12em; }
+.endcard { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+           background: radial-gradient(900px 520px at 50% 40%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), var(--bg); }
+.endcard .brand { font-family: var(--font-display); font-weight: 800; font-size: 150px; letter-spacing: -0.05em; }
+.endcard .by { font-size: 40px; color: var(--muted); margin-top: 10px; }
+.endcard .disc { position: absolute; bottom: 56px; font-size: 28px; color: var(--muted); }
+.chip { position: relative; overflow: hidden; }
+.chip .glow { position: absolute; inset: 0; border-radius: 999px; opacity: 0; z-index: -1;
+              background: color-mix(in srgb, var(--accent) 34%, var(--surface)); box-shadow: inset 0 0 0 1px var(--accent); }
+.chip { isolation: isolate; }

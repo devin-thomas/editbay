@@ -1,0 +1,44 @@
+1
+00:00:00,000 --> 00:00:03,380
+You can hand a video to a coding agent and get a real edit back.
+
+2
+00:00:03,620 --> 00:00:06,540
+What makes it work is a loop, not a lucky prompt.
+
+3
+00:00:07,940 --> 00:00:09,560
+Step one is Transcribe.
+
+4
+00:00:10,210 --> 00:00:15,070
+Every word gets a timestamp, so every graphic can land on the word it belongs to.
+
+5
+00:00:16,280 --> 00:00:17,640
+Step two is Cut.
+
+6
+00:00:18,300 --> 00:00:22,780
+Dead air, filler, and retakes come out, and every cut lands in silence.
+
+7
+00:00:24,250 --> 00:00:26,210
+Step three is Plan the Beats.
+
+8
+00:00:26,630 --> 00:00:31,410
+Each graphic gets a word to land on, a place on screen, and a reason to exist.
+
+9
+00:00:32,530 --> 00:00:38,290
+Step four is Build. The agent writes the motion as a web page and renders it frame by frame.
+
+10
+00:00:39,160 --> 00:00:47,480
+Step five is Verify. It measures the loudness, checks every cut and every card, and fixes what fails before you watch.
+
+11
+00:00:48,420 --> 00:00:55,580
+Then the loop feeds itself. What you liked and what you didn't goes back into the skills, so the next edit starts smarter.
+

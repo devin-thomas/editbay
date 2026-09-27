@@ -1,0 +1,278 @@
+{
+ "timeline": "narration",
+ "words": "../narration/words.words.json",
+ "fps": 60,
+ "duration": 59.78,
+ "min_read": 2.0,
+ "composition": "index.html",
+ "mode": "open",
+ "cues": [
+  {
+   "id": "C00",
+   "anchor": "You can hand",
+   "until": "back",
+   "kind": "label",
+   "zone": "top",
+   "content": {
+    "title": "EDITING WITH AN AGENT"
+   },
+   "why": "name the topic before the first idea lands"
+  },
+  {
+   "id": "C01",
+   "anchor": "You can hand",
+   "offset": -0.25,
+   "until": "coding agent",
+   "tail": 0.05,
+   "kind": "title",
+   "zone": "center",
+   "content": {
+    "title": "Hand it a video."
+   },
+   "why": "the promise, in the viewer's words"
+  },
+  {
+   "id": "C02",
+   "anchor": "get a real edit back",
+   "offset": -0.1,
+   "hold": 2.2,
+   "kind": "title",
+   "zone": "center",
+   "content": {
+    "title": "Get a real edit back."
+   },
+   "why": "the payoff"
+  },
+  {
+   "id": "C03",
+   "anchor": "a loop",
+   "offset": -0.1,
+   "until_start": "Step one",
+   "tail": -0.35,
+   "kind": "title",
+   "zone": "center",
+   "content": {
+    "title": "A loop, not a lucky prompt."
+   },
+   "sfx": "shimmer",
+   "why": "the thesis of the video"
+  },
+  {
+   "id": "C10",
+   "anchor": "Step one",
+   "until_start": "Step two",
+   "tail": -0.12,
+   "kind": "step",
+   "zone": "left",
+   "content": {
+    "number": "STEP 01",
+    "title": "Transcribe",
+    "subtitle": "every word gets a timestamp"
+   },
+   "sfx": "whoosh-short",
+   "why": "step card"
+  },
+  {
+   "id": "C11",
+   "anchor": "Every word gets a timestamp",
+   "offset": -0.3,
+   "until_start": "Step two",
+   "tail": -0.12,
+   "kind": "custom",
+   "zone": "right",
+   "content": {
+    "html": "<div class=\"card demo\"><div class=\"kicker\">word · start (s)</div><div class=\"ts-row\" id=\"ts0\"><span class=\"ts-t\">10.21</span><span class=\"ts-w\">Every</span></div><div class=\"ts-row\" id=\"ts1\"><span class=\"ts-t\">10.73</span><span class=\"ts-w\">word</span></div><div class=\"ts-row\" id=\"ts2\"><span class=\"ts-t\">11.03</span><span class=\"ts-w\">gets</span></div><div class=\"ts-row\" id=\"ts3\"><span class=\"ts-t\">11.25</span><span class=\"ts-w\">a</span></div><div class=\"ts-row\" id=\"ts4\"><span class=\"ts-t\">11.39</span><span class=\"ts-w\">timestamp</span></div></div>",
+    "js": "tl.fromTo(\"#ts0\", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: \"power2.out\"}, 10.21); tl.fromTo(\"#ts1\", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: \"power2.out\"}, 10.73); tl.fromTo(\"#ts2\", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: \"power2.out\"}, 11.03); tl.fromTo(\"#ts3\", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: \"power2.out\"}, 11.25); tl.fromTo(\"#ts4\", {opacity: 0, x: 18}, {opacity: 1, x: 0, duration: 0.18, ease: \"power2.out\"}, 11.39);"
+   },
+   "origin": "agent",
+   "why": "show real timestamps arriving with the words"
+  },
+  {
+   "id": "C20",
+   "anchor": "Step two",
+   "until_start": "Step three",
+   "tail": -0.12,
+   "kind": "step",
+   "zone": "left",
+   "content": {
+    "number": "STEP 02",
+    "title": "Cut",
+    "subtitle": "dead air · filler · retakes"
+   },
+   "sfx": "whoosh-short",
+   "why": "step card"
+  },
+  {
+   "id": "C21",
+   "anchor": "Step two",
+   "offset": 0.3,
+   "until_start": "Step three",
+   "tail": -0.12,
+   "kind": "custom",
+   "zone": "right",
+   "content": {
+    "html": "<div class=\"card demo\"><div class=\"kicker\">waveform · before the cut</div><div class=\"wave\"><i class=\"wb \" style=\"height:36px\"></i><i class=\"wb \" style=\"height:68px\"></i><i class=\"wb \" style=\"height:104px\"></i><i class=\"wb \" style=\"height:80px\"></i><i class=\"wb \" style=\"height:128px\"></i><i class=\"wb \" style=\"height:60px\"></i><i class=\"wb \" style=\"height:92px\"></i><i class=\"wb \" style=\"height:116px\"></i><i class=\"wb \" style=\"height:52px\"></i><i class=\"wb dead\" style=\"height:12px\"></i><i class=\"wb dead\" style=\"height:10px\"></i><i class=\"wb dead\" style=\"height:14px\"></i><i class=\"wb dead\" style=\"height:10px\"></i><i class=\"wb \" style=\"height:88px\"></i><i class=\"wb \" style=\"height:124px\"></i><i class=\"wb \" style=\"height:76px\"></i><i class=\"wb \" style=\"height:100px\"></i><i class=\"wb \" style=\"height:56px\"></i><i class=\"wb \" style=\"height:84px\"></i><i class=\"wb filler\" style=\"height:48px\"></i><i class=\"wb filler\" style=\"height:44px\"></i><i class=\"wb \" style=\"height:96px\"></i><i class=\"wb \" style=\"height:120px\"></i><i class=\"wb \" style=\"height:72px\"></i><i class=\"wb \" style=\"height:108px\"></i><i class=\"wb \" style=\"height:60px\"></i><i class=\"wb \" style=\"height:80px\"></i><i class=\"wb retake\" style=\"height:92px\"></i><i class=\"wb retake\" style=\"height:104px\"></i><i class=\"wb retake\" style=\"height:76px\"></i><i class=\"wb retake\" style=\"height:88px\"></i><i class=\"wb retake\" style=\"height:100px\"></i><i class=\"wb \" style=\"height:68px\"></i><i class=\"wb \" style=\"height:116px\"></i><i class=\"wb \" style=\"height:84px\"></i><i class=\"wb \" style=\"height:56px\"></i><i class=\"wb \" style=\"height:96px\"></i><i class=\"wb \" style=\"height:124px\"></i><i class=\"wb \" style=\"height:72px\"></i><i class=\"wb \" style=\"height:60px\"></i></div><div class=\"wave-key\"><b class=\"k dead\"></b>dead air<b class=\"k filler\"></b>filler<b class=\"k retake\"></b>retake</div></div>",
+    "js": "tl.to(\"#C21 .wb.dead\", {scaleY: 0.02, opacity: 0.25, duration: 0.35, ease: \"power2.in\", stagger: 0.03}, 18.3); tl.to(\"#C21 .wb.filler\", {scaleY: 0.02, opacity: 0.25, duration: 0.35, ease: \"power2.in\", stagger: 0.03}, 19.26); tl.to(\"#C21 .wb.retake\", {scaleY: 0.02, opacity: 0.25, duration: 0.35, ease: \"power2.in\", stagger: 0.03}, 20.18);"
+   },
+   "origin": "agent",
+   "why": "each kind of cut collapses as it is named"
+  },
+  {
+   "id": "C22",
+   "anchor": "every cut lands in silence",
+   "hold": 2.4,
+   "kind": "label",
+   "zone": "bottom",
+   "content": {
+    "title": "every cut lands in silence"
+   },
+   "flash": false,
+   "why": "the rule that makes cuts invisible"
+  },
+  {
+   "id": "C30",
+   "anchor": "Step three",
+   "until_start": "Step four",
+   "tail": -0.12,
+   "kind": "step",
+   "zone": "left",
+   "content": {
+    "number": "STEP 03",
+    "title": "Plan the beats",
+    "subtitle": "a word, a place, a reason"
+   },
+   "sfx": "whoosh-short",
+   "why": "step card"
+  },
+  {
+   "id": "C31",
+   "anchor": "Each graphic gets",
+   "until_start": "Step four",
+   "tail": -0.12,
+   "kind": "custom",
+   "zone": "right",
+   "content": {
+    "html": "<div class=\"card demo\"><div class=\"kicker\">one cue</div><div class=\"need\" id=\"nd0\"><span class=\"need-k\">anchor</span><span class=\"need-v\">a word to land on</span></div><div class=\"need\" id=\"nd1\"><span class=\"need-k\">zone</span><span class=\"need-v\">a place on screen</span></div><div class=\"need\" id=\"nd2\"><span class=\"need-k\">why</span><span class=\"need-v\">a reason to exist</span></div></div>",
+    "js": "tl.fromTo(\"#nd0\", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.3, ease: \"power2.out\"}, 27.79); tl.fromTo(\"#nd1\", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.3, ease: \"power2.out\"}, 28.91); tl.fromTo(\"#nd2\", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.3, ease: \"power2.out\"}, 30.65);"
+   },
+   "origin": "agent",
+   "why": "the three fields of a cue, on their words"
+  },
+  {
+   "id": "C40",
+   "anchor": "Step four",
+   "until_start": "Step five",
+   "tail": -0.12,
+   "kind": "step",
+   "zone": "left",
+   "content": {
+    "number": "STEP 04",
+    "title": "Build",
+    "subtitle": "motion as a web page"
+   },
+   "sfx": "whoosh-short",
+   "why": "step card"
+  },
+  {
+   "id": "C41",
+   "anchor": "The agent writes",
+   "offset": -0.2,
+   "until_start": "Step five",
+   "tail": -0.12,
+   "kind": "custom",
+   "zone": "right",
+   "content": {
+    "html": "<div class=\"card demo code\"><div class=\"kicker\">index.html</div><div class=\"cl\" id=\"cl0\">&lt;div id=\"C10\" class=\"clip\"</div><div class=\"cl\" id=\"cl1\">     data-start=\"12.40\"</div><div class=\"cl\" id=\"cl2\">     data-duration=\"4.80\"&gt;</div><div class=\"cl\" id=\"cl3\">  Transcribe</div><div class=\"cl\" id=\"cl4\">&lt;/div&gt;</div><div class=\"frames\">frame <span id=\"fc\">0000</span></div></div>",
+    "js": "tl.fromTo(\"#cl0\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 34.91); tl.fromTo(\"#cl1\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.19); tl.fromTo(\"#cl2\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.47); tl.fromTo(\"#cl3\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.75); tl.fromTo(\"#cl4\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 36.03); const fcEl = document.getElementById(\"fc\"); const fco = {n: 0}; tl.to(fco, {n: 3587, duration: 1.4, ease: \"power1.out\", onUpdate: () => { fcEl.textContent = String(Math.round(fco.n)).padStart(4, \"0\"); }}, 37.61);"
+   },
+   "origin": "agent",
+   "why": "the composition is code; frames are rendered from it"
+  },
+  {
+   "id": "C50",
+   "anchor": "Step five",
+   "until_start": "Then the loop",
+   "tail": -0.12,
+   "kind": "step",
+   "zone": "left",
+   "content": {
+    "number": "STEP 05",
+    "title": "Verify",
+    "subtitle": "measure, check, fix"
+   },
+   "sfx": "whoosh-short",
+   "why": "step card"
+  },
+  {
+   "id": "C51",
+   "anchor": "It measures",
+   "offset": -0.2,
+   "until_start": "Then the loop",
+   "tail": -0.12,
+   "kind": "custom",
+   "zone": "right",
+   "content": {
+    "html": "<div class=\"card demo\"><div class=\"kicker\">render-verify</div><div class=\"chk\" id=\"ck0\"><span class=\"tick\">✓</span>−16 LUFS · −1 dBTP</div><div class=\"chk\" id=\"ck1\"><span class=\"tick\">✓</span>149 of 149 words heard</div><div class=\"chk\" id=\"ck2\"><span class=\"tick\">✓</span>every card on its word</div><div class=\"chk\" id=\"ck3\"><span class=\"tick\">✓</span>repair, then hand over</div></div>",
+    "js": "tl.fromTo(\"#ck0\", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 42.2); tl.fromTo(\"#ck0 .tick\", {scale: 0}, {scale: 1, duration: 0.3, ease: \"back.out(2)\"}, 42.2); tl.fromTo(\"#ck1\", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 21.52); tl.fromTo(\"#ck1 .tick\", {scale: 0}, {scale: 1, duration: 0.3, ease: \"back.out(2)\"}, 21.52); tl.fromTo(\"#ck2\", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 44.5); tl.fromTo(\"#ck2 .tick\", {scale: 0}, {scale: 1, duration: 0.3, ease: \"back.out(2)\"}, 44.5); tl.fromTo(\"#ck3\", {opacity: 0.18}, {opacity: 1, duration: 0.2}, 45.66); tl.fromTo(\"#ck3 .tick\", {scale: 0}, {scale: 1, duration: 0.3, ease: \"back.out(2)\"}, 45.66);"
+   },
+   "origin": "agent",
+   "why": "this video's own QA, ticked as each check is named"
+  },
+  {
+   "id": "C60",
+   "anchor": "the loop feeds itself",
+   "offset": -0.1,
+   "until": "starts smarter",
+   "tail": 0.55,
+   "kind": "title",
+   "zone": "top",
+   "content": {
+    "title": "The loop feeds itself."
+   },
+   "sfx": "shimmer",
+   "why": "callback to the thesis"
+  },
+  {
+   "id": "C61",
+   "anchor": "What you liked",
+   "until": "starts smarter",
+   "tail": 0.55,
+   "kind": "custom",
+   "zone": "center",
+   "content": {
+    "html": "<div class=\"loop\"><svg viewBox=\"0 0 900 260\" width=\"900\" height=\"260\"><path id=\"loop-path\" d=\"M 90 130 C 90 20, 810 20, 810 130 C 810 240, 90 240, 90 130\" fill=\"none\" stroke=\"var(--accent)\" stroke-width=\"4\" stroke-dasharray=\"1400\" stroke-dashoffset=\"1400\"/></svg><div class=\"loop-labels\"><span>edit</span><span>feedback</span><span>skills</span><span>next edit</span></div></div>",
+    "js": "tl.to(\"#loop-path\", {strokeDashoffset: 0, duration: 1.6, ease: \"power2.inOut\"}, 52.6);"
+   },
+   "origin": "agent",
+   "why": "draw the loop as it is described"
+  },
+  {
+   "id": "C62",
+   "at": 55.93,
+   "hold": 3.6,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "html": "<div class=\"endcard\"><div class=\"brand\">editbay</div><div class=\"by\">Starter Pack · Devin Thomas</div><div class=\"disc\">Narrated with a voice model trained on the creator's own voice.</div></div>"
+   },
+   "sfx": "impact",
+   "why": "end card with the voice disclosure"
+  },
+  {
+   "id": "R0",
+   "anchor": "Step one",
+   "offset": -0.4,
+   "until_start": "Then the loop",
+   "tail": -0.12,
+   "kind": "custom",
+   "zone": "top",
+   "content": {
+    "html": "<div class=\"rail\"><div class=\"chip\" id=\"chip0\"><span class=\"glow\"></span><span class=\"n\">01</span>Transcribe</div><div class=\"chip\" id=\"chip1\"><span class=\"glow\"></span><span class=\"n\">02</span>Cut</div><div class=\"chip\" id=\"chip2\"><span class=\"glow\"></span><span class=\"n\">03</span>Plan the beats</div><div class=\"chip\" id=\"chip3\"><span class=\"glow\"></span><span class=\"n\">04</span>Build</div><div class=\"chip\" id=\"chip4\"><span class=\"glow\"></span><span class=\"n\">05</span>Verify</div></div>",
+    "js": "tl.to(\"#chip0 .glow\", {opacity: 1, duration: 0.25}, 7.84); tl.to(\"#chip0 .glow\", {opacity: 0, duration: 0.25}, 16.18); tl.to(\"#chip1 .glow\", {opacity: 1, duration: 0.25}, 16.18); tl.to(\"#chip1 .glow\", {opacity: 0, duration: 0.25}, 24.15); tl.to(\"#chip2 .glow\", {opacity: 1, duration: 0.25}, 24.15); tl.to(\"#chip2 .glow\", {opacity: 0, duration: 0.25}, 32.43); tl.to(\"#chip3 .glow\", {opacity: 1, duration: 0.25}, 32.43); tl.to(\"#chip3 .glow\", {opacity: 0, duration: 0.25}, 39.06); tl.to(\"#chip4 .glow\", {opacity: 1, duration: 0.25}, 39.06); tl.to(\"#chip4 .glow\", {opacity: 0, duration: 0.25}, 47.9); "
+   },
+   "origin": "agent",
+   "why": "where we are in the loop; the active step lit"
+  }
+ ]
+}

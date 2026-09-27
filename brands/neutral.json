@@ -1,0 +1,20 @@
+{
+  "id": "neutral",
+  "name": "Neutral (no brand)",
+  "status": "locked",
+  "source": "editbay default: a quiet dark look that stays out of the way until a real brand exists",
+  "palette": {"background": "#0e1014", "surface": "#171a21", "text": "#f2f4f8", "text_muted": "#a3abb8",
+              "accent": "#5b8cff", "accent_2": null, "success": "#6fd3a0", "danger": "#f0806f"},
+  "fonts": {"display": {"family": "Inter", "weights": [600, 800], "source": "google-fonts"},
+            "body": {"family": "Inter", "weights": [400, 600]},
+            "mono": {"family": "JetBrains Mono", "weights": [500], "use": "code and machine labels only"}},
+  "type_scale_px_1080p": {"hero": 120, "headline": 72, "body": 44, "label": 28, "min_phone_readable": 36},
+  "shape": {"radius_px": [8, 14], "stroke_px": 2, "grid_px": null},
+  "motion": {"eases": {"enter": "cubic-bezier(.2,.8,.2,1)", "exit": "cubic-bezier(.4,0,1,1)"}, "min_read_hold_s": 2.0,
+             "default_enter_s": 0.4},
+  "devices": {"allowed": ["kinetic type", "cards behind text over footage", "subtle grain"], "forbidden": []},
+  "logo": {"files": [], "clear_space": "", "never": []},
+  "audio": {"lufs_explainer": -16, "lufs_reel": -14, "true_peak": -1.0, "music_policy": "own, CC0, or CC BY with credit"},
+  "voice": {"tone": "plain and specific", "never_say": []},
+  "notes": ""
+}

@@ -1,0 +1,63 @@
+{
+ "source": "../fixture.mp4",
+ "fps": 30.0,
+ "duration": 33.546,
+ "keep": [
+  {
+   "in": 0.0,
+   "out": 5.1
+  },
+  {
+   "in": 14.0,
+   "out": 19.5667
+  },
+  {
+   "in": 22.4667,
+   "out": 25.8333
+  },
+  {
+   "in": 28.0,
+   "out": 33.4333
+  }
+ ],
+ "remove": [
+  {
+   "in": 5.1,
+   "out": 7.3,
+   "reason": "dead air 2.63s",
+   "text": ""
+  },
+  {
+   "in": 7.3333,
+   "out": 14.0,
+   "reason": "retake: 'sorry let me start that again' then restart + dead air 2.63s",
+   "text": "so the first step is to cut the video. Sorry, let me start that again."
+  },
+  {
+   "in": 19.5667,
+   "out": 22.4667,
+   "reason": "dead air 2.21s + filler",
+   "text": "Um,"
+  },
+  {
+   "in": 25.8333,
+   "out": 28.0,
+   "reason": "dead air 2.65s",
+   "text": ""
+  },
+  {
+   "in": 33.4333,
+   "out": 33.5333,
+   "reason": "trailing silence",
+   "text": ""
+  }
+ ],
+ "suggested": [],
+ "stats": {
+  "source_s": 33.55,
+  "cut_s": 19.47,
+  "removed_s": 14.08,
+  "removals": 5,
+  "keeps": 4
+ }
+}
