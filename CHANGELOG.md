@@ -10,6 +10,9 @@
   12 fps, at AboveNormal 53 fps; the same job 288 s vs 60 s). `transcribe_faster_whisper.py` raises its own priority
   at start; `tts_worker_runner.py` raises the worker's whole tree, because a venv's python.exe is a launcher whose real
   interpreter does not inherit AboveNormal. Both verified on Titan (0x20 -> 0x8000).
+- remux_audio: when AAC overshoots the true-peak ceiling, limit the transients instead of trimming the whole mix. The
+  trim loop collapsed the dev vlog's copies to -17.3 LUFS: Sum Slight's near-square drum hits encode at 160k to
+  -0.9 dBTP untrimmed and +1.5 dBTP after a 0.2 dB trim. A limit 3 dB under the ceiling gives -1.1 dBTP at -15.0 LUFS.
 
 From the Muse run's retro, folded in by CacheBrief's STEWARD desk (2026-09-27):
 - av_qa `--require-content-ends` (on by default in verify_report): fails a delivery whose first or last frame is only

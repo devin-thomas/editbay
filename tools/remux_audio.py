@@ -25,8 +25,8 @@ def measure(path):
     return json.load(open(out))[0]
 
 
-def encode(render, mix, out, bitrate, gain_db=0.0):
-    af = ["-af", f"volume={gain_db:.2f}dB"] if gain_db else []
+def encode(render, mix, out, bitrate, limit_db=None):
+    af = ["-af", f"alimiter=limit={10 ** (limit_db / 20):.4f}:attack=1:release=30:level=disabled"] if limit_db is not None else []
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", render, "-i", mix, "-map", "0:v:0", "-map", "1:a:0",
                     "-c:v", "copy", *af, "-c:a", "aac", "-b:a", bitrate, "-ar", "48000", "-shortest", "-movflags", "+faststart", out],
                    check=True)
@@ -39,15 +39,19 @@ def main():
     ap.add_argument("--bitrate", default="320k")
     a = ap.parse_args()
     encode(a.render, a.mix, a.out, a.bitrate)
-    m, trim = measure(a.out), 0.0
-    for _ in range(3):  # low AAC bitrates can overshoot again after one trim (128k did: -0.9 dBTP after a 0.3 dB trim)
+    m, limit = measure(a.out), None
+    for _ in range(3):
         if m["true_peak_dbtp"] is None or m["true_peak_dbtp"] <= a.tp:
             break
-        trim += m["true_peak_dbtp"] - a.tp + 0.1
-        encode(a.render, a.mix, a.out, a.bitrate, -trim)
+        # AAC overshoots sharp transients (hot, near-square drum hits) far more than their level, and a whole-mix gain
+        # trim can make it worse: a vlog mix at -2.1 dBTP encoded at 160k to -0.9 dBTP, then to +1.5 dBTP after a
+        # 0.2 dB trim, and the old trim loop took the copy to -17.3 LUFS. Limit the transients instead (a limit 3 dB
+        # under the ceiling gave -1.1 dBTP at -15.0 LUFS), 1 dB lower on each further pass.
+        limit = a.tp - 3.0 if limit is None else limit - 1.0
+        encode(a.render, a.mix, a.out, a.bitrate, limit)
         m = measure(a.out)
-    if trim:
-        print(f"trimmed {trim:.2f} dB for the AAC true peak")
+    if limit is not None:
+        print(f"limited transients at {limit:.1f} dBFS for the AAC true peak")
     dur = lambda p, s: float(subprocess.run(["ffprobe", "-v", "error", "-select_streams", s, "-show_entries", "stream=duration",
                                              "-of", "csv=p=0", p], capture_output=True, text=True).stdout or 0)
     v, au = dur(a.out, "v:0"), dur(a.out, "a:0")
