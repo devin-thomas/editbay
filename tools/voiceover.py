@@ -24,19 +24,40 @@ or `~~~` blocks are skipped (headings, notes, cue blocks). An optional `[B03]` p
 Usage:
   voiceover.py script.md --out narration/ --engine qwen3-worker --voice aiden --python P --worker W --ckpt C --device mps
   voiceover.py script.md --out narration/ --engine say --voice Samantha
-  voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1
+  voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1 --story-slug STORY --producer-callsign CALLSIGN
+  voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1 --dry-run --story-slug STORY --producer-callsign CALLSIGN
 Writes narration/narration.wav (48 kHz mono, 24-bit), narration/sentences/*.wav, narration/narration.json
 ({sentences:[{i, beat, text, start, end, file, seed}], gap, paragraph_gap, duration, engine, voice}).
 Re-running reuses sentence WAVs whose text is unchanged; --redo 4,7 regenerates those with a new seed.
+Remote jobs use the namespace STORY--PRODUCER (inferred from --out and EDITBAY_* when omitted); --dry-run prints it
+without starting TTS.
 TTS garbles sentences now and then: always check with voiceover_check.py before building on the timings.
 """
 import argparse, json, os, re, shutil, subprocess, sys, tempfile
 
-import numpy as np
-import soundfile as sf
-import soxr
+np = sf = soxr = None
 
 SR = 48000
+
+
+def safe_part(value, label):
+    value = re.sub(r"[^A-Za-z0-9._-]+", "-", str(value).strip()).strip("-._")
+    if not value:
+        raise SystemExit(f"voiceover: {label} must contain at least one safe path character")
+    return value
+
+
+def run_identity(out_dir, story_slug=None, producer=None):
+    """Return the story and producer names used to isolate a remote TTS job."""
+    out_dir = os.path.abspath(out_dir)
+    slug = story_slug or os.environ.get("EDITBAY_STORY_SLUG") or os.path.basename(os.path.dirname(out_dir))
+    slug = safe_part(slug, "story slug")
+    callsign = producer or os.environ.get("EDITBAY_PRODUCER_CALLSIGN") or f"PRODUCER-{slug}"
+    return slug, safe_part(callsign, "producer callsign")
+
+
+def remote_work_dir(cfg, story_slug, producer):
+    return cfg["work_dir"].rstrip("/") + f"/{story_slug}--{producer}"
 
 
 def parse_script(path):
@@ -81,10 +102,10 @@ class QwenWorker:
         self.p.stdin.close(); self.p.wait(timeout=60)
 
 
-def remote_generate(cfg, jobs, local_dir, tag):
+def remote_generate(cfg, jobs, local_dir, story_slug, producer):
     """Generate [(sentence_no, text, seed)] on the voice's host in one job; copy the WAVs to local_dir/sNNN.wav."""
     import time as _t
-    host, rdir = cfg["host"], cfg["work_dir"].rstrip("/") + "/" + tag
+    host, rdir = cfg["host"], remote_work_dir(cfg, story_slug, producer)
     here = os.path.dirname(os.path.abspath(__file__))
     job = {"worker": cfg["worker"], "lock": cfg["lock"], "out_dir": rdir,
            "items": [{"id": f"s{i:03d}", "text": t, "seed": sd, "settings": {"language": cfg.get("language", "English")}}
@@ -137,6 +158,9 @@ def main():
     ap.add_argument("--engine", choices=["remote", "qwen3-worker", "say", "hyperframes"], default="qwen3-worker")
     ap.add_argument("--voice-config", help="name under tts.voices in the editbay config (engine remote)")
     ap.add_argument("--config", default=os.path.expanduser("~/.config/editbay/config.json"))
+    ap.add_argument("--story-slug", help="story slug for the remote work namespace (inferred from --out when omitted)")
+    ap.add_argument("--producer-callsign", help="producer callsign for the remote work namespace")
+    ap.add_argument("--dry-run", action="store_true", help="print the remote namespace without starting TTS")
     ap.add_argument("--voice", default="aiden"); ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--python"); ap.add_argument("--worker"); ap.add_argument("--ckpt"); ap.add_argument("--device", default="mps")
     ap.add_argument("--gap", type=float, default=0.4, help="silence between sentences (s)")
@@ -144,6 +168,21 @@ def main():
     ap.add_argument("--lead-in", type=float, default=0.3)
     ap.add_argument("--redo", default="", help="comma list of sentence numbers to regenerate with a new seed")
     a = ap.parse_args()
+    story_slug, producer = run_identity(a.out, a.story_slug, a.producer_callsign)
+    if a.dry_run:
+        if a.engine == "remote":
+            if not a.voice_config:
+                raise SystemExit("voiceover: --voice-config is required for --engine remote")
+            cfg = json.load(open(a.config))["tts"]["voices"][a.voice_config]
+            print(f"remote workdir: {remote_work_dir(cfg, story_slug, producer)}")
+            print(f"namespace: {story_slug}--{producer}")
+        else:
+            print(f"dry-run: engine={a.engine} out={a.out}")
+        return
+    global np, sf, soxr
+    import numpy as np
+    import soundfile as sf
+    import soxr
     redo = {int(x) for x in a.redo.split(",") if x.strip()}
     old = {}
     mpath = os.path.join(a.out, "narration.json")
@@ -152,6 +191,8 @@ def main():
     paras = parse_script(a.script)
     os.makedirs(os.path.join(a.out, "sentences"), exist_ok=True)
     if a.engine == "remote":
+        if not a.voice_config:
+            raise SystemExit("voiceover: --voice-config is required for --engine remote")
         vcfg = json.load(open(a.config))["tts"]["voices"][a.voice_config]
         a.voice = a.voice_config
         old0 = {}
@@ -169,7 +210,7 @@ def main():
                 if not (os.path.exists(f) and prev.get("text") == s_ and n not in redo0):
                     jobs.append((n, s_, seed))
         if jobs:
-            remote_generate(vcfg, jobs, os.path.join(a.out, "sentences"), os.path.basename(os.path.abspath(a.out)))
+            remote_generate(vcfg, jobs, os.path.join(a.out, "sentences"), story_slug, producer)
         remote_seeds = {i: sd for i, _, sd in jobs}
     worker = None  # started lazily: a fully cached rebuild never loads the model
     pieces, meta, t, i = [np.zeros(int(a.lead_in * SR))], [], a.lead_in, 0

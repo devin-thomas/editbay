@@ -31,6 +31,25 @@ the word), `hold` or `until` (+ `tail`), `beat` + `hold_beats` (music), `at` (ab
 `kind`, `content`, `enter`, `exit`, `treatment`, `sfx`, `why`, `origin` (`agent` for unrequested additions),
 `flash` (short on purpose), `cover_face` (deliberate takeover), `selector` (DOM id when not `#<id>`).
 
+## OPEN-LOOPS.json
+
+Curiosity is a timing obligation, not a vague note. Keep `beats/OPEN-LOOPS.json` beside the beat sheet:
+
+```json
+{
+  "loops": [
+    {"id": "L01", "question": "Why did the merchant block the agent?", "setup_time": 4.2, "payoff_time": 19.6}
+  ]
+}
+```
+
+`beats_check.py --open-loops beats/OPEN-LOOPS.json` fails a missing or non-numeric setup/payoff, a time outside the
+piece, and any payoff at two seconds or less after its setup. Keep the question short enough to review against the
+opening and name the beat that pays it off in the adjacent cue's `why`.
+
+The open-loop contract is adapted from `nateherkai/hyperframes-student-kit` (`.claude/skills/short-form-edit/`), under
+its MIT license and pipeline-use permission. Preserve that attribution when reusing the wording or checker rule.
+
 ## Timing habits that read well
 
 - Entrances land 0.1-0.2 s before the anchor word: the eye arrives as the ear does.

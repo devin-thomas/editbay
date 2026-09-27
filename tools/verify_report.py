@@ -13,18 +13,63 @@ Usage:
       [--faces media/x.faces.json --source SRC [--face-mode diff|detect] [--face-offset 0] [--face-skip a-b,...]]
       [--expected words.json --heard heard.json] words on screen / in the mix vs what should be there
       [--sheet-every 0.5]                        overview sheet interval (default: 0.5 s under 60 s, else 5 s)
+      [--require-end-card --end-card-proof qa/end-card.json]  exact encoded last frame must be checked as the end card
 Profiles come from the config's delivery_profiles (size, fps, lufs, true_peak). The av-qa gate also checks the first
 and last video frames for background-only emptiness. Exit 1 when any gate fails.
 """
 import argparse, datetime, json, os, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_VOICE_DISCLOSURE = "Narrated with a voice model trained on the creator's own voice."
 
 
 def tool(name, *args, uv=True):
     cmd = (["uv", "run", "-q", os.path.join(HERE, name)] if uv else ["python3", os.path.join(HERE, name)]) + [str(x) for x in args]
     r = subprocess.run(cmd, capture_output=True, text=True)
     return r.returncode, (r.stdout + r.stderr).strip()
+
+
+def extract_exact_last_frame(video, out_path):
+    """Decode and save the final encoded video frame, not a timestamp just before the tail."""
+    count = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-count_frames",
+                            "-show_entries", "stream=nb_read_frames", "-of", "default=nw=1:nk=1", video],
+                           capture_output=True, text=True)
+    if count.returncode or not count.stdout.strip():
+        return False, (count.stderr or "ffprobe did not return an encoded frame count").strip()
+    try:
+        frame_count = int(count.stdout.strip().splitlines()[-1])
+    except ValueError:
+        return False, f"ffprobe returned an invalid encoded frame count: {count.stdout.strip()!r}"
+    if frame_count < 1:
+        return False, "encoded video has no frames"
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    frame = subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-v", "error", "-i", video, "-vf",
+                            f"select=eq(n\\,{frame_count - 1})", "-frames:v", "1", "-y", out_path],
+                           capture_output=True, text=True)
+    if frame.returncode or not os.path.exists(out_path):
+        return False, (frame.stderr or "ffmpeg did not write the exact last frame").strip()
+    return True, f"decoded frame {frame_count - 1} of {frame_count - 1} to {out_path}"
+
+
+def end_card_result(proof_path, frame_path, voice_disclosure):
+    """Validate the human's inspection record against the frame this run extracted."""
+    if not proof_path:
+        return False, "no --end-card-proof was supplied"
+    try:
+        proof = json.load(open(proof_path))
+    except (OSError, json.JSONDecodeError) as exc:
+        return False, f"could not read end-card proof: {exc}"
+    expected_frame = os.path.basename(frame_path)
+    problems = []
+    if proof.get("frame") != expected_frame:
+        problems.append(f"frame must be {expected_frame!r}")
+    if proof.get("is_end_card") is not True:
+        problems.append("is_end_card must be true")
+    if proof.get("voice_disclosure") != voice_disclosure:
+        problems.append("voice_disclosure does not match the required line")
+    if problems:
+        return False, "; ".join(problems)
+    return True, f"human inspected exact encoded last frame {expected_frame}; end card and voice disclosure present"
 
 
 def main():
@@ -39,6 +84,9 @@ def main():
     ap.add_argument("--faces"); ap.add_argument("--source"); ap.add_argument("--face-mode", default="diff")
     ap.add_argument("--face-offset", type=float, default=0.0); ap.add_argument("--face-skip", default="")
     ap.add_argument("--expected"); ap.add_argument("--heard"); ap.add_argument("--sheet-every", type=float)
+    ap.add_argument("--require-end-card", action="store_true")
+    ap.add_argument("--end-card-proof", help="JSON proof for qa/encoded-last-frame.png")
+    ap.add_argument("--voice-disclosure", default=DEFAULT_VOICE_DISCLOSURE)
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     prof = {}
@@ -46,8 +94,8 @@ def main():
         prof = json.load(open(a.config)).get("delivery_profiles", {}).get(a.profile, {})
     gates, evidence = [], []
 
-    def gate(name, code, text, path=None):
-        status = "PASS" if code == 0 else "FAIL"
+    def gate(name, code, text, path=None, status=None):
+        status = status or ("PASS" if code == 0 else "FAIL")
         gates.append({"gate": name, "status": status, "detail": text.splitlines()[-1] if text else ""})
         if path:
             evidence.append(path)
@@ -61,8 +109,11 @@ def main():
             d = json.loads(r.stdout)
             summary = ", ".join(f"{k} {'ok' if v.get('ok') else 'FAIL'}" for k, v in d.items()
                                 if isinstance(v, dict) and "ok" in v)
+            if d.get("status") == "PENDING":
+                summary = f"PENDING: phase={d.get('phase', '?')}; {d.get('detail', summary)}"
             open(os.path.join(a.out, "hyperframes-check.json"), "w").write(r.stdout)
-            gate("hyperframes-check", 0 if d.get("ok") else 1, summary, os.path.join(a.out, "hyperframes-check.json"))
+            gate("hyperframes-check", 0 if d.get("ok") else 1, summary, os.path.join(a.out, "hyperframes-check.json"),
+                 status=d.get("status") if d.get("status") in ("PENDING", "FAIL", "PASS") else None)
         except json.JSONDecodeError:
             gate("hyperframes-check", 1, (r.stdout + r.stderr)[-2000:])
     else:
@@ -87,6 +138,16 @@ def main():
         args += ["--allow-freeze", a.allow_freeze]
     args += ["--require-content-ends"]
     gate("av-qa", *tool("av_qa.py", *args), os.path.join(a.out, "av_qa.json"))
+    tail_path = os.path.join(a.out, "encoded-last-frame.png")
+    tail_ok, tail_detail = extract_exact_last_frame(a.render, tail_path)
+    if not tail_ok:
+        gate("encoded-tail", 1, f"could not extract exact encoded last frame: {tail_detail}")
+    elif a.require_end_card or a.end_card_proof:
+        proof_ok, proof_detail = end_card_result(a.end_card_proof, tail_path, a.voice_disclosure)
+        gate("encoded-tail", 0 if proof_ok else 1, proof_detail, tail_path)
+    else:
+        gate("encoded-tail", 0, f"{tail_detail}; inspect it and record end-card proof before delivery", tail_path,
+             status="PENDING")
     lu = ["--target", prof["lufs"], "--tp", prof.get("true_peak", -1.0)] if prof.get("lufs") is not None else []
     gate("loudness", *tool("loudness.py", a.render, *lu, "--json", os.path.join(a.out, "loudness.json"), uv=False),
          os.path.join(a.out, "loudness.json"))

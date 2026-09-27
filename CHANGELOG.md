@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+From CacheBrief's three pilot shorts, AUDIT, and HEAD review (STEWARD pass 2, 2026-09-27):
+- voiceover and asr_remote: remote work dirs are namespaced `story--producer` (from --story-slug/--producer-callsign,
+  EDITBAY_* env, or the run folder), so concurrent producers on the GPU host never share a directory; `--dry-run`
+  prints the namespace. Two concurrent dry runs produced distinct paths.
+- hf.py: bounded `check` (180 s default; a hung browser child becomes PENDING, not a hang); disk-aware 4K workers.
+- verify_report: exact encoded last frame must be the end card (two pilots lost it in the final 2-3 frames).
+- asset_ledger: full sha256, source-segment reuse/overlap gate; gates.md adds opening-frame, logo-fidelity, and
+  duration-ledger evidence.
+- beats_check `--open-loops` (idea from nateherkai/hyperframes-student-kit, MIT): every open loop pays off > 2 s later.
+- hf_scaffold: brand looks and shell by `--look`, local fonts only, inline CSS marked with its source, landscape
+  caption proof.
+- sourcing notes: after two blocked captures, fall back honestly; motion notes: per-section crossfade waivers,
+  seek-safe count-ups.
+
 - New skill `style-edit-talks-back`: a talking-head edit where the edit is a second character (monospace asides,
   running counters, punch words, parody lower thirds, a parody-world cold open), learned with reference-to-style from
   eight measured videos by corbin (203-235 wpm, 30-60 visual events a minute, LRA 2.3 LU). The references were studied

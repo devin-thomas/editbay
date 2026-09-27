@@ -16,7 +16,8 @@ Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`..
 
 ```bash
 uv run $EB/tools/hf_scaffold.py --beats beats/beats.resolved.json --brand BRAND.json --out hf/ \
-  --audio sound/mix.wav [--base media/talk.mp4] [--background grid] [--captions cut/words.cut.json] [--hud "LABEL"]
+  --audio sound/mix.wav [--base media/talk.mp4] [--background grid] [--captions cut/words.cut.json] [--hud "LABEL"] \
+  [--look signal|ledger|arcade|silicon]  # CacheBrief only: local look + shell links
 ```
 
 It runs `hyperframes init` if needed, copies media into `hf/assets/`, writes `hf/index.html` (one element per cue,
@@ -40,7 +41,7 @@ frames, end cards): [references/overlay-patterns.md](references/overlay-patterns
 ## 3. Check before rendering
 
 ```bash
-uv run $EB/tools/hf.py check hf/ --json --at-transitions
+uv run $EB/tools/hf.py check hf/ --json --at 0 --at-transitions --check-timeout 180
 uv run $EB/tools/text_check.py hf/ --brand BRAND.json
 uv run $EB/tools/hf.py snapshot hf/ --at 1.2,4.8,9.5
 ```

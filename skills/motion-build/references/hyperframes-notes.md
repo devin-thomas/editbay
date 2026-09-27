@@ -24,6 +24,21 @@ Gotchas that each cost a re-render:
 - **Rule 2 — burned captions:** animate each `.cap-line .w` span with opacity and colour only. Put any x/y/scale
   motion on the `.cap-line` wrapper so custom GSAP motion cannot overwrite a word's caption state.
 - `check` skips the layout pass while lint has errors: re-run it once lint is clean, or overlaps stay hidden.
+- Run checks through `tools/hf.py check ... --check-timeout 180`. If the browser child exceeds the bound, the wrapper
+  exits 124 and emits JSON with `status: "PENDING"`, `phase`, `child_command`, and the last output; preserve that
+  result in `verify_report.py` instead of calling a hung check a pass or an unexplained failure.
+- Before a 4K render, `hf.py` prints free disk, the one-worker and multi-worker temporary-frame estimates, and the
+  worker recommendation. Let it append `--workers 1` when auto workers do not fit; an explicit count is a warning to
+  fix before rendering. One-worker streaming is the safe default near the estimate.
+- `hf_scaffold.py --extra-css scenes.css` inlines that file into `index.html`. The generated HTML is the runtime source:
+  rerun the scaffold after editing `scenes.css`, or patch the marked inline block and record the repair.
+- For a 16:9 captioned proof, pass the same verified word array to `hf_scaffold.py --captions` and assert that the
+  generated HTML contains `.cap-line` cues before rendering. Captions are a separate lower band, not an afterthought.
+- Count-ups are seek-safe only when each value is a discrete timed clip or a proxy value derived from the current
+  timeline time. Extract a mid-hold frame after seeking and confirm it is not the initial value; a live DOM counter that
+  only worked after playing from frame 0 is a failure.
+- Overlapping full-frame scene sections are intentional only with `data-layout-ignore` on every overlapping section and
+  a note in the beat/build record explaining the crossfade. Do not waive layout errors globally.
 - Maximum render rate is 240 fps. Motion blur: render two 240 fps passes offset by half a frame (`--variables`) and
   blend 8 samples per output frame with `tmix`, then master to ProRes 4444.
 - Alpha overlays: `--format mov` (ProRes 4444) or `webm`; 4:2:2 dims saturated footage at seams, use 4:4:4.

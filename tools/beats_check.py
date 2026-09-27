@@ -9,7 +9,7 @@ This turns anchors into seconds, checks the plan against the brand and the foota
 build and the verifier use.
 
 Usage:
-  beats_check.py beats/beats.json [--out beats/] [--brand brands/x.json] [--strict]
+  beats_check.py beats/beats.json [--out beats/] [--brand brands/x.json] [--open-loops beats/OPEN-LOOPS.json] [--strict]
 beats.json:
   {"timeline": "cut", "words": "cut/words.cut.json", "grid": null, "fps": 60, "duration": 42.0,
    "faces": "media/talk.faces.json", "min_read": 2.5,
@@ -31,6 +31,8 @@ beats.json:
 Writes: beats.resolved.json, BEATS.md (table + per-zone timeline), <name>.motion.json (hyperframes check sidecar:
 each cue appears by its start + 0.5 s, stays in frame, and keeps its order).
 Exit 1 on errors (an anchor not found, a cue outside the piece); warnings are printed and listed in BEATS.md.
+When OPEN-LOOPS.json is present, every question needs a payoff more than 2 seconds after its setup; an absent or
+too-early payoff is an error.
 """
 import argparse, difflib, json, os, re, sys
 
@@ -67,9 +69,50 @@ def overlap(a, b):
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
+def check_open_loops(path, duration):
+    """Validate the small, explicit curiosity ledger before motion work starts."""
+    if not path:
+        return [], []
+    data = json.load(open(path))
+    loops = data if isinstance(data, list) else data.get("loops")
+    if not isinstance(loops, list):
+        return [f"open loops: {path} must be a list or an object with a 'loops' list"], []
+    errors, rows = [], []
+    for i, loop in enumerate(loops, 1):
+        label = (loop.get("id") or f"loop {i}") if isinstance(loop, dict) else f"loop {i}"
+        if not isinstance(loop, dict):
+            errors.append(f"{label}: entry must be an object")
+            continue
+        question = str(loop.get("question") or "").strip()
+        if not question:
+            errors.append(f"{label}: question is required")
+        try:
+            setup = float(loop["setup_time"])
+        except (KeyError, TypeError, ValueError):
+            errors.append(f"{label}: setup_time must be numeric")
+            continue
+        if "payoff_time" not in loop or loop.get("payoff_time") is None:
+            errors.append(f"{label}: payoff_time is required (an open loop cannot remain unpaid)")
+            continue
+        try:
+            payoff = float(loop["payoff_time"])
+        except (TypeError, ValueError):
+            errors.append(f"{label}: payoff_time must be numeric")
+            continue
+        if setup < 0 or setup > duration:
+            errors.append(f"{label}: setup_time {setup:g}s is outside the {duration:g}s piece")
+        if payoff < 0 or payoff > duration:
+            errors.append(f"{label}: payoff_time {payoff:g}s is outside the {duration:g}s piece")
+        if payoff - setup <= 2.0:
+            errors.append(f"{label}: payoff must be more than 2s after setup ({setup:g}s -> {payoff:g}s)")
+        rows.append((label, question, setup, payoff))
+    return errors, rows
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("beats"); ap.add_argument("--out"); ap.add_argument("--brand"); ap.add_argument("--strict", action="store_true")
+    ap.add_argument("beats"); ap.add_argument("--out"); ap.add_argument("--brand"); ap.add_argument("--open-loops")
+    ap.add_argument("--strict", action="store_true")
     a = ap.parse_args()
     base = os.path.dirname(os.path.abspath(a.beats))
     out = a.out or base
@@ -82,6 +125,12 @@ def main():
     min_read = sheet.get("min_read") or brand.get("motion", {}).get("min_read_hold_s", 2.0)
     dur, fps = sheet["duration"], sheet.get("fps", 60)
     errors, warnings, resolved = [], [], []
+    loops_path = a.open_loops
+    if loops_path is None:
+        candidate = os.path.join(base, "OPEN-LOOPS.json")
+        loops_path = candidate if os.path.exists(candidate) else None
+    loop_errors, loop_rows = check_open_loops(loops_path, dur) if loops_path else ([], [])
+    errors.extend(loop_errors)
     for c in sheet["cues"]:
         r = dict(c)
         if "beat" in c:
@@ -175,6 +224,11 @@ def main():
                     row[k] = r["id"][-1]
         lines.append(f"{z:>8} |" + "".join(row))
     lines += ["```", ""]
+    if loops_path:
+        lines += ["## Open loops", "", "| id | question | setup | payoff |", "|---|---|---:|---:|"]
+        lines += [f"| {label} | {question.replace('|', '/')} | {setup:g}s | {payoff:g}s |"
+                  for label, question, setup, payoff in loop_rows]
+        lines += [f"\nSource: `{os.path.basename(loops_path)}`; payoff must be more than 2 seconds after setup.", ""]
     if errors or warnings:
         lines += ["## Findings", ""] + [f"- ERROR {e}" for e in errors] + [f"- warn {w}" for w in warnings]
     open(os.path.join(out, "BEATS.md"), "w").write("\n".join(lines) + "\n")

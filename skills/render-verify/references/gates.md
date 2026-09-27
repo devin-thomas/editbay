@@ -9,6 +9,10 @@
 | face-clear | overlays never sit on the speaker's face | move the card to a free zone from faces.json; intentional takeovers go in `--face-skip` |
 | words | captions / cut / narration contain the expected words | missing words: the cut clipped a word (re-plan with silence snapping) or captions skipped a line |
 | visual | a human-grade read of the whole piece | off-brand device, unreadable small text at 390 px wide, a transition that reads as a glitch |
+| opening-frame | encoded frame 0 and the first three seconds show the planned hook, not an empty/background-only opening | extract the encoded frame 0 and a 3-second contact strip; repair the hook, then rerun `av-qa` |
+| encoded-tail | the exact encoded last frame is an end card carrying the voice disclosure | `verify_report.py --require-end-card --end-card-proof qa/end-card.json` extracts `qa/encoded-last-frame.png`; inspect that exact frame and record `{"frame":"encoded-last-frame.png","is_end_card":true,"voice_disclosure":"Narrated with a voice model trained on the creator's own voice."}`; anything missing fails |
+| logo-fidelity | every official logo in the encoded video matches its ledger/source file in colour, proportions, and clear space | compare a frame crop with the source SVG/PNG; animate the wrapper or replace the incorrect asset |
+| duration-ledger | real footage/captures, generated media, and the final encoded duration are separately accounted for | list each source segment and generated clip; reconcile the sum against the render instead of hiding a missing or repeated segment |
 
 Planned holds: pass every intentional interval in one comma-separated value, for example
 `--allow-freeze 12.0:15.5,40.2:44.0`; the literal separator is `:` (`start:end`), and each range must match the plan.

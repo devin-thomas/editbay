@@ -33,15 +33,17 @@ description or end card. A stock voice needs neither. Drafts can use `--engine s
 ## 3. Generate
 
 ```bash
-uv run $EB/tools/voiceover.py script.md --out narration/ --engine remote --voice-config creator-clone   # cloned voice
+uv run $EB/tools/voiceover.py script.md --out narration/ --engine remote --voice-config creator-clone \
+  --story-slug STORY_SLUG --producer-callsign PRODUCER_CALLSIGN   # cloned voice; isolated Titan namespace
 uv run $EB/tools/voiceover.py script.md --out narration/ --engine qwen3-worker --voice aiden \
   --python "$TTS_PY" --worker "$TTS_WORKER" --ckpt "$TTS_CKPT" --device mps                    # local stock voice
 ```
 
 The remote engine sends only the sentences that need generating to `tools/tts_worker_runner.py` on the host, which
 takes that machine's GPU lock (shared with other narration pipelines there), keeps the model loaded for the batch,
-and returns the WAVs in one transfer. `narration/narration.json` records each sentence's text, seed, and position;
-re-runs reuse unchanged sentences.
+and returns the WAVs in one transfer. Its remote directory is `STORY_SLUG--PRODUCER_CALLSIGN`, never a generic
+`narration/` basename; use `--dry-run` to print the namespace before taking the GPU lock. `narration/narration.json`
+records each sentence's text, seed, and position; re-runs reuse unchanged sentences within that isolated namespace.
 
 **Done when:** `narration.wav` and `narration.json` exist and the overall pace is 140-165 wpm (the tool prints it;
 short sentences read faster, so judge pace on the real script, not a fragment).

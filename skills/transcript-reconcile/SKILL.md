@@ -25,7 +25,8 @@ visible so far.
 ## 2. Transcribe twice on the GPU host
 
 ```bash
-uv run $EB/tools/asr_remote.py audio.wav --out-dir transcript/ --prompt-file vocab.txt
+uv run $EB/tools/asr_remote.py audio.wav --out-dir transcript/ --prompt-file vocab.txt \
+  --story-slug STORY_SLUG --producer-callsign PRODUCER_CALLSIGN
 ```
 
 It copies the audio and `transcribe_faster_whisper.py` to the configured GPU host, runs large-v3 (sequential, with
@@ -33,7 +34,9 @@ the prompt) and turbo (batched), brings back `t.v3.*` and `t.turbo.*`, and print
 agree within 5%. `vocab.txt` is a comma list of the glossary's canonical names (spelling bias, not an instruction).
 Remote mechanics, for debugging: [references/remote-gpu.md](references/remote-gpu.md). With no GPU host, run
 `$EB/tools/transcribe_faster_whisper.py` locally with `--device cpu --compute int8` (slow), or
-`uv run $EB/tools/hf.py transcribe audio.wav --model large-v3` for a single pass.
+`uv run $EB/tools/hf.py transcribe audio.wav --model large-v3` for a single pass. Remote ASR uses the same
+`STORY_SLUG--PRODUCER_CALLSIGN` namespace under the configured work root; use `--dry-run` to inspect it without using
+the GPU host.
 
 **Done when:** both JSON files are back and their word counts are within 5% of each other (a bigger gap means a
 dropped or hallucinated stretch: find it before continuing).

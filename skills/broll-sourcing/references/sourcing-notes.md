@@ -14,3 +14,7 @@
   `ffmpeg -i raw.mp4 -an -vf "fps=60" -c:v libx264 -crf 16 -g 1 -keyint_min 1 -bf 0 -pix_fmt yuv420p clip-60.mp4`
   (speed changes, if any, before the fps filter with `setpts`).
 - **Downloads:** results from aggregators expire (24 hours to 14 days in their docs): download immediately and hash.
+- **Blocked captures:** retry a protected page once with the documented capture flags. After two 403/Cloudflare blocks,
+  keep the URL, timestamps, response evidence, and the failed commands in `ESCALATION.md`; do not fabricate a screenshot.
+  Use a source-labelled headline/type treatment or another accessible primary source, and mark the capture as blocked in
+  the asset ledger.

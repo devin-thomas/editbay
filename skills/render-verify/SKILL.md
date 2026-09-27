@@ -31,10 +31,13 @@ uv run $EB/tools/verify_report.py --render renders/review.mp4 --out qa/ --profil
   --grid beats/grid.json --half \                                   # music-led pieces
   --faces media/talk.faces.json --source media/talk.mp4 \           # footage under overlays
   --expected transcript/words.json --heard qa/heard.json            # voice or captions present
+  --require-end-card --end-card-proof qa/end-card.json              # exact encoded tail, inspected as the end card
 ```
 
 Each gate is PASS, FAIL, or PENDING (not run, with the reason). The av-qa gate also checks that the first and last
-frames contain detail rather than only a smooth background. What each gate proves and how to fix its common failures:
+frames contain detail rather than only a smooth background. When `--require-end-card` is set, the exact encoded last
+frame is extracted and the proof record must say it is the end card with the exact voice disclosure; a nearby timed
+frame does not count. What each gate proves and how to fix its common failures:
 [references/gates.md](references/gates.md). `--allow-*` ranges must match the plan (a fade from black, a held end card);
 never widen them to make a failure go away.
 

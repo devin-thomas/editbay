@@ -11,6 +11,7 @@ Usage:
   hf_scaffold.py --beats beats/beats.resolved.json --brand BRAND.json --out hf/ [--size 1920x1080] [--fps 60]
                  [--audio sound/mix.wav] [--base media/talk.mp4] [--background grid|glow|solid]
                  [--captions words.json] [--hud "EDITBAY / EXPLAINER"] [--title "..."] [--extra-css scenes.css]
+                 [--look signal|ledger|arcade|silicon] (CacheBrief: load local look and shell CSS)
                  [--remap left=upper,right=lower]   (re-layout the same beat sheet for 1080x1920)
 Cue kinds: title, side-card, lower-third, bullet, label, step, word-highlight, image-panel, takeover, custom.
   content fields: title, subtitle, kicker, icon (img path), items (list), src (image/video), html + js (custom),
@@ -71,6 +72,7 @@ def css(brand, W, H, background):
     px = lambda v: f"{round(v * k)}px"
     fam = lambda role, fb: f"'{(f.get(role) or {}).get('family', fb)}', {fb}"
     radius = (brand.get("shape") or {}).get("radius_px", [10, 14])
+    cachebrief = brand.get("id") == "cachebrief"
     bg = {"solid": "var(--bg)",
           "glow": "radial-gradient(1200px 700px at 70% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), var(--bg)",
           "grid": ("radial-gradient(1100px 650px at 72% 28%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%),"
@@ -80,15 +82,32 @@ def css(brand, W, H, background):
     # Vertical: keep captions above the bottom band that Shorts, Reels and TikTok cover with their own UI.
     cap_bottom = f"{round(0.26 * H)}px" if H > W else px(56)
     cap_right = "12%" if H > W else "6%"
+    if cachebrief:
+        bg_token, surface_token, text_token = "var(--cb-bg)", "var(--cb-surface)", "var(--cb-text)"
+        muted_token, accent_token, line_token = "var(--cb-muted)", "var(--cb-accent)", "var(--cb-line)"
+        radius_token, radius_sm_token = "var(--cb-radius)", "var(--cb-radius-sm)"
+        display_token, body_token, mono_token = "var(--cb-font-display)", "var(--cb-font-body)", "var(--cb-font-mono)"
+        scale = {"hero": "var(--cb-v-hero)" if H > W else "var(--cb-w-hero)",
+                 "headline": "var(--cb-v-headline)" if H > W else "var(--cb-w-headline)",
+                 "body": "var(--cb-v-body)" if H > W else "var(--cb-w-body)",
+                 "label": "var(--cb-v-label)" if H > W else "var(--cb-w-label)",
+                 "small": "var(--cb-v-min)" if H > W else "var(--cb-w-min)"}
+    else:
+        bg_token, surface_token, text_token = p.get("background", "#0e1014"), p.get("surface", "#171a21"), p.get("text", "#f2f4f8")
+        muted_token, accent_token, line_token = p.get("text_muted", "#a3abb8"), p.get("accent", "#5b8cff"), p.get("line", "#2b323c")
+        radius_token, radius_sm_token = f"{radius[-1]}px", f"{radius[0]}px"
+        display_token, body_token, mono_token = fam("display", "Inter, sans-serif"), fam("body", "Inter, sans-serif"), fam("mono", "ui-monospace, monospace")
+        scale = {"hero": px(sc.get("hero", 120)), "headline": px(sc.get("headline", 72)),
+                 "body": px(sc.get("body", 44)), "label": px(sc.get("label", 28)),
+                 "small": px(max(sc.get("label", 28), sc.get("min_phone_readable", 36)))}
     return f"""
       :root {{
-        --bg: {p.get('background', '#0e1014')}; --surface: {p.get('surface', '#171a21')}; --text: {p.get('text', '#f2f4f8')};
-        --muted: {p.get('text_muted', '#a3abb8')}; --accent: {p.get('accent', '#5b8cff')}; --line: {p.get('line', '#2b323c')};
-        --radius: {radius[-1]}px; --radius-sm: {radius[0]}px;
-        --font-display: {fam('display', 'Inter, sans-serif')}; --font-body: {fam('body', 'Inter, sans-serif')};
-        --font-mono: {fam('mono', 'ui-monospace, monospace')};
-        --hero: {px(sc.get('hero', 120))}; --headline: {px(sc.get('headline', 72))}; --body: {px(sc.get('body', 44))};
-        --label: {px(sc.get('label', 28))}; --small: {px(max(sc.get('label', 28), sc.get('min_phone_readable', 36)))};
+        --bg: {bg_token}; --surface: {surface_token}; --text: {text_token};
+        --muted: {muted_token}; --accent: {accent_token}; --line: {line_token};
+        --radius: {radius_token}; --radius-sm: {radius_sm_token};
+        --font-display: {display_token}; --font-body: {body_token}; --font-mono: {mono_token};
+        --hero: {scale['hero']}; --headline: {scale['headline']}; --body: {scale['body']};
+        --label: {scale['label']}; --small: {scale['small']};
       }}
       * {{ margin: 0; padding: 0; box-sizing: border-box; }}
       html, body {{ width: {W}px; height: {H}px; overflow: hidden; background: var(--bg); }}
@@ -272,7 +291,8 @@ def main():
     ap.add_argument("--captions"); ap.add_argument("--hud"); ap.add_argument("--title", default="editbay composition")
     ap.add_argument("--words", help="word array for word-highlight cues (defaults to the beat sheet's words)")
     ap.add_argument("--hf-version", default="0.8.79")
-    ap.add_argument("--extra-css", help="a CSS file appended to the generated styles (custom scenes)")
+    ap.add_argument("--extra-css", help="a CSS file appended to the generated styles (custom scenes; rerun after edits)")
+    ap.add_argument("--look", choices=["signal", "ledger", "arcade", "silicon"], help="CacheBrief local look CSS")
     ap.add_argument("--remap", default="", help="zone remap for a re-layout, e.g. left=upper,right=lower (vertical cuts)")
     a = ap.parse_args()
     remap = dict(kv.split("=") for kv in a.remap.split(",") if "=" in kv)
@@ -349,7 +369,23 @@ def main():
                   f' tc.textContent = `TC 00:00:${{pad(Math.floor(t))}}:${{pad(f)}}`; }});')
     if audio:
         body.append(f'<audio id="mix" src="{audio}" data-start="0" data-duration="{dur}" data-volume="1"></audio>')
-    extra_css = ("\n" + open(a.extra_css).read()) if a.extra_css else ""
+    extra_css = ("\n/* Inlined from " + os.path.basename(a.extra_css) + "; rerun hf_scaffold.py after editing that file. */\n"
+                 + open(a.extra_css, encoding="utf-8").read()) if a.extra_css else ""
+    cachebrief = brand.get("id") == "cachebrief"
+    look = a.look or brand.get("look") or "signal"
+    if cachebrief:
+        look_data = (brand.get("looks") or {}).get(look)
+        if not look_data:
+            raise SystemExit(f"hf_scaffold: unknown CacheBrief look {look!r}")
+        links = (f'<link rel="stylesheet" href="{html.escape(look_data["css"], quote=True)}" />\n'
+                 '    <link rel="stylesheet" href="brand/shell/shell.css" />')
+        root_class = "cb-frame cb-frame--v" if H > W else "cb-frame cb-frame--w"
+    else:
+        links = ('<link rel="preconnect" href="https://fonts.googleapis.com" />'
+                 '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />\n    ' + google_fonts(brand))
+        root_class = ""
+    extra_notice = (f"<!-- extra CSS is inlined from {os.path.basename(a.extra_css)}; rerun hf_scaffold.py after edits -->"
+                    if a.extra_css else "")
     doc = f"""<!doctype html>
 <html lang="en">
   <head>
@@ -357,14 +393,14 @@ def main():
     <meta name="viewport" content="width={W}, height={H}" />
     <title>{esc(a.title)}</title>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    {google_fonts(brand)}
+    {links}
     <style>{css(brand, W, H, a.background)}{extra_css}
     </style>
   </head>
   <body>
     <!-- scaffolded by editbay hf_scaffold.py from {os.path.basename(a.beats)}; brand {brand.get('id')} -->
-    <div id="root" data-composition-id="main" data-start="0" data-duration="{dur}" data-fps="{a.fps}" data-width="{W}" data-height="{H}">
+    {extra_notice}
+    <div id="root" class="{root_class}" data-composition-id="main" data-start="0" data-duration="{dur}" data-fps="{a.fps}" data-width="{W}" data-height="{H}">
       {chr(10).join('      ' + b for b in body).strip()}
     </div>
     <script>
@@ -382,7 +418,8 @@ def main():
         shutil.copy2(os.path.join(base_dir, side[0]), os.path.join(a.out, "index.motion.json"))
     print(f"wrote {os.path.join(a.out, 'index.html')}: {len(sheet['cues'])} cues, {W}x{H}@{a.fps}, {dur}s"
           + (", captions" if a.captions else "") + (", hud" if a.hud else "") + (f", audio {audio}" if audio else "")
-          + (", motion sidecar" if side else ""))
+          + (", motion sidecar" if side else "") + (f", CacheBrief {look} local shell" if cachebrief else "")
+          + (f"; extra CSS inlined from {os.path.basename(a.extra_css)} — rerun scaffold after edits" if a.extra_css else ""))
 
 
 if __name__ == "__main__":
