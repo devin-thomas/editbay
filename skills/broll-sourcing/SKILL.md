@@ -54,7 +54,12 @@ evidence. Kling-style 24 fps clips: re-encode all-intra at the render fps before
 
 ```bash
 uv run $EB/tools/asset_ledger.py check assets/ledger.json --composition hf/
+# If unused templates are copied into hf/, add an explicit ignore:
+uv run $EB/tools/asset_ledger.py check assets/ledger.json --composition hf/ --ignore 'brand/shell/snippets/**'
 ```
+
+The ledger follows files the composition actually loads; nested `url()` references inside a `data:` SVG are not media.
+Use an explicit ignore glob for unused example/snippet files and record the reason in the QA notes.
 
 **Done when:** the check exits 0: every file the composition uses has provenance, licences where needed, and labels
 on generated media.

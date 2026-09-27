@@ -25,6 +25,10 @@ id = cue id, timed with `data-start`/`data-duration`), and copies the beat sheet
 tokens become CSS variables; `--hud` only when the brand allows HUD numbers. Audio is the finished mix from
 sound-bed (the base video is muted), so loudness is decided in one place.
 
+For a local CacheBrief project, resolve the look and shell styles to files copied under the render root and fail before
+rendering if either stylesheet is missing; local font URLs must stay inside that root (use `/brand/fonts/...` or a
+normalized copy, never an unresolved `../fonts` path).
+
 **Done when:** `hf/index.html` exists and `uv run $EB/tools/hf.py lint hf/` reports no errors.
 
 ## 2. Dress the scenes
@@ -53,6 +57,10 @@ errors in the HTML; mark intentional overlaps with the escape-hatch attributes a
 text under the brand's phone minimum and words split across lines, and warns on one-word last lines in headings;
 mark only purely decorative text `data-decorative` (never put information only there). Snapshots at hero moments
 are the cheap look before a render; read them together.
+
+Set `EDITBAY_HF_VERSION` (and `hf_scaffold.py --hf-version`) to the same pinned version for check and render. Keep
+intentional hook holds in the motion sidecar honest: a scene whose DOM starts after a three-second hook cannot assert
+that it appears by 0.5 s. Sample transitions even when the full pass is slower.
 
 **Done when:** `check` exits 0, `text_check` passes, and the hero snapshots look like the plan.
 

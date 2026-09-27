@@ -53,3 +53,21 @@ Gotchas that each cost a re-render:
   master the mix in sound-bed and put it back after every render with `tools/remux_audio.py` (video copied untouched).
 - `--resolution landscape-4k` renders the same composition at 2x device scale: the way to make a 4K master from a
   1080p layout (fixed-pixel CSS stays correct).
+- **Rule 3 — caption colors:** scaffold-generated caption tweens use explicit hex values, not `var(--muted)` or
+  `var(--accent)`. Capture a mid-caption frame where a highlighted word should be visible; first/last frames are not
+  enough.
+- **Rule 4 — version and holds:** set `EDITBAY_HF_VERSION` for both check and render, and pass the same pin to
+  `hf_scaffold.py --hf-version`. Keep intentional hook holds in the motion sidecar; a scene whose DOM starts after a
+  3 s hook must not assert that it appears by 0.5 s. Sample the full transition set before delivery.
+- **Rule 5 — portrait safe stack:** with a fixed caption band, positioned wrappers that have `left` and `right` use
+  `width: auto`, rail nodes reflow vertically, and non-narrated notes under the caption band move or hide. Browser
+  layout can pass while the encoded review fails, so inspect a portrait contact sheet after re-layout.
+- **Rule 6 — orientation-aware text:** use the landscape `min_readable` threshold for a 1920x1080 composition and the
+  portrait phone threshold for 1080x1920; do not apply the portrait minimum to both orientations.
+- **Rule 7 — phone-safe labels:** secondary labels in a fixed progression card use short tokens such as `BASE`, `GROW`,
+  `CAP`, and `NEW`; test the actual 170 px card at phone size before approving longer labels.
+- **Rule 8 — blend fallback:** treat `mix-blend-mode` as an explicit render-cost choice. Replace nonessential grain
+  with a non-blended texture; when blending is essential, record the screenshot fallback and budget its measured render
+  time.
+- **Rule 9 — local brand paths:** when CSS is copied into a local HyperFrames root, normalize `../fonts` references to
+  `/brand/fonts/...` (or another path inside the root) and fail on missing local stylesheets before rendering.

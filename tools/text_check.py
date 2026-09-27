@@ -16,8 +16,9 @@ CSS state (the timeline does not run; web fonts load when online, so line breaks
   size    computed font size (times any resting CSS scale; SVG text times its on-screen scale) below the minimum: error
   broken  a word that wraps onto two lines (a long label in a narrow box): error
   widow   a heading (.t-title, .hero, h1-h3, or any text block at 1.5x the minimum) ending in a one-word line: warning
-Minimum: --min, else the brand's type_scale_px_1080p.min_phone_readable (min_phone_readable_9x16 on portrait canvases
-when present), scaled the way hf_scaffold scales type (x height/1080 landscape, x width/1080 portrait); default 36.
+Minimum: --min, else the portrait brand's type_scale_px_1080p.min_phone_readable (min_phone_readable_9x16 when present)
+or the landscape brand's type_scale_px_1920x1080.min_readable, scaled the way hf_scaffold scales type (x height/1080
+landscape, x width/1080 portrait); default 36.
 Text inside an element with data-decorative (kickers that repeat a title, HUD labels, step numbers) is listed but
 never fails: never put information only in decorative text. Exit 1 on any error.
 Chrome: the installed Google Chrome, else EDITBAY_CHROME, else HyperFrames' cached chrome-headless-shell.
@@ -110,8 +111,17 @@ def main():
     k = H / 1080 if W >= H else W / 1080
     base, src = 36.0, "default"
     if a.brand:
-        sc = json.load(open(a.brand)).get("type_scale_px_1080p", {})
-        key = "min_phone_readable_9x16" if W < H and "min_phone_readable_9x16" in sc else "min_phone_readable"
+        brand = json.load(open(a.brand))
+        if W < H:
+            sc = brand.get("type_scale_px_1080p", {})
+            key = "min_phone_readable_9x16" if "min_phone_readable_9x16" in sc else "min_phone_readable"
+        else:
+            sc = brand.get("type_scale_px_1920x1080", {})
+            if "min_readable" in sc:
+                key = "min_readable"
+            else:
+                sc = brand.get("type_scale_px_1080p", {})
+                key = "min_phone_readable"
         if key in sc:
             base, src = float(sc[key]), f"brand {os.path.basename(a.brand)} {key}"
     min_px = a.min if a.min is not None else round(base * k, 1)

@@ -26,6 +26,7 @@ Usage:
   voiceover.py script.md --out narration/ --engine say --voice Samantha
   voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1 --story-slug STORY --producer-callsign CALLSIGN
   voiceover.py script.md --out narration/ --engine remote --voice-config devin-v1 --dry-run --story-slug STORY --producer-callsign CALLSIGN
+                [--glossary transcript/glossary.json]
 Writes narration/narration.wav (48 kHz mono, 24-bit), narration/sentences/*.wav, narration/narration.json
 ({sentences:[{i, beat, text, start, end, file, seed}], gap, paragraph_gap, duration, engine, voice}).
 Re-running reuses sentence WAVs whose text is unchanged; --redo 4,7 regenerates those with a new seed.
@@ -58,6 +59,25 @@ def run_identity(out_dir, story_slug=None, producer=None):
 
 def remote_work_dir(cfg, story_slug, producer):
     return cfg["work_dir"].rstrip("/") + f"/{story_slug}--{producer}"
+
+
+def validate_glossary(path):
+    """Fail before TTS when a reconciliation glossary cannot support variant matching."""
+    if not path:
+        return
+    try:
+        data = json.load(open(path, encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"voiceover: could not read glossary {path}: {exc}") from exc
+    terms = data.get("terms") if isinstance(data, dict) else None
+    if not isinstance(terms, list):
+        raise SystemExit("voiceover: glossary must contain a terms array")
+    for index, term in enumerate(terms):
+        if not isinstance(term, dict) or not isinstance(term.get("canonical"), str) or not term["canonical"].strip():
+            raise SystemExit(f"voiceover: glossary term {index} needs a non-empty canonical string")
+        variants = term.get("variants")
+        if not isinstance(variants, list) or any(not isinstance(v, str) or not v.strip() for v in variants):
+            raise SystemExit(f"voiceover: glossary term {index} needs a variants array of non-empty strings")
 
 
 def parse_script(path):
@@ -158,6 +178,7 @@ def main():
     ap.add_argument("--engine", choices=["remote", "qwen3-worker", "say", "hyperframes"], default="qwen3-worker")
     ap.add_argument("--voice-config", help="name under tts.voices in the editbay config (engine remote)")
     ap.add_argument("--config", default=os.path.expanduser("~/.config/editbay/config.json"))
+    ap.add_argument("--glossary", help="reconcile-style glossary; validate its variants before TTS")
     ap.add_argument("--story-slug", help="story slug for the remote work namespace (inferred from --out when omitted)")
     ap.add_argument("--producer-callsign", help="producer callsign for the remote work namespace")
     ap.add_argument("--dry-run", action="store_true", help="print the remote namespace without starting TTS")
@@ -168,6 +189,7 @@ def main():
     ap.add_argument("--lead-in", type=float, default=0.3)
     ap.add_argument("--redo", default="", help="comma list of sentence numbers to regenerate with a new seed")
     a = ap.parse_args()
+    validate_glossary(a.glossary)
     story_slug, producer = run_identity(a.out, a.story_slug, a.producer_callsign)
     if a.dry_run:
         if a.engine == "remote":

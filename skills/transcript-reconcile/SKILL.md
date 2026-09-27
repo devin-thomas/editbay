@@ -56,6 +56,10 @@ most names), listen if needed, then add a patch with the evidence in `why`, or l
 patterns (inventions after pauses, prompt-induced phrases, dropped sentences, split compounds):
 [references/failure-modes.md](references/failure-modes.md).
 
+If the script has a bare numeral but the rendered speech clearly says its ordinal form (for example, `13` heard as
+`13th`), patch the final caption token to the heard form with a timestamp-safe evidence note. Do not change the spoken
+script unless the fact itself changed; log the wording correction so the timing decision is reproducible.
+
 **Done when:** the log shows 0 patch misses, every unresolved span has a patch or a written reason, and every
 glossary term appears only in its canonical spelling.
 

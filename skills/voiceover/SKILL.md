@@ -17,7 +17,10 @@ TTS engines and their paths come from `~/.config/editbay/config.json` (`tts`).
 Keep what is said separate from what is shown: cue blocks (`~~~cue ... ~~~`), notes (`>`), and headings are skipped
 by the generator. One paragraph per beat, tagged `[B01]`. Write numbers, times, and symbols the way they are said
 ("five point five", "three P M"), spell out acronyms the voice would mangle, and keep sentences under about 25
-words. Voice and tone rules come from the brand profile (`voice`). Guide: [references/script-craft.md](references/script-craft.md).
+words. Pronunciation notes belong in `transcript/glossary.json` or a skipped metadata block, never as plain text in a
+spoken paragraph. When a glossary is supplied, validate every term before starting TTS: it must include a `variants`
+array, even when the canonical form is the only accepted spelling. Voice and tone rules come from the brand profile
+(`voice`). Guide: [references/script-craft.md](references/script-craft.md).
 
 **Done when:** every paragraph carries a beat tag and reads aloud cleanly at 140-160 words per minute (count it).
 
@@ -45,8 +48,10 @@ and returns the WAVs in one transfer. Its remote directory is `STORY_SLUG--PRODU
 `narration/` basename; use `--dry-run` to print the namespace before taking the GPU lock. `narration/narration.json`
 records each sentence's text, seed, and position; re-runs reuse unchanged sentences within that isolated namespace.
 When other jobs hold the GPU lock, the runner queues (up to 45 min, printing "GPU busy ... waiting"), so start remote TTS
-in the background and poll its log. Never substitute another voice for a cloned one: if the lock times out, rerun or
-escalate; a stand-in voice may be used only for a timing draft that is never delivered.
+in the background and poll its log. Inspect the full owner command before diagnosing a busy lock; never stop the owner
+or retry indefinitely. Record the lock evidence, and use a timing fallback only when it is explicitly labelled and never
+delivered. Never substitute another voice for a cloned one: if the lock times out, rerun or escalate, keeping the
+cloned-voice delivery risk explicit.
 
 **Done when:** `narration.wav` and `narration.json` exist and the overall pace is 140-165 wpm (the tool prints it;
 short sentences read faster, so judge pace on the real script, not a fragment).
@@ -78,7 +83,9 @@ Reconcile the narration transcript with the script as the third source
 ## Checklist
 
 - [ ] Spoken layer written with beat tags; pace counted
+- [ ] Glossary entries validated with `variants`; pronunciation metadata is not spoken
 - [ ] Voice chosen; clone consent and disclosure placement recorded when used
 - [ ] One seed per beat; pace 140-165 wpm on the real script
+- [ ] Shared GPU lock evidence recorded; any fallback is timing-only and labelled
 - [ ] Every sentence checked against the script; re-rolls logged
 - [ ] Word timings reconciled against the script and handed to the beat sheet

@@ -18,3 +18,6 @@
   keep the URL, timestamps, response evidence, and the failed commands in `ESCALATION.md`; do not fabricate a screenshot.
   Use a source-labelled headline/type treatment or another accessible primary source, and mark the capture as blocked in
   the asset ledger.
+- **Ad-heavy captures:** when ads or browser chrome dominate a live source page, do not present the screenshot as
+  headline evidence. Typeset the exact headline and byline in a source-labelled card, disclose that the capture was
+  omitted, and retain the canonical URL in the delivery package.

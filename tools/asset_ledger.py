@@ -8,15 +8,17 @@ Usage:
   asset_ledger.py add assets/ledger.json FILE --kind capture|official|stock|generated|own --source URL_OR_NOTE
                   [--license "..."] [--label "on-screen label"] [--prompt "..."] [--tool "..."] [--cost-usd 0.12]
                   [--source-file SOURCE] [--source-start SECONDS --source-end SECONDS]
-  asset_ledger.py check assets/ledger.json --composition hf/   (every src/href under hf/ that points at a file has an entry;
+  asset_ledger.py check assets/ledger.json --composition hf/ [--ignore 'brand/shell/snippets/**']
+                                                               (every src/href under hf/ that points at a file has an entry;
                                                                generated and stock entries carry a licence; generated
-                                                               entries carry an on-screen label or a reason)
+                                                               entries carry an on-screen label or a reason; nested
+                                                               url() references inside data: URLs are ignored)
   asset_ledger.py list assets/ledger.json
 Kinds: capture (our own screenshot or recording of something), official (a brand's own logo or press asset), stock
 (licensed library media), generated (made by a model: label it), own (made for this project: renders, synthesis).
 Exit 1 when check finds a gap.
 """
-import argparse, datetime, hashlib, json, os, re, sys
+import argparse, datetime, fnmatch, hashlib, json, os, re, sys
 
 KINDS = ("capture", "official", "stock", "generated", "own")
 
@@ -29,6 +31,48 @@ def sha(path):
     return hashlib.sha256(open(path, "rb").read()).hexdigest()
 
 
+def css_url_refs(text):
+    """Read CSS url() values while treating a nested SVG data URL as one opaque reference."""
+    refs, i = [], 0
+    while True:
+        start = text.find("url(", i)
+        if start < 0:
+            return refs
+        j, depth, quote = start + 4, 1, None
+        value = []
+        while j < len(text) and depth:
+            ch = text[j]
+            if quote:
+                value.append(ch)
+                if ch == quote and (j == 0 or text[j - 1] != "\\"):
+                    quote = None
+            elif ch in "'\"":
+                quote = ch; value.append(ch)
+            elif ch == "(":
+                depth += 1; value.append(ch)
+            elif ch == ")":
+                depth -= 1
+                if depth:
+                    value.append(ch)
+            else:
+                value.append(ch)
+            j += 1
+        refs.append("".join(value).strip().strip("'\""))
+        i = max(j, start + 4)
+
+
+def references(text):
+    refs = re.findall(r"\b(?:src|href)\s*=\s*[\"']([^\"']+)[\"']", text, re.I)
+    return refs + css_url_refs(text)
+
+
+def ignored(path, composition, patterns):
+    if not patterns:
+        return False
+    rel = os.path.relpath(path, composition).replace(os.sep, "/")
+    return any(fnmatch.fnmatch(rel, p) or fnmatch.fnmatch(os.path.basename(rel), p) for p in patterns)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -39,6 +83,8 @@ def main():
     ad.add_argument("--source-file", default="", help="source recording for a clip segment")
     ad.add_argument("--source-start", type=float); ad.add_argument("--source-end", type=float)
     ck = sub.add_parser("check"); ck.add_argument("ledger"); ck.add_argument("--composition", required=True)
+    ck.add_argument("--ignore", action="append", default=[], metavar="GLOB",
+                    help="ignore an unused composition file or directory (relative glob; repeatable)")
     ls = sub.add_parser("list"); ls.add_argument("ledger")
     a = ap.parse_args()
     led = load(a.ledger)
@@ -71,15 +117,26 @@ def main():
     else:
         known = {e["file"]: e for e in led["assets"]}
         used, gaps = set(), []
-        for root, _, files in os.walk(a.composition):
+        ignored_files = 0
+        for root, dirs, files in os.walk(a.composition):
             if "node_modules" in root:
                 continue
+            kept_dirs = []
+            for directory in dirs:
+                if ignored(os.path.join(root, directory), a.composition, a.ignore):
+                    ignored_files += 1
+                else:
+                    kept_dirs.append(directory)
+            dirs[:] = kept_dirs
             for f in files:
+                path = os.path.join(root, f)
+                if ignored(path, a.composition, a.ignore):
+                    ignored_files += 1
+                    continue
                 if f.endswith((".html", ".css")):
-                    text = open(os.path.join(root, f), encoding="utf-8", errors="ignore").read()
-                    for ref in re.findall(r'(?:src|href)="([^"#:]+)"|url\(["\']?([^"\')]+)["\']?\)', text):
-                        ref = ref[0] or ref[1]
-                        if ref and not ref.startswith(("http", "data:", "//")) and not ref.endswith((".html", ".css")):
+                    text = open(path, encoding="utf-8", errors="ignore").read()
+                    for ref in references(text):
+                        if ref and not ref.startswith(("http", "data:", "//", "#")) and not ref.endswith((".html", ".css")):
                             used.add(os.path.basename(ref))
         for u in sorted(used):
             e = known.get(u)
@@ -110,7 +167,7 @@ def main():
                 gaps.append(f"{file} and {other_file}: {relation} in {source} ({max(start, other_start):g}-{min(end, other_end):g}s)")
         for g in gaps:
             print("GAP", g)
-        print(f"{len(used)} assets used; {len(gaps)} gaps")
+        print(f"{len(used)} assets used; {len(gaps)} gaps; {ignored_files} ignored composition path(s)")
         sys.exit(1 if gaps else 0)
 
 

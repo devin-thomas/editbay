@@ -13,7 +13,7 @@ Delivery profiles (size, fps, loudness) come from `~/.config/editbay/config.json
 
 ## 1. Gate the composition
 
-Before rendering a HyperFrames project: `uv run $EB/tools/hf.py check hf/ --json --snapshots --at-transitions` and
+Before rendering a HyperFrames project: `EDITBAY_HF_VERSION=<pin> uv run $EB/tools/hf.py check hf/ --json --snapshots --at-transitions --check-timeout 180` and
 `uv run $EB/tools/text_check.py hf/ --brand BRAND.json`. Layout overlaps, contrast failures, runtime errors, text
 under the brand's phone minimum, words split across lines, and `*.motion.json` assertions (entrances land by their
 beat, order holds, nothing leaves frame, nothing freezes) are fixed in the HTML now; they are cheap here and
@@ -35,9 +35,12 @@ uv run $EB/tools/verify_report.py --render renders/review.mp4 --out qa/ --profil
 ```
 
 Each gate is PASS, FAIL, or PENDING (not run, with the reason). The av-qa gate also checks that the first and last
-frames contain detail rather than only a smooth background. When `--require-end-card` is set, the exact encoded last
-frame is extracted and the proof record must say it is the end card with the exact voice disclosure; a nearby timed
-frame does not count. What each gate proves and how to fix its common failures:
+frames contain detail rather than only a smooth background. When `--require-end-card` is set, count the encoded frames,
+inspect frame N-1 in `encoded-last-frame.png`, and require the proof record to name that file, mark it as the end card,
+and repeat the exact voice disclosure; verify caption ink and opacity there because a nearby timed frame does not count.
+Measure loudness on the encoded review/delivery file, not only the source WAV. If the local HyperFrames AAC path
+reproducibly attenuates the mix, apply a measured source compensation, rerun the encoded loudness gate, and record both
+measurements. What each gate proves and how to fix its common failures:
 [references/gates.md](references/gates.md). `--allow-*` ranges must match the plan (a fade from black, a held end card);
 never widen them to make a failure go away.
 

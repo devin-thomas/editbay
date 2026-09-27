@@ -9,6 +9,7 @@ Usage:
       [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 12.0:15.5,40.2:44.0]   (comma-separated start:end ranges)
       [--hf-project hf/]                         hyperframes check (DOM: layout, contrast, motion sidecars), through hf.py
       [--brand BRAND.json]                       with --hf-project: text_check.py (phone-size text, words split across lines)
+      [--min 30]                                 override the orientation-aware text minimum passed to text_check.py
       [--grid beats/grid.json --half]            cuts on the beat grid (music-led pieces)
       [--faces media/x.faces.json --source SRC [--face-mode diff|detect] [--face-offset 0] [--face-skip a-b,...]]
       [--expected words.json --heard heard.json] words on screen / in the mix vs what should be there
@@ -79,6 +80,7 @@ def main():
     ap.add_argument("--expect-duration", type=float); ap.add_argument("--allow-black")
     ap.add_argument("--allow-freeze", help="intentional holds as comma-separated start:end ranges, e.g. 12:15,40:44.5")
     ap.add_argument("--brand", help="brand profile JSON: gates on-screen text against its phone minimum")
+    ap.add_argument("--min", type=float, help="override the text minimum passed to text_check.py")
     ap.add_argument("--hf-project"); ap.add_argument("--grid"); ap.add_argument("--half", action="store_true")
     ap.add_argument("--tolerance-ms", type=float)
     ap.add_argument("--faces"); ap.add_argument("--source"); ap.add_argument("--face-mode", default="diff")
@@ -119,8 +121,10 @@ def main():
     else:
         gates.append({"gate": "hyperframes-check", "status": "PENDING", "detail": "no --hf-project given"})
     if a.hf_project and a.brand:
-        gate("text", *tool("text_check.py", a.hf_project, "--brand", a.brand, "--json", os.path.join(a.out, "text.json")),
-             os.path.join(a.out, "text.json"))
+        text_args = [a.hf_project, "--brand", a.brand, "--json", os.path.join(a.out, "text.json")]
+        if a.min is not None:
+            text_args += ["--min", a.min]
+        gate("text", *tool("text_check.py", *text_args), os.path.join(a.out, "text.json"))
     else:
         gates.append({"gate": "text", "status": "PENDING", "detail": "no --hf-project/--brand: phone-size text not checked"})
 

@@ -26,6 +26,8 @@ captions belong on the .cap-line wrapper. There are no clocks or randomness. Leg
 content labels never go under the brand's min_phone_readable, kickers/step numbers/HUD are data-decorative, headings
 balance their lines, cards have no backdrop-filter (it forces HyperFrames into slow screenshot capture), and vertical
 layouts use a 160-1500px safe stack on a 1920px canvas with a depth plane behind it; captions sit above platform UI.
+CacheBrief scaffolds copy the selected local look/shell CSS and referenced fonts into OUT/brand/, normalize font URLs to
+/brand/fonts/, and use literal hex colors for caption tweens.
 """
 import argparse, html, json, os, re, shutil, subprocess
 
@@ -64,6 +66,53 @@ def google_fonts(brand):
             fams.append((f["family"], sorted(set(f.get("weights") or [400, 700]))))
     q = "&".join(f"family={f.replace(' ', '+')}:wght@{';'.join(str(w) for w in ws)}" for f, ws in fams)
     return f'<link href="https://fonts.googleapis.com/css2?{q}&display=block" rel="stylesheet" />' if fams else ""
+
+
+def explicit_color(value, fallback):
+    return value if isinstance(value, str) and re.fullmatch(r"#[0-9a-fA-F]{3,8}", value.strip()) else fallback
+
+
+def cachebrief_styles(brand_path, look_data, out, look):
+    """Copy the selected local CSS and its fonts, normalizing parent-traversal font URLs."""
+    brand_dir = os.path.dirname(os.path.abspath(brand_path))
+    repo_dir = os.path.dirname(brand_dir)
+    sources = [
+        (os.path.join(repo_dir, look_data["css"]), os.path.join(out, "brand", "looks", look, "look.css")),
+        (os.path.join(brand_dir, "shell", "shell.css"), os.path.join(out, "brand", "shell", "shell.css")),
+    ]
+    for source, _ in sources:
+        if not os.path.isfile(source):
+            raise SystemExit(f"hf_scaffold: missing local CacheBrief stylesheet: {source}")
+    copied = []
+    for source, target in sources:
+        text = open(source, encoding="utf-8").read()
+        text = re.sub(r"url\(([\"']?)(?:\.\./)+fonts/([^\)\"']+)\1\)", r'url("/brand/fonts/\2")', text)
+        os.makedirs(os.path.dirname(target), exist_ok=True)
+        open(target, "w", encoding="utf-8").write(text)
+        copied.append((source, text))
+        for font in sorted(set(re.findall(r'url\("/brand/fonts/([^"/]+)"\)', text))):
+            source_font = os.path.join(brand_dir, "fonts", font)
+            if not os.path.isfile(source_font):
+                raise SystemExit(f"hf_scaffold: missing local CacheBrief font: {source_font}")
+            target_font = os.path.join(out, "brand", "fonts", font)
+            os.makedirs(os.path.dirname(target_font), exist_ok=True)
+            shutil.copy2(source_font, target_font)
+    return copied
+
+
+def cachebrief_caption_colors(brand_path, look_data, brand):
+    """Read look caption tokens as literals so GSAP never interpolates CSS variables."""
+    fallback_muted = explicit_color((brand.get("palette") or {}).get("text_muted"), "#a3abb8")
+    fallback_accent = explicit_color((brand.get("palette") or {}).get("accent"), "#5b8cff")
+    source = os.path.join(os.path.dirname(os.path.abspath(brand_path)), "..", look_data["css"])
+    source = os.path.abspath(source)
+    if not os.path.isfile(source):
+        raise SystemExit(f"hf_scaffold: missing local CacheBrief stylesheet: {source}")
+    text = open(source, encoding="utf-8").read()
+    def token(name, fallback):
+        match = re.search(rf"--{re.escape(name)}\s*:\s*([^;]+);", text)
+        return explicit_color(match.group(1).strip() if match else "", fallback)
+    return token("cb-cap-ink", fallback_muted), token("cb-cap-hi", fallback_accent)
 
 
 def css(brand, W, H, background):
@@ -290,7 +339,7 @@ def main():
     ap.add_argument("--audio"); ap.add_argument("--base"); ap.add_argument("--background", choices=["grid", "glow", "solid"], default="grid")
     ap.add_argument("--captions"); ap.add_argument("--hud"); ap.add_argument("--title", default="editbay composition")
     ap.add_argument("--words", help="word array for word-highlight cues (defaults to the beat sheet's words)")
-    ap.add_argument("--hf-version", default="0.8.79")
+    ap.add_argument("--hf-version", default=os.environ.get("EDITBAY_HF_VERSION", "0.8.79"))
     ap.add_argument("--extra-css", help="a CSS file appended to the generated styles (custom scenes; rerun after edits)")
     ap.add_argument("--look", choices=["signal", "ledger", "arcade", "silicon"], help="CacheBrief local look CSS")
     ap.add_argument("--remap", default="", help="zone remap for a re-layout, e.g. left=upper,right=lower (vertical cuts)")
@@ -298,6 +347,14 @@ def main():
     remap = dict(kv.split("=") for kv in a.remap.split(",") if "=" in kv)
     W, H = (int(x) for x in a.size.split("x"))
     sheet = json.load(open(a.beats)); brand = json.load(open(a.brand))
+    cachebrief = brand.get("id") == "cachebrief"
+    look = a.look or brand.get("look") or "signal"
+    look_data = (brand.get("looks") or {}).get(look) if cachebrief else None
+    if cachebrief and not look_data:
+        raise SystemExit(f"hf_scaffold: unknown CacheBrief look {look!r}")
+    caption_muted, caption_accent = (cachebrief_caption_colors(a.brand, look_data, brand) if cachebrief else
+                                     (explicit_color((brand.get("palette") or {}).get("text_muted"), "#a3abb8"),
+                                      explicit_color((brand.get("palette") or {}).get("accent"), "#5b8cff")))
     base_dir = os.path.dirname(os.path.abspath(a.beats))
     dur = sheet["duration"]
     wpath = a.words or (os.path.join(base_dir, sheet["words"]) if sheet.get("words") else None)
@@ -356,9 +413,9 @@ def main():
                 if i:
                     previous = line[i - 1]
                     previous_selector = f'#cap{k} .w[data-t=\\"{previous["start"]}\\"]'
-                    caption_js.append(f'tl.to("{previous_selector}", {{opacity: 0.72, color: "var(--muted)", duration: 0.12, ease: "none"}}, {w["start"]});')
+                    caption_js.append(f'tl.to("{previous_selector}", {{opacity: 0.72, color: {json.dumps(caption_muted)}, duration: 0.12, ease: "none"}}, {w["start"]});')
                 selector = f'#cap{k} .w[data-t=\\"{w["start"]}\\"]'
-                caption_js.append(f'tl.to("{selector}", {{opacity: 1, color: "var(--accent)", duration: 0.12, ease: "none"}}, {w["start"]});')
+                caption_js.append(f'tl.to("{selector}", {{opacity: 1, color: {json.dumps(caption_accent)}, duration: 0.12, ease: "none"}}, {w["start"]});')
             js += caption_js
     if a.hud:
         body.append(f'<div id="hud" class="clip" data-decorative data-start="0" data-duration="{dur}"><div class="c tl"></div><div class="c tr"></div>'
@@ -371,12 +428,8 @@ def main():
         body.append(f'<audio id="mix" src="{audio}" data-start="0" data-duration="{dur}" data-volume="1"></audio>')
     extra_css = ("\n/* Inlined from " + os.path.basename(a.extra_css) + "; rerun hf_scaffold.py after editing that file. */\n"
                  + open(a.extra_css, encoding="utf-8").read()) if a.extra_css else ""
-    cachebrief = brand.get("id") == "cachebrief"
-    look = a.look or brand.get("look") or "signal"
     if cachebrief:
-        look_data = (brand.get("looks") or {}).get(look)
-        if not look_data:
-            raise SystemExit(f"hf_scaffold: unknown CacheBrief look {look!r}")
+        cachebrief_styles(a.brand, look_data, a.out, look)
         links = (f'<link rel="stylesheet" href="{html.escape(look_data["css"], quote=True)}" />\n'
                  '    <link rel="stylesheet" href="brand/shell/shell.css" />')
         root_class = "cb-frame cb-frame--v" if H > W else "cb-frame cb-frame--w"
