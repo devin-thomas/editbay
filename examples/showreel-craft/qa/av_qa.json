@@ -1,0 +1,49 @@
+{
+ "file": "renders/final.mp4",
+ "probe": {
+  "duration": 16.5,
+  "video": {
+   "codec": "h264",
+   "size": "1920x1080",
+   "fps": 60.0,
+   "pix_fmt": "yuv420p",
+   "duration": 16.5,
+   "color_primaries": "bt709"
+  },
+  "audio": {
+   "codec": "aac",
+   "sample_rate": 48000,
+   "channels": 2,
+   "duration": 16.5
+  }
+ },
+ "black": [],
+ "freeze": [
+  [
+   0.0,
+   1.683333
+  ],
+  [
+   6.25,
+   7.05
+  ],
+  [
+   8.533333,
+   9.15
+  ],
+  [
+   15.95,
+   null
+  ]
+ ],
+ "silence": [],
+ "pops": [],
+ "errors": [],
+ "warnings": [],
+ "notes": [
+  "static picture 0.00-1.68s (1.7s; allow intentional holds with --allow-freeze)",
+  "static picture 6.25-7.05s (0.8s; allow intentional holds with --allow-freeze)",
+  "static picture 8.53-9.15s (0.6s; allow intentional holds with --allow-freeze)"
+ ],
+ "ok": true
+}

@@ -1,0 +1,310 @@
+{
+ "bpm": 128.0,
+ "seconds_per_beat": 0.46875,
+ "fps": 60,
+ "frames_per_beat": 28.125,
+ "duration": 17.5,
+ "music_end": 15.0,
+ "beats": [
+  {
+   "i": 0,
+   "t": 0.0,
+   "bar": 1,
+   "beat": 1,
+   "frame": 0,
+   "section": "intro"
+  },
+  {
+   "i": 1,
+   "t": 0.4688,
+   "bar": 1,
+   "beat": 2,
+   "frame": 28,
+   "section": "intro"
+  },
+  {
+   "i": 2,
+   "t": 0.9375,
+   "bar": 1,
+   "beat": 3,
+   "frame": 56,
+   "section": "intro"
+  },
+  {
+   "i": 3,
+   "t": 1.4062,
+   "bar": 1,
+   "beat": 4,
+   "frame": 84,
+   "section": "intro"
+  },
+  {
+   "i": 4,
+   "t": 1.875,
+   "bar": 2,
+   "beat": 1,
+   "frame": 112,
+   "section": "build"
+  },
+  {
+   "i": 5,
+   "t": 2.3438,
+   "bar": 2,
+   "beat": 2,
+   "frame": 141,
+   "section": "build"
+  },
+  {
+   "i": 6,
+   "t": 2.8125,
+   "bar": 2,
+   "beat": 3,
+   "frame": 169,
+   "section": "build"
+  },
+  {
+   "i": 7,
+   "t": 3.2812,
+   "bar": 2,
+   "beat": 4,
+   "frame": 197,
+   "section": "build"
+  },
+  {
+   "i": 8,
+   "t": 3.75,
+   "bar": 3,
+   "beat": 1,
+   "frame": 225,
+   "section": "drop"
+  },
+  {
+   "i": 9,
+   "t": 4.2188,
+   "bar": 3,
+   "beat": 2,
+   "frame": 253,
+   "section": "drop"
+  },
+  {
+   "i": 10,
+   "t": 4.6875,
+   "bar": 3,
+   "beat": 3,
+   "frame": 281,
+   "section": "drop"
+  },
+  {
+   "i": 11,
+   "t": 5.1562,
+   "bar": 3,
+   "beat": 4,
+   "frame": 309,
+   "section": "drop"
+  },
+  {
+   "i": 12,
+   "t": 5.625,
+   "bar": 4,
+   "beat": 1,
+   "frame": 338,
+   "section": "drop"
+  },
+  {
+   "i": 13,
+   "t": 6.0938,
+   "bar": 4,
+   "beat": 2,
+   "frame": 366,
+   "section": "drop"
+  },
+  {
+   "i": 14,
+   "t": 6.5625,
+   "bar": 4,
+   "beat": 3,
+   "frame": 394,
+   "section": "drop"
+  },
+  {
+   "i": 15,
+   "t": 7.0312,
+   "bar": 4,
+   "beat": 4,
+   "frame": 422,
+   "section": "drop"
+  },
+  {
+   "i": 16,
+   "t": 7.5,
+   "bar": 5,
+   "beat": 1,
+   "frame": 450,
+   "section": "drop"
+  },
+  {
+   "i": 17,
+   "t": 7.9688,
+   "bar": 5,
+   "beat": 2,
+   "frame": 478,
+   "section": "drop"
+  },
+  {
+   "i": 18,
+   "t": 8.4375,
+   "bar": 5,
+   "beat": 3,
+   "frame": 506,
+   "section": "drop"
+  },
+  {
+   "i": 19,
+   "t": 8.9062,
+   "bar": 5,
+   "beat": 4,
+   "frame": 534,
+   "section": "drop"
+  },
+  {
+   "i": 20,
+   "t": 9.375,
+   "bar": 6,
+   "beat": 1,
+   "frame": 562,
+   "section": "drop"
+  },
+  {
+   "i": 21,
+   "t": 9.8438,
+   "bar": 6,
+   "beat": 2,
+   "frame": 591,
+   "section": "drop"
+  },
+  {
+   "i": 22,
+   "t": 10.3125,
+   "bar": 6,
+   "beat": 3,
+   "frame": 619,
+   "section": "drop"
+  },
+  {
+   "i": 23,
+   "t": 10.7812,
+   "bar": 6,
+   "beat": 4,
+   "frame": 647,
+   "section": "drop"
+  },
+  {
+   "i": 24,
+   "t": 11.25,
+   "bar": 7,
+   "beat": 1,
+   "frame": 675,
+   "section": "drop"
+  },
+  {
+   "i": 25,
+   "t": 11.7188,
+   "bar": 7,
+   "beat": 2,
+   "frame": 703,
+   "section": "drop"
+  },
+  {
+   "i": 26,
+   "t": 12.1875,
+   "bar": 7,
+   "beat": 3,
+   "frame": 731,
+   "section": "drop"
+  },
+  {
+   "i": 27,
+   "t": 12.6562,
+   "bar": 7,
+   "beat": 4,
+   "frame": 759,
+   "section": "drop"
+  },
+  {
+   "i": 28,
+   "t": 13.125,
+   "bar": 8,
+   "beat": 1,
+   "frame": 788,
+   "section": "hold"
+  },
+  {
+   "i": 29,
+   "t": 13.5938,
+   "bar": 8,
+   "beat": 2,
+   "frame": 816,
+   "section": "hold"
+  },
+  {
+   "i": 30,
+   "t": 14.0625,
+   "bar": 8,
+   "beat": 3,
+   "frame": 844,
+   "section": "hold"
+  },
+  {
+   "i": 31,
+   "t": 14.5312,
+   "bar": 8,
+   "beat": 4,
+   "frame": 872,
+   "section": "hold"
+  },
+  {
+   "i": 32,
+   "t": 15.0,
+   "bar": 9,
+   "beat": 1,
+   "frame": 900,
+   "section": "end-hit"
+  }
+ ],
+ "downbeats": [
+  0.0,
+  1.875,
+  3.75,
+  5.625,
+  7.5,
+  9.375,
+  11.25,
+  13.125,
+  15.0
+ ],
+ "sections": [
+  {
+   "name": "intro",
+   "start": 0.0,
+   "bars": 1
+  },
+  {
+   "name": "build",
+   "start": 1.875,
+   "bars": 1
+  },
+  {
+   "name": "drop",
+   "start": 3.75,
+   "bars": 5
+  },
+  {
+   "name": "hold",
+   "start": 13.125,
+   "bars": 1
+  }
+ ],
+ "style": "drive",
+ "key": "F minor",
+ "seed": 21
+}

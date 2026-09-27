@@ -24,3 +24,5 @@ examples/**/hf/renders/
 examples/**/*.fcpxml
 examples/**/qa/hyperframes-check.json
 examples/**/deliver/*.jpg
+examples/**/reference/*.jpg
+examples/**/reference/*.png

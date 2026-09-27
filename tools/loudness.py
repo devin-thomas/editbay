@@ -10,7 +10,7 @@ Usage:
 Targets (house defaults): -14 LUFS for reels/shorts/music-led pieces, -16 LUFS for narrated explainers;
 true peak <= -1 dBTP measured on the DELIVERED file (AAC transcodes add ~0.3 dB: leave headroom, re-measure).
 """
-import argparse, json, re, subprocess, sys
+import argparse, json, os, re, subprocess, sys
 
 
 def measure(path):
@@ -32,7 +32,17 @@ def normalize(src, dst, target, tp, lra=11):
     # 48 kHz out: loudnorm upsamples internally to 192 kHz and would otherwise keep that rate.
     subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", src, "-af", af, "-ar", "48000", "-c:v", "copy", dst],
                    check=True)
-    return measure(dst)
+    res = measure(dst)
+    # Linear loudnorm is a gain change, so a dense mix can still peak over the ceiling. Trim the excess (and a 0.1 dB
+    # margin) as plain gain: integrated loudness drops by the same small amount and stays inside the window.
+    if res["true_peak_dbtp"] is not None and res["true_peak_dbtp"] > tp:
+        trim = res["true_peak_dbtp"] - tp + 0.1
+        tmp = dst + ".trim" + os.path.splitext(dst)[1]
+        subprocess.run(["ffmpeg", "-nostdin", "-v", "error", "-y", "-i", dst, "-af", f"volume=-{trim:.2f}dB", "-c:v", "copy", tmp],
+                       check=True)
+        os.replace(tmp, dst)
+        res = measure(dst)
+    return res
 
 
 def main():

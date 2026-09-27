@@ -26,3 +26,8 @@ Gotchas that each cost a re-render:
 - Fonts: Google Fonts links load before capture; for renders that must match elsewhere, vendor the fonts into the
   project (the package ships `hyperframes-localize-fonts`) or use `--docker`.
 - Studio for humans: `npx hyperframes preview --background` (agent-safe), `--status`, `--stop`.
+- **Render audio is normalised to about -16 LUFS** with one static gain (0.8.79, measured: a -14.3 LUFS mix came
+  out at -16.1 with a constant -1.79 dB and zero lag; a -16.0 mix stayed at -16.1). For any other loudness target,
+  master the mix in sound-bed and put it back after every render with `tools/remux_audio.py` (video copied untouched).
+- `--resolution landscape-4k` renders the same composition at 2x device scale: the way to make a 4K master from a
+  1080p layout (fixed-pixel CSS stays correct).

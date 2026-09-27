@@ -12,7 +12,7 @@ Usage:
               [--key A --scale minor] [--seed 3] [--fps 60] [--end-hit]
   sections: name:bars pairs. Names that shape the arrangement: intro (pad + hat), build (adds kick, rising filter),
   groove (kit + bass, no arp: under a voice), drop (full kit + bass + arp), break (pad only), outro (kit falls away),
-  hold (sustained chord for a lockup).
+  hold (sustained chord for a lockup). --gaps 24 silences the half beat before beat 24 (a pre-drop gap).
 Writes OUT.wav (48 kHz stereo, around -18 LUFS, leave loudness to the mix), OUT.stems/{drums,bass,pad,arp}.wav,
 and OUT.grid.json ({bpm, seconds_per_beat, fps, duration, beats:[{i,t,bar,beat,frame,section}], sections, downbeats}).
 It is a bed, not a song: steady, unobtrusive under a voice, punctuated where the sections change.
@@ -86,6 +86,7 @@ def main():
     ap.add_argument("--key", default="A"); ap.add_argument("--scale", choices=list(SCALES), default="minor")
     ap.add_argument("--seed", type=int, default=3); ap.add_argument("--fps", type=float, default=60)
     ap.add_argument("--end-hit", action="store_true", help="a final hit and ring-out after the last bar")
+    ap.add_argument("--gaps", default="", help="beat indices preceded by half a beat of silence (pre-drop gaps)")
     a = ap.parse_args()
     rng = np.random.default_rng(a.seed)
     spb = 60.0 / a.bpm
@@ -144,6 +145,12 @@ def main():
         hn = int(2.3 * SR); last = [degree_note(0, 1), degree_note(2, 1), degree_note(4, 1), degree_note(0, 2)]
         place(pad, lowpass(sum(saw(hz(m), hn, d) for m in last for d in (-0.003, 0.003)) / 8, 1800) * adsr(hn, 0.01, 0.3, 0.6, 1.5), dur)
         grid.append({"i": len(grid), "t": round(dur, 4), "bar": bars + 1, "beat": 1, "frame": round(dur * a.fps), "section": "end-hit"})
+    for gb in [int(x) for x in a.gaps.split(",") if x.strip()]:
+        g0, g1 = int((gb - 0.5) * spb * SR), int(gb * spb * SR)
+        fade = int(0.004 * SR)
+        for buf in (drums, bass, pad, arp):
+            buf[g0:g1] = 0.0
+            buf[max(g0 - fade, 0):g0] *= np.linspace(1, 0, g0 - max(g0 - fade, 0))
     stems = {"drums": drums, "bass": bass, "pad": pad, "arp": arp}
     mix = sum(stems.values())
     peak = np.max(np.abs(mix)) or 1

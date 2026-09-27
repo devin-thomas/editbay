@@ -22,10 +22,12 @@ beats.json:
   anchor: a phrase in the words (case/punctuation-insensitive); occurrence picks the Nth; offset shifts the start.
   until: end the cue at the end of this phrase (searched after the anchor) instead of a fixed hold.
   until_start: end the cue where this phrase starts (hold a scene until the next beat takes over; no empty gap).
-  beat / hold_beats: music-led cues on grid.json beats (bar b, beat k -> index (b-1)*4 + k-1).
+  beat / hold_beats: music-led cues on grid.json beats (bar b, beat k -> index (b-1)*4 + k-1); half-beats like
+  24.5 are interpolated on the grid.
   zone: left | right | top | bottom | center | full | pip-tl | pip-tr | pip-bl | pip-br.
   overlay_of: id of a cue this one deliberately layers on (a highlight over a rail): no shared-zone warning.
   text kinds (read time applies): title, side-card, lower-third, bullet, word-highlight, caption-slam, label.
+  kind "sfx": a sound-only cue (its "sfx" names the sound); no element, no motion assertion.
 Writes: beats.resolved.json, BEATS.md (table + per-zone timeline), <name>.motion.json (hyperframes check sidecar:
 each cue appears by its start + 0.5 s, stays in frame, and keeps its order).
 Exit 1 on errors (an anchor not found, a cue outside the piece); warnings are printed and listed in BEATS.md.
@@ -86,10 +88,11 @@ def main():
             if not grid:
                 errors.append(f"{c['id']}: beat cue but no grid"); continue
             beats = [b["t"] if isinstance(b, dict) else b for b in grid["beats"]]
-            if c["beat"] >= len(beats):
+            bi, frac = int(c["beat"]), c["beat"] - int(c["beat"])  # half-beats (24.5) interpolate on the grid
+            if bi >= len(beats):
                 errors.append(f"{c['id']}: beat {c['beat']} beyond the grid ({len(beats)} beats)"); continue
             spb = grid.get("seconds_per_beat") or (beats[1] - beats[0])
-            r["start"] = beats[c["beat"]] + c.get("offset", 0.0)
+            r["start"] = beats[bi] + frac * spb + c.get("offset", 0.0)
             r["end"] = r["start"] + c.get("hold_beats", 2) * spb
         elif "anchor" in c:
             s, e, near = find(words, c["anchor"], c.get("occurrence", 1))
@@ -143,12 +146,13 @@ def main():
     json.dump({**{k: v for k, v in sheet.items() if k != "cues"}, "cues": resolved}, open(os.path.join(out, "beats.resolved.json"), "w"), indent=1)
     name = os.path.splitext(os.path.basename(sheet.get("composition", "index.html")))[0]
     motion = {"duration": dur, "assertions": []}
-    for r in resolved:
+    visual = [r for r in resolved if r.get("kind") != "sfx"]  # sound-only cues place audio, not pixels
+    for r in visual:
         sel = r.get("selector", f"#{r['id']}")
         motion["assertions"].append({"kind": "appearsBy", "selector": sel, "bySec": round(r["start"] + 0.5, 3)})
         if r.get("zone") != "full":
             motion["assertions"].append({"kind": "staysInFrame", "selector": sel})
-    for p, q in zip(resolved, resolved[1:]):
+    for p, q in zip(visual, visual[1:]):
         if q["start"] - p["start"] >= 0.3:
             motion["assertions"].append({"kind": "before", "a": p.get("selector", f"#{p['id']}"), "b": q.get("selector", f"#{q['id']}")})
     json.dump(motion, open(os.path.join(out, f"{name}.motion.json"), "w"), indent=1)

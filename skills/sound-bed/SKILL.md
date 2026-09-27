@@ -52,10 +52,12 @@ least 18 LU under the voice at sentence starts (listen to three).
 
 ## 4. Hand to the build
 
-The composition plays `sound/mix.wav` as its only audio. After the final encode, render-verify measures loudness again
-on the delivered file (AAC can add about 0.3 dB of peak); if it drifts, re-mux the mix rather than re-rendering video.
+The composition plays `sound/mix.wav` as its only audio. HyperFrames normalises rendered audio to about -16 LUFS, so
+for any other target put the mastered mix back after each render:
+`uv run $EB/tools/remux_audio.py renders/review.mp4 sound/mix.wav --out renders/final.mp4 --target -14 --tp -1.0`
+(the video is copied; AAC true-peak overshoot is trimmed). Render-verify then measures the delivered file.
 
-**Done when:** the mix path is in the brief and the build uses it.
+**Done when:** the mix path is in the brief, the build uses it, and the delivered file measures on target.
 
 ## Checklist
 

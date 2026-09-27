@@ -1,0 +1,153 @@
+{
+ "video": "/Users/research/dev/video-skills-research/source/x/kenn_2103336752341745664.mp4",
+ "fps": 60.0,
+ "threshold": 0.25,
+ "range": [
+  0.0,
+  15.061
+ ],
+ "cuts": [
+  {
+   "t": 1.767,
+   "score": 0.474,
+   "last": 1.767,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 4.233,
+   "score": 0.833,
+   "last": 4.25,
+   "frames": 2,
+   "kind": "flash"
+  },
+  {
+   "t": 7.5,
+   "score": 1.0,
+   "last": 7.533,
+   "frames": 3,
+   "kind": "flash"
+  },
+  {
+   "t": 11.25,
+   "score": 0.913,
+   "last": 11.25,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 11.733,
+   "score": 1.0,
+   "last": 11.75,
+   "frames": 2,
+   "kind": "flash"
+  },
+  {
+   "t": 12.2,
+   "score": 0.302,
+   "last": 12.2,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.433,
+   "score": 0.387,
+   "last": 12.433,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.667,
+   "score": 0.641,
+   "last": 12.667,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.933,
+   "score": 0.78,
+   "last": 12.933,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.983,
+   "score": 0.631,
+   "last": 12.983,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 13.017,
+   "score": 0.699,
+   "last": 13.05,
+   "frames": 2,
+   "kind": "flash"
+  },
+  {
+   "t": 13.1,
+   "score": 0.88,
+   "last": 13.133,
+   "frames": 2,
+   "kind": "flash"
+  }
+ ],
+ "shots": [
+  1.767,
+  2.466,
+  3.267,
+  3.75,
+  0.483,
+  0.467,
+  0.233,
+  0.234,
+  0.266,
+  0.05,
+  0.034,
+  0.083,
+  1.961
+ ],
+ "stats": {
+  "shots": 13,
+  "cuts_per_min": 47.8,
+  "mean_shot": 1.159,
+  "median_shot": 0.467,
+  "min_shot": 0.034,
+  "max_shot": 3.75,
+  "min_shot_frames": 2
+ },
+ "density": [
+  {
+   "t": 0.0,
+   "cuts": 1
+  },
+  {
+   "t": 2.0,
+   "cuts": 0
+  },
+  {
+   "t": 4.0,
+   "cuts": 1
+  },
+  {
+   "t": 6.0,
+   "cuts": 1
+  },
+  {
+   "t": 8.0,
+   "cuts": 0
+  },
+  {
+   "t": 10.0,
+   "cuts": 2
+  },
+  {
+   "t": 12.0,
+   "cuts": 7
+  },
+  {
+   "t": 14.0,
+   "cuts": 0
+  }
+ ]
+}

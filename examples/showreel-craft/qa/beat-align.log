@@ -1,0 +1,11 @@
+cut    7.483s  half-beat delta   -17.0 ms  residual   -17.0 ms  ok
+cut   11.250s  half-beat delta    +0.0 ms  residual    +0.0 ms  ok
+cut   11.483s  half-beat delta    -1.4 ms  residual    -1.4 ms  ok
+cut   11.733s  half-beat delta   +14.2 ms  residual   +14.2 ms  ok
+cut   11.950s  half-beat delta    -3.2 ms  residual    -3.2 ms  ok
+cut   12.183s  half-beat delta    -4.5 ms  residual    -4.5 ms  ok
+cut   12.433s  half-beat delta   +11.2 ms  residual   +11.2 ms  ok
+cut   12.650s  half-beat delta    -6.2 ms  residual    -6.2 ms  ok
+cut   12.883s  half-beat delta    -7.6 ms  residual    -7.6 ms  ok
+cut   13.133s  half-beat delta    +8.0 ms  residual    +8.0 ms  ok
+10/10 cuts within ±34.0 ms

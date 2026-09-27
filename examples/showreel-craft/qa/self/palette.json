@@ -1,0 +1,45 @@
+{
+ "source": "renders/review.mp4",
+ "palette": [
+  {
+   "hex": "#0c1215",
+   "share": 0.381,
+   "role": "near-black"
+  },
+  {
+   "hex": "#0f171e",
+   "share": 0.28,
+   "role": "near-black"
+  },
+  {
+   "hex": "#111d2b",
+   "share": 0.199,
+   "role": "neutral"
+  },
+  {
+   "hex": "#213042",
+   "share": 0.047,
+   "role": "colour"
+  },
+  {
+   "hex": "#ebf1f3",
+   "share": 0.039,
+   "role": "near-white"
+  },
+  {
+   "hex": "#2c7be3",
+   "share": 0.036,
+   "role": "accent"
+  },
+  {
+   "hex": "#626e7e",
+   "share": 0.011,
+   "role": "neutral"
+  },
+  {
+   "hex": "#070b0f",
+   "share": 0.007,
+   "role": "near-black"
+  }
+ ]
+}

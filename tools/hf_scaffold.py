@@ -13,7 +13,8 @@ Usage:
                  [--captions words.json] [--hud "EDITBAY / EXPLAINER"] [--title "..."] [--extra-css scenes.css]
                  [--remap left=upper,right=lower]   (re-layout the same beat sheet for 1080x1920)
 Cue kinds: title, side-card, lower-third, bullet, label, step, word-highlight, image-panel, takeover, custom.
-  content fields: title, subtitle, kicker, icon (img path), items (list), src (image/video), html + js (custom).
+  content fields: title, subtitle, kicker, icon (img path), items (list), src (image/video), html + js (custom),
+  raw (custom only: no default fade in/out; the scene's js owns every tween, for hard cuts on the beat).
   enter/exit presets: fade, rise, drop, slide-from-left, slide-from-right, pop (transform and opacity only).
 Writes OUT/index.html (+ OUT/index.motion.json from the beat sheet's sidecar when present) and copies media into
 OUT/assets/. Runs `hyperframes init` first when OUT has no project (skills install skipped).
@@ -196,9 +197,13 @@ def cue_js(c, words):
         if (c.get("content") or {}).get("subtitle"):
             lines.append(f'tl.fromTo("#{cid} .t-sub", {{opacity: 0}}, {{opacity: 1, duration: 0.4}}, {s + 0.25});')
     elif kind == "custom":
-        lines.append(f'tl.fromTo("#{cid}", {{opacity: 0}}, {{opacity: 1, duration: 0.35, ease: "power2.out"}}, {s});')
+        raw = (c.get("content") or {}).get("raw")
+        if not raw:  # raw scenes own their entrance and exit (hard cuts on the beat)
+            lines.append(f'tl.fromTo("#{cid}", {{opacity: 0}}, {{opacity: 1, duration: 0.35, ease: "power2.out"}}, {s});')
         if (c.get("content") or {}).get("js"):
             lines.append("{ const S = %s, E = %s; %s }" % (s, e, c["content"]["js"]))
+        if raw:
+            return "\n      ".join(lines)
     else:
         lines.append(f'tl.fromTo("#{cid}", {json.dumps(frm)}, {{opacity: 1, x: 0, y: 0, scale: 1, duration: 0.5, ease: "{ease}"}}, {s});')
     if kind == "bullet":
@@ -274,8 +279,9 @@ def main():
     if base:
         body.append(f'<div id="base-wrap" class="clip" data-start="0" data-duration="{dur}"><video id="base" src="{base}" muted '
                     f'playsinline data-start="0" data-duration="{dur}" class="clip"></video></div>')
-    body += [cue_html(c, W, H, words) for c in sheet["cues"]]
-    js = [cue_js(c, words) for c in sheet["cues"]]
+    shown = [c for c in sheet["cues"] if c.get("kind") != "sfx"]  # sfx cues only drive the mix
+    body += [cue_html(c, W, H, words) for c in shown]
+    js = [cue_js(c, words) for c in shown]
     js.append(f'tl.fromTo("#bg-glow", {{x: -60, y: 30}}, {{x: 60, y: -30, duration: {dur}, ease: "none"}}, 0);')
     if a.captions:
         cw = json.load(open(a.captions))

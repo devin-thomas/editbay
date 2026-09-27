@@ -1,0 +1,53 @@
+{
+ "render": "renders/final.mp4",
+ "gates": [
+  {
+   "gate": "hyperframes-check",
+   "status": "PASS",
+   "detail": "lint ok, runtime ok, layout ok, motion ok, contrast ok"
+  },
+  {
+   "gate": "av-qa",
+   "status": "PASS",
+   "detail": "- note static picture 8.53-9.15s (0.6s; allow intentional holds with --allow-freeze)"
+  },
+  {
+   "gate": "loudness",
+   "status": "PASS",
+   "detail": "renders/final.mp4: -14.3 LUFS, LRA 1.5 LU, TP -1.4 dBTP  OK (target -14.0 \u00b11 LU, TP <= -1.0)"
+  },
+  {
+   "gate": "beat-align",
+   "status": "PASS",
+   "detail": "10/10 cuts within \u00b134.0 ms"
+  },
+  {
+   "gate": "face-clear",
+   "status": "PENDING",
+   "detail": "no --faces/--source (no talking head?)"
+  },
+  {
+   "gate": "words",
+   "status": "PENDING",
+   "detail": "no --expected/--heard"
+  },
+  {
+   "gate": "visual",
+   "status": "PENDING",
+   "detail": "read 5 sheet(s) at this phase boundary and record what you saw below"
+  }
+ ],
+ "evidence": [
+  "qa/hyperframes-check.json",
+  "qa/av_qa.json",
+  "qa/loudness.json",
+  "qa/cuts.json"
+ ],
+ "sheets": [
+  "qa/overview_01.jpg",
+  "qa/overview_02.jpg",
+  "qa/overview_03.jpg",
+  "qa/strips_01.jpg",
+  "qa/strips_02.jpg"
+ ]
+}

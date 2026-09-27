@@ -1,0 +1,115 @@
+{
+ "duration": 16.5,
+ "assertions": [
+  {
+   "kind": "appearsBy",
+   "selector": "#C1",
+   "bySec": 0.5
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#ML",
+   "bySec": 0.5
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#C2",
+   "bySec": 2.367
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#C3",
+   "bySec": 4.25
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#C4",
+   "bySec": 6.133
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#C5",
+   "bySec": 8.0
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#C6",
+   "bySec": 9.867
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F0",
+   "bySec": 11.75
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F1",
+   "bySec": 11.983
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F2",
+   "bySec": 12.217
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F3",
+   "bySec": 12.45
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F4",
+   "bySec": 12.683
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F5",
+   "bySec": 12.917
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F6",
+   "bySec": 13.15
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#F7",
+   "bySec": 13.383
+  },
+  {
+   "kind": "appearsBy",
+   "selector": "#C8",
+   "bySec": 13.633
+  },
+  {
+   "kind": "before",
+   "a": "#ML",
+   "b": "#C2"
+  },
+  {
+   "kind": "before",
+   "a": "#C2",
+   "b": "#C3"
+  },
+  {
+   "kind": "before",
+   "a": "#C3",
+   "b": "#C4"
+  },
+  {
+   "kind": "before",
+   "a": "#C4",
+   "b": "#C5"
+  },
+  {
+   "kind": "before",
+   "a": "#C5",
+   "b": "#C6"
+  },
+  {
+   "kind": "before",
+   "a": "#C6",
+   "b": "#F0"
+  }
+ ]
+}

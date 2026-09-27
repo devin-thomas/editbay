@@ -1,0 +1,33 @@
+[
+ {
+  "variant": "final-1080p",
+  "file": "editbay-craft-reel-final-1080p.mp4",
+  "bytes": 4362963,
+  "sha256": "a62075d3b00f9ad12ee4cda3c1bd032a6586bb26b364cb9b3d5e30f152adbe54",
+  "duration": 16.5,
+  "video": "h264 1920x1080 60.0fps",
+  "audio": "aac 48000 Hz",
+  "loudness": {
+   "lufs": -14.3,
+   "true_peak_dbtp": -1.4
+  }
+ },
+ {
+  "variant": "thumb-A",
+  "file": "editbay-craft-reel-thumb-A.jpg",
+  "bytes": 76654,
+  "sha256": "db35e34203fc18084faf6a60c70deb1abd8687614ff13586566d22b0f498dfa3"
+ },
+ {
+  "variant": "thumb-B",
+  "file": "editbay-craft-reel-thumb-B.jpg",
+  "bytes": 57810,
+  "sha256": "ae9c62f585447b0aee63e325aea374065e02e63926243357502a67a1979d403e"
+ },
+ {
+  "variant": "thumb-C",
+  "file": "editbay-craft-reel-thumb-C.jpg",
+  "bytes": 70427,
+  "sha256": "8ef6b827ec98cb6c88184660ad998dc58781f602d4b1f670809d4872e676918f"
+ }
+]

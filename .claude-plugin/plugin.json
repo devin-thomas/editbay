@@ -25,6 +25,8 @@
     "./skills/sound-bed",
     "./skills/motion-build",
     "./skills/render-verify",
-    "./skills/delivery-pack"
+    "./skills/delivery-pack",
+    "./skills/reference-to-style",
+    "./skills/style-craft-reel"
   ]
 }

@@ -1,0 +1,45 @@
+{
+ "source": "/Users/research/dev/video-skills-research/source/x/kenn_2103336752341745664.mp4",
+ "palette": [
+  {
+   "hex": "#0a0a0d",
+   "share": 0.381,
+   "role": "near-black"
+  },
+  {
+   "hex": "#e4e1d9",
+   "share": 0.177,
+   "role": "near-white"
+  },
+  {
+   "hex": "#12111e",
+   "share": 0.168,
+   "role": "near-black"
+  },
+  {
+   "hex": "#2f1e23",
+   "share": 0.111,
+   "role": "neutral"
+  },
+  {
+   "hex": "#56393a",
+   "share": 0.06,
+   "role": "neutral"
+  },
+  {
+   "hex": "#d73f27",
+   "share": 0.043,
+   "role": "accent"
+  },
+  {
+   "hex": "#98888e",
+   "share": 0.03,
+   "role": "neutral"
+  },
+  {
+   "hex": "#323ce5",
+   "share": 0.029,
+   "role": "accent"
+  }
+ ]
+}

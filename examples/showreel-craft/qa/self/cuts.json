@@ -1,0 +1,141 @@
+{
+ "video": "renders/review.mp4",
+ "fps": 60.0,
+ "threshold": 0.25,
+ "range": [
+  0.0,
+  16.5
+ ],
+ "cuts": [
+  {
+   "t": 7.483,
+   "score": 1.0,
+   "last": 7.483,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 11.25,
+   "score": 0.797,
+   "last": 11.25,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 11.483,
+   "score": 1.0,
+   "last": 11.483,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 11.733,
+   "score": 1.0,
+   "last": 11.733,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 11.95,
+   "score": 0.817,
+   "last": 11.95,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.183,
+   "score": 1.0,
+   "last": 12.183,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.433,
+   "score": 1.0,
+   "last": 12.433,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.65,
+   "score": 0.847,
+   "last": 12.65,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 12.883,
+   "score": 1.0,
+   "last": 12.883,
+   "frames": 1,
+   "kind": "cut"
+  },
+  {
+   "t": 13.133,
+   "score": 1.0,
+   "last": 13.133,
+   "frames": 1,
+   "kind": "cut"
+  }
+ ],
+ "shots": [
+  7.483,
+  3.767,
+  0.233,
+  0.25,
+  0.217,
+  0.233,
+  0.25,
+  0.217,
+  0.233,
+  0.25,
+  3.367
+ ],
+ "stats": {
+  "shots": 11,
+  "cuts_per_min": 36.4,
+  "mean_shot": 1.5,
+  "median_shot": 0.25,
+  "min_shot": 0.217,
+  "max_shot": 7.483,
+  "min_shot_frames": 13
+ },
+ "density": [
+  {
+   "t": 0.0,
+   "cuts": 0
+  },
+  {
+   "t": 2.0,
+   "cuts": 0
+  },
+  {
+   "t": 4.0,
+   "cuts": 0
+  },
+  {
+   "t": 6.0,
+   "cuts": 1
+  },
+  {
+   "t": 8.0,
+   "cuts": 0
+  },
+  {
+   "t": 10.0,
+   "cuts": 4
+  },
+  {
+   "t": 12.0,
+   "cuts": 5
+  },
+  {
+   "t": 14.0,
+   "cuts": 0
+  },
+  {
+   "t": 16.0,
+   "cuts": 0
+  }
+ ]
+}

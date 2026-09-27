@@ -1,0 +1,106 @@
+{
+ "file": "kenn_2103336752341745664.mp4",
+ "duration": 15.061,
+ "fps": 60.0,
+ "size": "1920x1080",
+ "shots": 13,
+ "cuts": 12,
+ "flashes": 5,
+ "median_shot": 0.467,
+ "cuts_by_third": [
+  2,
+  1,
+  9
+ ],
+ "longest_shots": [
+  [
+   7.5,
+   11.25
+  ],
+  [
+   4.23,
+   7.5
+  ],
+  [
+   1.77,
+   4.23
+  ],
+  [
+   13.1,
+   15.06
+  ],
+  [
+   0.0,
+   1.77
+  ],
+  [
+   11.25,
+   11.73
+  ]
+ ],
+ "tempo_detected": 129.2,
+ "seconds_per_beat": 0.4644,
+ "cut_to_grid_residual_ms": {
+  "median_abs": 28.0,
+  "within_2_frames": "7/12"
+ },
+ "loudness": "kenn_2103336752341745664.mp4: -12.4 LUFS, LRA 2.4 LU, TP -0.6 dBTP",
+ "holds": [
+  [
+   0.0,
+   0.48
+  ]
+ ],
+ "palette": [
+  {
+   "hex": "#0a0a0d",
+   "share": 0.381,
+   "role": "near-black"
+  },
+  {
+   "hex": "#e4e1d9",
+   "share": 0.177,
+   "role": "near-white"
+  },
+  {
+   "hex": "#12111e",
+   "share": 0.168,
+   "role": "near-black"
+  },
+  {
+   "hex": "#2f1e23",
+   "share": 0.111,
+   "role": "neutral"
+  },
+  {
+   "hex": "#56393a",
+   "share": 0.06,
+   "role": "neutral"
+  },
+  {
+   "hex": "#d73f27",
+   "share": 0.043,
+   "role": "accent"
+  },
+  {
+   "hex": "#98888e",
+   "share": 0.03,
+   "role": "neutral"
+  },
+  {
+   "hex": "#323ce5",
+   "share": 0.029,
+   "role": "accent"
+  }
+ ],
+ "sheets": [
+  "overview_01.jpg",
+  "overview_02.jpg",
+  "overview_03.jpg",
+  "overview_04.jpg"
+ ],
+ "strips": [
+  "strips_01.jpg",
+  "strips_02.jpg"
+ ]
+}

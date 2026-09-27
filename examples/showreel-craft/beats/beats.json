@@ -1,0 +1,332 @@
+{
+ "timeline": "music",
+ "grid": "../sound/bed.grid.json",
+ "fps": 60,
+ "duration": 16.5,
+ "min_read": 1.0,
+ "composition": "index.html",
+ "mode": "strict",
+ "cues": [
+  {
+   "id": "C1",
+   "beat": 0,
+   "hold_beats": 4,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage\"><div class=\"base\"></div><div class=\"caret\" id=\"c1caret\"></div></div>",
+    "js": "tl.set(\"#C1\", {opacity: 1}, S); tl.fromTo(\"#c1caret\", {y: -620}, {y: 0, duration: 0.449, ease: \"power2.in\"}, S); tl.to(\"#c1caret\", {scaleY: 0.62, scaleX: 1.35, duration: 0.07, ease: \"power1.out\"}, 0.4688); tl.to(\"#c1caret\", {scaleY: 1, scaleX: 1, duration: 0.28, ease: \"elastic.out(1, 0.45)\"}, 0.5388); tl.to(\"#c1caret\", {opacity: 0, duration: 0.01}, 0.9375); tl.to(\"#c1caret\", {opacity: 1, duration: 0.01}, 1.1719); tl.to(\"#c1caret\", {opacity: 0, duration: 0.01}, 1.4062); tl.to(\"#c1caret\", {opacity: 1, duration: 0.01}, 1.5234); tl.to(\"#c1caret\", {scaleX: 26, scaleY: 0.08, duration: 0.214, ease: \"power3.in\"}, 1.6406);"
+   },
+   "why": "the motif arrives with physics",
+   "overlay_of": null
+  },
+  {
+   "id": "C2",
+   "beat": 4,
+   "hold_beats": 4,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage\"><div class=\"line\" id=\"c2line\"></div><div class=\"words\"><span class=\"w \" id=\"c2w0\">Words</span><span class=\"w \" id=\"c2w1\">first,</span><span class=\"w \" id=\"c2w2\">then</span><span class=\"w accent\" id=\"c2w3\">frames.</span></div><div class=\"dots\"><i class=\"dot\" id=\"c2d0\"></i><i class=\"dot\" id=\"c2d1\"></i><i class=\"dot\" id=\"c2d2\"></i><i class=\"dot\" id=\"c2d3\"></i><i class=\"dot\" id=\"c2d4\"></i><i class=\"dot\" id=\"c2d5\"></i><i class=\"dot\" id=\"c2d6\"></i><i class=\"dot\" id=\"c2d7\"></i><i class=\"dot\" id=\"c2d8\"></i><i class=\"dot\" id=\"c2d9\"></i><i class=\"dot\" id=\"c2d10\"></i><i class=\"dot\" id=\"c2d11\"></i></div></div>",
+    "js": "tl.set(\"#C2\", {opacity: 1}, S); tl.fromTo(\"#c2line\", {scaleX: 1}, {scaleX: 0.0, duration: 0.3, ease: \"power2.in\"}, S); tl.fromTo(\"#c2w0\", {opacity: 0, y: 70}, {opacity: 1, y: 0, duration: 0.22, ease: \"back.out(1.6)\"}, 1.875); tl.fromTo(\"#c2w1\", {opacity: 0, y: 70}, {opacity: 1, y: 0, duration: 0.22, ease: \"back.out(1.6)\"}, 2.3438); tl.fromTo(\"#c2w2\", {opacity: 0, y: 70}, {opacity: 1, y: 0, duration: 0.22, ease: \"back.out(1.6)\"}, 2.8125); tl.fromTo(\"#c2w3\", {opacity: 0, y: 70}, {opacity: 1, y: 0, duration: 0.22, ease: \"back.out(1.6)\"}, 3.2812); tl.fromTo(\"#c2w3\", {skewX: 0}, {skewX: -9, duration: 0.2}, 3.2812); tl.to(\"#C2 .w\", {opacity: 0, scale: 0.4, duration: 0.18, ease: \"power2.in\"}, 3.5625); tl.fromTo(\"#c2d0\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.5719); tl.fromTo(\"#c2d1\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.5839); tl.fromTo(\"#c2d2\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.5959); tl.fromTo(\"#c2d3\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6079); tl.fromTo(\"#c2d4\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6199); tl.fromTo(\"#c2d5\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6319); tl.fromTo(\"#c2d6\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6439); tl.fromTo(\"#c2d7\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6559); tl.fromTo(\"#c2d8\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6679); tl.fromTo(\"#c2d9\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6799); tl.fromTo(\"#c2d10\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.6919); tl.fromTo(\"#c2d11\", {scale: 0, opacity: 0}, {scale: 1, opacity: 1, duration: 0.12}, 3.7039);"
+   },
+   "why": "kinetic statement: transcription comes first",
+   "overlay_of": null
+  },
+  {
+   "id": "C3",
+   "beat": 8,
+   "hold_beats": 4,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage\"><div class=\"grid\"><i class=\"cell\" style=\"--x:0;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:0\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:1\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:2\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:3\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:4\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:5\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:6\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:7\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:0;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:1;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:2;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:3;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:4;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:5;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:6;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:7;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:8;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:9;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:10;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:11;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:12;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:13;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:14;--y:8\"><b class=\"lit\"></b></i><i class=\"cell\" style=\"--x:15;--y:8\"><b class=\"lit\"></b></i></div></div>",
+    "js": "tl.set(\"#C3\", {opacity: 1}, S); tl.fromTo(\"#C3 .cell\", {scale: 0}, {scale: 1, duration: 0.2, stagger: {each: 0.003, from: \"center\"}}, S); tl.fromTo(\"#C3 .grid\", {scale: 1.045}, {scale: 1, duration: 0.3, ease: \"power2.out\"}, 4.2188); tl.fromTo(\"#C3 .grid\", {scale: 1.045}, {scale: 1, duration: 0.3, ease: \"power2.out\"}, 4.6875); tl.fromTo(\"#C3 .grid\", {scale: 1.045}, {scale: 1, duration: 0.3, ease: \"power2.out\"}, 5.1562); tl.fromTo(\"#C3 .lit\", {opacity: 0}, {opacity: 1, duration: 0.18, yoyo: true, repeat: 1, stagger: {each: 0.012, grid: [9, 16], from: \"start\", axis: \"x\"}}, 4.2188); tl.to(\"#C3 .cell\", {scaleY: 0.06, duration: 0.214, ease: \"power3.in\"}, 5.3906);"
+   },
+   "why": "density: the motif multiplied into a field",
+   "overlay_of": null
+  },
+  {
+   "id": "C4",
+   "beat": 12,
+   "hold_beats": 4,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage\"><div class=\"wave\"><i class=\"wb \" style=\"height:90px\"></i><i class=\"wb \" style=\"height:156px\"></i><i class=\"wb \" style=\"height:210px\"></i><i class=\"wb \" style=\"height:132px\"></i><i class=\"wb \" style=\"height:240px\"></i><i class=\"wb \" style=\"height:108px\"></i><i class=\"wb \" style=\"height:180px\"></i><i class=\"wb \" style=\"height:222px\"></i><i class=\"wb dead\" style=\"height:24px\"></i><i class=\"wb dead\" style=\"height:18px\"></i><i class=\"wb dead\" style=\"height:27px\"></i><i class=\"wb dead\" style=\"height:21px\"></i><i class=\"wb \" style=\"height:174px\"></i><i class=\"wb \" style=\"height:252px\"></i><i class=\"wb \" style=\"height:138px\"></i><i class=\"wb \" style=\"height:198px\"></i><i class=\"wb \" style=\"height:114px\"></i><i class=\"wb fill\" style=\"height:66px\"></i><i class=\"wb fill\" style=\"height:60px\"></i><i class=\"wb \" style=\"height:162px\"></i><i class=\"wb \" style=\"height:228px\"></i><i class=\"wb \" style=\"height:120px\"></i><i class=\"wb \" style=\"height:186px\"></i><i class=\"wb \" style=\"height:150px\"></i><i class=\"wb take\" style=\"height:210px\"></i><i class=\"wb take\" style=\"height:132px\"></i><i class=\"wb take\" style=\"height:174px\"></i><i class=\"wb take\" style=\"height:108px\"></i><i class=\"wb take\" style=\"height:192px\"></i><i class=\"wb \" style=\"height:234px\"></i><i class=\"wb \" style=\"height:144px\"></i><i class=\"wb \" style=\"height:90px\"></i></div><div class=\"wl\"><span id=\"l1\">dead air</span><span id=\"l2\">filler</span><span id=\"l3\">retake</span></div><div class=\"flash\"></div></div>",
+    "js": "tl.set(\"#C4\", {opacity: 1}, S); tl.fromTo(\"#C4 .wb\", {scaleY: 0.02}, {scaleY: 1, duration: 0.25, stagger: 0.006, ease: \"power2.out\"}, S); tl.to(\"#C4 .wb.dead\", {scaleY: 0.02, opacity: 0.2, duration: 0.16, ease: \"power2.in\"}, 6.0938); tl.fromTo(\"#l1\", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.14}, 6.0938); tl.to(\"#C4 .wb.fill\", {scaleY: 0.02, opacity: 0.2, duration: 0.16, ease: \"power2.in\"}, 6.5625); tl.fromTo(\"#l2\", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.14}, 6.5625); tl.to(\"#C4 .wb.take\", {scaleY: 0.02, opacity: 0.2, duration: 0.16, ease: \"power2.in\"}, 7.0312); tl.fromTo(\"#l3\", {opacity: 0, y: 14}, {opacity: 1, y: 0, duration: 0.14}, 7.0312); tl.fromTo(\"#C4 .flash\", {opacity: 0}, {opacity: 1, duration: 0.017}, 7.4660);"
+   },
+   "why": "the cut, as a picture: removed chunks collapse on the beat",
+   "overlay_of": null
+  },
+  {
+   "id": "C5",
+   "beat": 16,
+   "hold_beats": 4,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage\"><div class=\"code card3d\" id=\"c5card\"><div class=\"cl\" id=\"c5l0\"><span class=\"k\">&lt;div</span> id=\"C5\" class=\"clip\"</div><div class=\"cl\" id=\"c5l1\">  data-start=\"7.500\"</div><div class=\"cl\" id=\"c5l2\">  data-duration=\"1.875\"<span class=\"k\">&gt;</span></div><div class=\"cl\" id=\"c5l3\">  tl.to(caret, { y: 0 }, beat(1))</div><div class=\"cl\" id=\"c5l4\"><span class=\"k\">&lt;/div&gt;</span></div><div class=\"pill\">render · 60 fps</div></div></div>",
+    "js": "tl.set(\"#C5\", {opacity: 1}, S); tl.fromTo(\"#c5card\", {scale: 0.92, opacity: 0}, {scale: 1, opacity: 1, duration: 0.2}, S); tl.fromTo(\"#c5l0\", {opacity: 0, x: -18}, {opacity: 1, x: 0, duration: 0.1}, 7.7344); tl.fromTo(\"#c5l1\", {opacity: 0, x: -18}, {opacity: 1, x: 0, duration: 0.1}, 7.9688); tl.fromTo(\"#c5l2\", {opacity: 0, x: -18}, {opacity: 1, x: 0, duration: 0.1}, 8.2031); tl.fromTo(\"#c5l3\", {opacity: 0, x: -18}, {opacity: 1, x: 0, duration: 0.1}, 8.4375); tl.fromTo(\"#c5l4\", {opacity: 0, x: -18}, {opacity: 1, x: 0, duration: 0.1}, 8.6719); tl.to(\"#c5card\", {rotationY: -28, rotationX: 8, scale: 0.9, duration: 0.234, ease: \"power2.in\"}, 9.1406);"
+   },
+   "why": "build: the motion is code (the values are this reel's own)",
+   "overlay_of": null
+  },
+  {
+   "id": "C6",
+   "beat": 20,
+   "hold_beats": 4,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage persp\"><div class=\"fan\"><div class=\"c3\" id=\"c6c0\"><div class=\"sweep\"></div><span>frame 0001</span></div><div class=\"c3\" id=\"c6c1\"><div class=\"sweep\"></div><span>frame 0480</span></div><div class=\"c3\" id=\"c6c2\"><div class=\"sweep\"></div><span>frame 0960</span></div></div></div>",
+    "js": "tl.set(\"#C6\", {opacity: 1}, S); tl.fromTo(\"#c6c0\", {rotationY: 0, x: 0, z: 0}, {rotationY: -24, x: -360, z: -120, duration: 0.35, ease: \"power3.out\"}, S); tl.fromTo(\"#c6c1\", {rotationY: 0, x: 0, z: 0}, {rotationY: 0, x: 0, z: 0, duration: 0.35, ease: \"power3.out\"}, S); tl.fromTo(\"#c6c2\", {rotationY: 0, x: 0, z: 0}, {rotationY: 24, x: 360, z: -120, duration: 0.35, ease: \"power3.out\"}, S); tl.to(\"#C6 .fan\", {rotationY: 0, duration: 0.3, ease: \"power2.out\"}, 9.8438); tl.to(\"#C6 .fan\", {rotationY: -10, duration: 0.3, ease: \"power2.out\"}, 10.3125); tl.to(\"#C6 .fan\", {rotationY: 0, duration: 0.3, ease: \"power2.out\"}, 10.7812); tl.fromTo(\"#C6 .sweep\", {x: -420}, {x: 420, duration: 0.9, ease: \"power1.inOut\", stagger: 0.08}, 9.8438); tl.to(\"#C6\", {opacity: 0, duration: 0.02}, 11.0156);"
+   },
+   "why": "render: frames as objects",
+   "overlay_of": null
+  },
+  {
+   "id": "F0",
+   "beat": 24.0,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl0\"><div class=\"caret big\"></div></div>",
+    "js": "tl.set(\"#F0\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: caret",
+   "overlay_of": null
+  },
+  {
+   "id": "F1",
+   "beat": 24.5,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl1\"><div class=\"fl-t\">WORDS</div></div>",
+    "js": "tl.set(\"#F1\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: words",
+   "overlay_of": null
+  },
+  {
+   "id": "F2",
+   "beat": 25.0,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl2\"><div class=\"fl-grid\"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>",
+    "js": "tl.set(\"#F2\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: grid",
+   "overlay_of": null
+  },
+  {
+   "id": "F3",
+   "beat": 25.5,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl0\"><div class=\"fl-wave\"><i style=\"height:90px\"></i><i style=\"height:156px\"></i><i style=\"height:210px\"></i><i style=\"height:132px\"></i><i style=\"height:240px\"></i><i style=\"height:108px\"></i><i style=\"height:180px\"></i><i style=\"height:222px\"></i><i style=\"height:24px\"></i><i style=\"height:18px\"></i><i style=\"height:27px\"></i><i style=\"height:21px\"></i><i style=\"height:174px\"></i><i style=\"height:252px\"></i><i style=\"height:138px\"></i><i style=\"height:198px\"></i></div></div>",
+    "js": "tl.set(\"#F3\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: wave",
+   "overlay_of": null
+  },
+  {
+   "id": "F4",
+   "beat": 26.0,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl1\"><div class=\"fl-t mono\">&lt;/&gt;</div></div>",
+    "js": "tl.set(\"#F4\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: code",
+   "overlay_of": null
+  },
+  {
+   "id": "F5",
+   "beat": 26.5,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl2\"><div class=\"fl-frame\"></div></div>",
+    "js": "tl.set(\"#F5\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: frame",
+   "overlay_of": null
+  },
+  {
+   "id": "F6",
+   "beat": 27.0,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl0\"><div class=\"fl-t\">✓</div></div>",
+    "js": "tl.set(\"#F6\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: check",
+   "overlay_of": null
+  },
+  {
+   "id": "F7",
+   "beat": 27.5,
+   "hold_beats": 0.5,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "flash": true,
+   "sfx": "tick",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage fl fl1\"><div class=\"fl-t mono\">60</div></div>",
+    "js": "tl.set(\"#F7\", {opacity: 1}, S);"
+   },
+   "why": "flurry card: fps",
+   "overlay_of": null
+  },
+  {
+   "id": "C8",
+   "beat": 28,
+   "hold_beats": 7.2,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "content": {
+    "raw": true,
+    "html": "<div class=\"stage\"><div class=\"mark\"><span class=\"ch\" id=\"lk0\">e</span><span class=\"ch\" id=\"lk1\">d</span><span class=\"ch\" id=\"lk2\">i</span><span class=\"ch\" id=\"lk3\">t</span><span class=\"ch\" id=\"lk4\">b</span><span class=\"ch\" id=\"lk5\">a</span><span class=\"ch\" id=\"lk6\">y</span><span class=\"caret land\" id=\"lkcaret\"></span></div><div class=\"sub\" id=\"lksub\">Starter Pack · Devin Thomas</div></div>",
+    "js": "tl.set(\"#C8\", {opacity: 1}, S); tl.fromTo(\"#lk0\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.1250); tl.fromTo(\"#lk1\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.2422); tl.fromTo(\"#lk2\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.3594); tl.fromTo(\"#lk3\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.4766); tl.fromTo(\"#lk4\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.5938); tl.fromTo(\"#lk5\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.7109); tl.fromTo(\"#lk6\", {opacity: 0, y: 40}, {opacity: 1, y: 0, duration: 0.16, ease: \"power3.out\"}, 13.8281); tl.fromTo(\"#lkcaret\", {y: -700, opacity: 1}, {y: 0, duration: 0.449, ease: \"power2.in\"}, 13.8281); tl.to(\"#lkcaret\", {scaleY: 0.62, scaleX: 1.35, duration: 0.07}, 14.2969); tl.to(\"#lkcaret\", {scaleY: 1, scaleX: 1, duration: 0.3, ease: \"elastic.out(1, 0.45)\"}, 14.3669); tl.fromTo(\"#lksub\", {opacity: 0, y: 16}, {opacity: 1, y: 0, duration: 0.3}, 14.5312); tl.to(\"#lkcaret\", {opacity: 0, duration: 0.01}, 15.0000); tl.to(\"#lkcaret\", {opacity: 1, duration: 0.01}, 15.4688); tl.to(\"#lkcaret\", {opacity: 0, duration: 0.01}, 15.9375); tl.fromTo(\"#C8 .mark\", {scale: 1}, {scale: 1.03, duration: 3.375, ease: \"none\"}, S);"
+   },
+   "sfx": null,
+   "why": "lockup: the motif lands in the name",
+   "overlay_of": null
+  },
+  {
+   "id": "ML",
+   "beat": 0,
+   "hold_beats": 35.2,
+   "kind": "custom",
+   "zone": "full",
+   "cover_face": true,
+   "overlay_of": "C1",
+   "content": {
+    "raw": true,
+    "html": "<div class=\"mline\"><span class=\"ml-l\">editbay · showreel</span><span class=\"ml-c\"><b class=\"chn\" id=\"ch0\">01 caret</b><b class=\"chn\" id=\"ch1\">02 words</b><b class=\"chn\" id=\"ch2\">03 field</b><b class=\"chn\" id=\"ch3\">04 cut</b><b class=\"chn\" id=\"ch4\">05 build</b><b class=\"chn\" id=\"ch5\">06 render</b><b class=\"chn\" id=\"ch6\">07 recap</b><b class=\"chn\" id=\"ch7\">08 editbay</b></span><span class=\"ml-r\" id=\"bb\">bar 1 · 1</span></div>",
+    "js": "tl.set(\"#ML\", {opacity: 1}, S); tl.set(\"#ch0\", {opacity: 1}, 0.0); tl.set(\"#ch0\", {opacity: 0}, 1.875); tl.set(\"#ch1\", {opacity: 1}, 1.875); tl.set(\"#ch1\", {opacity: 0}, 3.75); tl.set(\"#ch2\", {opacity: 1}, 3.75); tl.set(\"#ch2\", {opacity: 0}, 5.625); tl.set(\"#ch3\", {opacity: 1}, 5.625); tl.set(\"#ch3\", {opacity: 0}, 7.5); tl.set(\"#ch4\", {opacity: 1}, 7.5); tl.set(\"#ch4\", {opacity: 0}, 9.375); tl.set(\"#ch5\", {opacity: 1}, 9.375); tl.set(\"#ch5\", {opacity: 0}, 11.25); tl.set(\"#ch6\", {opacity: 1}, 11.25); tl.set(\"#ch6\", {opacity: 0}, 13.125); tl.set(\"#ch7\", {opacity: 1}, 13.125); tl.set(\"#ch7\", {opacity: 0}, 16.5); const bb = document.getElementById(\"bb\"); tl.eventCallback(\"onUpdate\", () => { const b = Math.min(31, Math.floor(tl.time() / 0.46875)); bb.textContent = `bar ${Math.floor(b / 4) + 1} · ${b % 4 + 1}`; });"
+   },
+   "why": "machine layer"
+  },
+  {
+   "id": "S0",
+   "beat": 1,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "click",
+   "why": "sound: click"
+  },
+  {
+   "id": "S1",
+   "beat": 4,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "whoosh-short",
+   "why": "sound: whoosh-short"
+  },
+  {
+   "id": "S2",
+   "beat": 8,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "whoosh-short",
+   "why": "sound: whoosh-short"
+  },
+  {
+   "id": "S3",
+   "beat": 12,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "whoosh-short",
+   "why": "sound: whoosh-short"
+  },
+  {
+   "id": "S4",
+   "beat": 16,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "whoosh-short",
+   "why": "sound: whoosh-short"
+  },
+  {
+   "id": "S5",
+   "beat": 20,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "whoosh-short",
+   "why": "sound: whoosh-short"
+  },
+  {
+   "id": "S6",
+   "beat": 30.5,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "impact",
+   "why": "sound: impact"
+  },
+  {
+   "id": "S7",
+   "beat": 31,
+   "hold_beats": 0.25,
+   "kind": "sfx",
+   "sfx": "shimmer",
+   "why": "sound: shimmer"
+  }
+ ]
+}
