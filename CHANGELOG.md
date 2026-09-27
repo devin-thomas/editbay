@@ -6,6 +6,8 @@ From the first real talking-head edit (an 8.5-minute single-take promo recording
 - cut_plan `--selects`: assemble parts of a long take in any order, with gaps for inserts. Select edges snap to the
   silence around the words, never into them: nearest-silence snapping had dropped a soft first word and clipped a
   final consonant. Edges without a pause are reported as hard cuts, at the quietest point.
+- hf_scaffold: `--base` puts the footage video at the top level. Nested in a timed wrapper, HyperFrames 0.8.79 lint
+  fails with video_nested_in_timed_element (its frame extractor cannot reach it); first hit building over real footage.
 - cut_render: reordered EDLs render as forward runs joined by stream copy (frame-exact: each piece's first frame
   matches its source frame at 43-47 dB PSNR, neighbours at 32-34 dB); gaps render as black and silence and appear as
   markers in the FCPXML. In-order EDLs render as before (fixture regression identical).

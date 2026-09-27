@@ -91,8 +91,7 @@ def css(brand, W, H, background):
                overflow-wrap: normal; word-break: normal; hyphens: manual; }}
       #bg {{ position: absolute; inset: 0; background: {bg}; }}
       #bg-glow {{ position: absolute; inset: -10%; background: radial-gradient(800px 500px at 30% 70%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%); }}
-      #base-wrap {{ position: absolute; inset: 0; }}
-      #base-wrap video {{ width: 100%; height: 100%; object-fit: cover; }}
+      #base {{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }}
       .zone {{ position: absolute; display: flex; pointer-events: none; }}
       .zone > .clip {{ position: relative; }}
       .z-full > .clip {{ width: 100%; height: 100%; }}
@@ -305,9 +304,8 @@ def main():
     audio = asset(a.audio); base = asset(a.base)
     body = [f'<div id="bg" class="clip" data-start="0" data-duration="{dur}"></div>',
             f'<div id="bg-glow" class="clip" data-start="0" data-duration="{dur}"></div>']
-    if base:
-        body.append(f'<div id="base-wrap" class="clip" data-start="0" data-duration="{dur}"><video id="base" src="{base}" muted '
-                    f'playsinline data-start="0" data-duration="{dur}" class="clip"></video></div>')
+    if base:  # top level: HyperFrames cannot extract frames from a timed video nested in a timed element
+        body.append(f'<video id="base" src="{base}" muted playsinline data-start="0" data-duration="{dur}" class="clip"></video>')
     shown = [c for c in sheet["cues"] if c.get("kind") != "sfx"]  # sfx cues only drive the mix
     # Two cues in one zone at once overlap on screen; common when a 16:9 sheet is re-laid out with --remap for 9:16.
     for i, c1 in enumerate(shown):
