@@ -39,11 +39,14 @@ def main():
     ap.add_argument("--bitrate", default="320k")
     a = ap.parse_args()
     encode(a.render, a.mix, a.out, a.bitrate)
-    m = measure(a.out)
-    if m["true_peak_dbtp"] is not None and m["true_peak_dbtp"] > a.tp:
-        trim = m["true_peak_dbtp"] - a.tp + 0.1
+    m, trim = measure(a.out), 0.0
+    for _ in range(3):  # low AAC bitrates can overshoot again after one trim (128k did: -0.9 dBTP after a 0.3 dB trim)
+        if m["true_peak_dbtp"] is None or m["true_peak_dbtp"] <= a.tp:
+            break
+        trim += m["true_peak_dbtp"] - a.tp + 0.1
         encode(a.render, a.mix, a.out, a.bitrate, -trim)
         m = measure(a.out)
+    if trim:
         print(f"trimmed {trim:.2f} dB for the AAC true peak")
     dur = lambda p, s: float(subprocess.run(["ffprobe", "-v", "error", "-select_streams", s, "-show_entries", "stream=duration",
                                              "-of", "csv=p=0", p], capture_output=True, text=True).stdout or 0)

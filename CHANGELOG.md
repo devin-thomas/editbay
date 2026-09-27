@@ -11,6 +11,8 @@ From the first real talking-head edit (an 8.5-minute single-take promo recording
 - cut_render: reordered EDLs render as forward runs joined by stream copy (frame-exact: each piece's first frame
   matches its source frame at 43-47 dB PSNR, neighbours at 32-34 dB); gaps render as black and silence and appear as
   markers in the FCPXML. In-order EDLs render as before (fixture regression identical).
+- remux_audio: the true-peak trim repeats (up to 3 passes). At 128k AAC a single 0.3 dB trim still left -0.9 dBTP
+  on the promo's share copy; repeating the trim brought it to -1.0 dBTP.
 
 ## 0.3.0 (2026-09-27)
 
