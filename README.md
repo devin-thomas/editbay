@@ -15,8 +15,14 @@ claude plugin marketplace add devin-thomas/editbay
 claude plugin install editbay@editbay
 ```
 
-Codex: copy the skill folders you want into `~/.codex/skills/` together with `tools/` (skills reach tools two folders
-up), or use the synced copy in devin-thomas/private-skills (`Research/editbay/`).
+Codex: put the editbay tree (at least `skills/` and `tools/`, side by side) in a skills folder Codex scans, such as
+`<project>/.agents/skills/editbay/`. Codex finds the nested skills and lists them as `editbay:<skill>`, and `$EB` in
+every skill is that `editbay/` folder. Tested with Codex CLI 0.145 (2026-09-26); `~/.codex/skills/editbay/` should work
+the same way for all projects but is untested. Don't copy skill folders on their own: they lose their tools.
+
+```bash
+mkdir -p .agents/skills/editbay && git -C ~/dev/editbay archive HEAD | tar -x -C .agents/skills/editbay
+```
 
 Prerequisites: `uv`, `ffmpeg`/`ffprobe`, Node 22+ (HyperFrames runs through `npx hyperframes@0.8.79`), and
 `~/.config/editbay/config.json` (copy [config/config.example.json](config/config.example.json)) naming your GPU host,

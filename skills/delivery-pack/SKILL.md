@@ -8,7 +8,7 @@ description: Package a verified edit for delivery. Renders the variants the deli
 The last step is where small lies creep in: a master nobody measured, captions from a raw transcript, a missing
 disclosure. Deliver only files that were measured as delivered, with a manifest that proves which is which.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 Delivery profiles come from `~/.config/editbay/config.json` (`delivery_profiles`).
 
 ## 1. Render the variants

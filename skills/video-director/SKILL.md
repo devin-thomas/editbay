@@ -9,7 +9,7 @@ One request, one brief, one loop: intake, transcript, cut, voice, beat sheet, so
 retro. The director decides what applies, keeps the creator's boundaries, and never calls a step done without its
 evidence.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Machine facts come from
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Machine facts come from
 `~/.config/editbay/config.json`.
 
 ## 1. Write the brief

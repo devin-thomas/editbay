@@ -8,7 +8,7 @@ description: Bring sources into an edit project and look at them before editing.
 Nobody edits footage they have not looked at. Intake turns "here are some files" into an inventory, sheets you can
 read at a glance, and audio ready for transcription, with every warning resolved or written down.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 Download host and cookie arguments come from `~/.config/editbay/config.json` (`downloads`).
 
 ## 1. Fetch

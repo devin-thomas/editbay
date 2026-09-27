@@ -9,7 +9,7 @@ Pace is set when the voice is generated, never by stretching audio afterwards. C
 (171-215 wpm measured); one request per sentence with one seed per beat, joined with 0.4 s, reads about 144 wpm.
 It also keeps failures small: a garbled sentence is re-rolled alone, and the rest stays byte-identical.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 TTS engines and their paths come from `~/.config/editbay/config.json` (`tts`).
 
 ## 1. Write the spoken layer

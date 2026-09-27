@@ -10,7 +10,7 @@ construction, then spend taste on the scenes that carry the idea. HyperFrames' s
 `/hyperframes-core`, `/hyperframes-animation`, `/hyperframes-cli`) are the reference for anything this file does
 not say; install them with `npx hyperframes skills update` when they are missing.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 
 ## 1. Scaffold
 

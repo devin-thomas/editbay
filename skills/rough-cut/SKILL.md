@@ -8,7 +8,7 @@ description: Rough-cut talking footage on word boundaries. Removes dead air, sta
 Cut what the speaker would cut, keep the breath that makes it sound human, and prove every join is clean. The plan is
 data (an EDL and a keep list) that a person can veto before anything renders.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 
 ## 1. Check the inputs
 

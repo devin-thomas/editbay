@@ -8,7 +8,7 @@ description: Sound for an edit: a music bed at an exact tempo (generated with it
 Sound is half of what reads as "editing". The bed sets pace, SFX punctuate what the eye sees, the voice always wins,
 and the file that ships is measured, not assumed.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 Loudness targets come from the delivery profile in config; music policy from the brand (`audio.music_policy`).
 
 ## 1. Choose the music

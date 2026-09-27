@@ -9,7 +9,7 @@ Proof beats illustration. When the narration makes a claim, the best B-roll is t
 asset comes next; stock and generation fill gaps and say what they are. Every file on screen has a ledger entry, and
 the gate fails the build when one does not.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 Paid providers, their costs, and the free routes on our machines: `$EB/docs/PROVIDERS.md`.
 
 ## 1. List what each cue needs

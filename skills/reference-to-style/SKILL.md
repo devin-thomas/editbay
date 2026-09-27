@@ -9,7 +9,7 @@ description: Turn a video you admire into a reusable style skill. Measures the r
 next run can follow and the verifier can hold a render to. The reference is studied, never reused: its media stays out
 of every deliverable, and its signature stays with it.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 
 ## 1. Get the reference
 

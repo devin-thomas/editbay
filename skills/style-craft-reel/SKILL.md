@@ -9,7 +9,7 @@ Range, proven in fifteen seconds: each chapter is a different discipline, and on
 variety reads as one voice. Source of truth: the breakdown in `examples/style-from-kenn-reel/reference/BREAKDOWN.md`
 of the editbay repository (principles 1-9); this skill restates them as rules with numbers.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 
 ## Grammar
 

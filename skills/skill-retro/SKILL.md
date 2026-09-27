@@ -8,7 +8,7 @@ description: Fold what a run taught back into the skills that ran it. Collects t
 A skill improves only when someone writes the lesson into it. If the creator had to say it twice, the second time
 belongs in a skill; if QA had to fix it twice, the first fix belongs upstream.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file).
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder).
 
 ## 1. Collect
 

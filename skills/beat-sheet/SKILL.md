@@ -9,7 +9,7 @@ The beat sheet is where taste becomes checkable. Every visual event is anchored 
 they feel, placed in a zone that keeps the face clear, and held long enough to read. The build follows the sheet;
 the verifier holds the build to it.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 
 ## 1. Gather the spine
 

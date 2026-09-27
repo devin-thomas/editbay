@@ -8,7 +8,7 @@ description: Word-timed transcripts you can cut and caption against. Transcribes
 A transcript is only as good as its worst name. Two Whisper passes plus a third source, a glossary, and patches you can
 defend: every change lands in a log with its reason, and nothing downstream reads an unreconciled transcript.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 The GPU host, its Python, and its work folder come from `~/.config/editbay/config.json` (`gpu_host`).
 
 ## 1. Prepare the audio and the third source

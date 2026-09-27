@@ -8,7 +8,7 @@ description: Verify a rendered video before anyone watches it. Runs the automate
 The first render is a draft. The agent watches its own output the way an editor would, fixes what it finds, and
 only then hands it over, with a report that separates what passed from what was never checked.
 
-Paths: `$EB` is the editbay plugin root (two folders above this file). Tools run as `uv run $EB/tools/<tool>.py`.
+Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`../..` from this skill's folder). Tools run as `uv run $EB/tools/<tool>.py`.
 Delivery profiles (size, fps, loudness) come from `~/.config/editbay/config.json`.
 
 ## 1. Gate the composition
