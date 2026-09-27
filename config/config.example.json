@@ -5,7 +5,7 @@
     "shell": "pwsh",
     "work_root": "C:/work/editbay",
     "python": "C:/work/editbay/.venv/Scripts/python.exe",
-    "notes": "PowerShell over ssh: end remote commands with '; [Environment]::Exit(0)' or the session can hang on exit."
+    "notes": "PowerShell over ssh: end remote commands with '; [Environment]::Exit(0)' or the session can hang on exit. Start heavy jobs at AboveNormal priority: Windows runs ssh-started processes in efficiency mode (x264 4.8x slower at Normal)."
   },
   "render_host": "local",
   "downloads": {

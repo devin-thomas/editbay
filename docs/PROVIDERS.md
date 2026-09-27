@@ -15,6 +15,29 @@ docs on the date given; recheck before spending), **est.** (estimate or not yet 
 Two machines with a real GPU each means most "AI features" have a local route. The gap is mostly generative video
 quality and, for some jobs, speed of setup.
 
+## Which machine does what (measured 2026-09-27)
+
+Same inputs on both machines. Until 2026-09-27 every job started on Titan over ssh ran in Windows' efficiency mode
+(low clocks for "background" processes); the numbers below are with the fix unless marked "throttled".
+
+| Job | Research (M5 Max) | Titan (4090, i7-12700) | Use |
+|---|---|---|---|
+| ASR, 19.4 min of speech | mlx-whisper large-v3 98 s, WER 4.37% (65 s, 3.89% with guards); turbo 23 s, 1.77% | faster-whisper beam 5: large-v3 76 s, WER 1.84%; turbo 7.4 s, 1.25% (throttled: 152 s, 17 s) | Titan |
+| ASR, 90 s narration | with guards: large-v3 3.8 s, 0.46%; turbo 1.6 s, 0.91% (unguarded 2.74%, 7.31%) | large-v3 4.8 s, 0.46%; turbo 1.1 s, 0.91% | either; the Mac only with guards |
+| devin-v1 voice clone | MPS 2.79 s per second of speech; 15/15 sentences pass voiceover_check | 2.34 s/s (throttled 4.46) | Titan; the Mac is a tested fallback |
+| HyperFrames render, 70 s promo, 1080p60 | 2m11s | 20m35s throttled (Chrome's processes; not re-measured) | the Mac |
+| Delivery encode, 68.7 s 1080p60 at ~11.6 Mbps | x264 slow 35 s, medium 21 s (VMAF 92.7 both); VideoToolbox 19 s (VMAF 90.6) | x264 slow 60 s (throttled 288 s); NVENC H.264 17 s (92.5), HEVC 28 s (93.0); moving the master there: 35 s | the Mac, x264 medium; VideoToolbox for drafts |
+
+- Guards for mlx-whisper: `condition_on_previous_text=False`, `hallucination_silence_threshold=2`. Without them the
+  Mac invents and loops text over pauses.
+- VMAF at matched bitrate: x264 and NVENC tie (92.5-93.0); VideoToolbox is about 2 points lower.
+- The throttle: Windows puts processes started over ssh in its efficiency mode. x264 ran at 12 fps at Normal priority
+  and 53 fps at AboveNormal (the same 600 frames). transcribe_faster_whisper.py raises its own priority and
+  tts_worker_runner.py raises the worker's tree (a venv's python.exe is a launcher; its real interpreter does not
+  inherit AboveNormal). For anything else started on Titan, raise it: `$p = Start-Process ... -PassThru;
+  $p.PriorityClass = 'AboveNormal'`, or set it from inside the process. Declare ctypes handle types, or the call
+  fails silently.
+
 ## Summary
 
 | Capability | Default (free) | Paid options met | Pay when |
@@ -104,7 +127,9 @@ quality and, for some jobs, speed of setup.
 
 ### Rendering and delivery
 - **Local (measured):** HyperFrames renders the 60 s 1080p60 explainer in ~57 s on the M5 Max (high quality);
-  4 s test at 1080p60 in 9.6 s including setup. Titan adds NVENC encoding and a second render box.
+  4 s test at 1080p60 in 9.6 s including setup. Titan's NVENC matches x264 quality in half the time, but moving a
+  master there costs about as long as encoding it here; renders and delivery encodes stay on the Mac (see Which machine
+  does what).
 - **Paid (doc):** HyperFrames cloud rendering through HeyGen, AWS Lambda, Google Cloud Run. Useful for long 4K
   pieces on a deadline; not needed at our current lengths.
 

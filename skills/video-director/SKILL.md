@@ -28,7 +28,8 @@ boundaries, and nothing in it contradicts the brand profile.
 Pick the chain from [references/routes.md](references/routes.md): talking-head edit, narrated explainer, music-led
 reel, footage reel from a big folder, captions only, or a pure HyperFrames workflow (hand off to `/hyperframes` when
 the request is exactly one of its routes and editbay adds nothing). Plan the machines: downloads, ASR, and the cloned
-voice on the GPU host; renders and tools locally.
+voice on the GPU host; renders, encodes and tools locally (measured in docs/PROVIDERS.md, "Which machine does
+what").
 
 **Done when:** the chain of skills and the machine for each step are written into `EDIT.md`.
 
