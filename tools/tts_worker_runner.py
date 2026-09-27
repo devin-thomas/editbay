@@ -34,20 +34,49 @@ def alive(pid):
         return False
 
 
-def take_lock(path):
-    """One GPU job at a time on this machine: the same pid lock the narration pipelines use."""
+def release_lock(path):
+    """Remove the lock only while it still names this process."""
+    try:
+        if open(path, encoding="utf-8").read().strip() == str(os.getpid()):
+            os.remove(path)
+    except OSError:
+        pass
+
+
+def take_lock(path, wait_s=2700, poll_s=5):
+    """One GPU job at a time on this machine: the same pid lock the narration pipelines use.
+
+    Queues instead of failing: while a live process holds the lock, poll every poll_s seconds for up to wait_s
+    (default 45 min; job "lock_wait_s" overrides). A lock left by a dead pid is cleared. Concurrent producers used to
+    exit on the first "GPU busy" and one fell back to a non-cloned voice (CacheBrief wave 1, 2026-09-27).
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    for _ in range(2):
+    deadline, announced = time.time() + wait_s, False
+    while True:
         try:
             fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
             os.write(fd, str(os.getpid()).encode()); os.close(fd)
-            atexit.register(lambda: os.path.exists(path) and os.remove(path))
+            atexit.register(release_lock, path)
+            if announced:
+                print("GPU lock acquired", file=sys.stderr, flush=True)
             return
         except FileExistsError:
-            owner = open(path, encoding="utf-8").read().strip()
+            try:
+                owner = open(path, encoding="utf-8").read().strip()
+            except OSError:
+                continue  # released between our open and read
             if owner.isdigit() and not alive(int(owner)):
-                os.remove(path); continue
-            raise SystemExit(f"GPU busy: pid {owner} holds {path}. Wait for it; do not delete a live lock.")
+                try:
+                    os.remove(path)
+                except OSError:
+                    pass
+                continue
+            if time.time() >= deadline:
+                raise SystemExit(f"GPU busy: pid {owner} still holds {path} after {wait_s} s. Do not delete a live lock.")
+            if not announced:
+                print(f"GPU busy: pid {owner} holds {path}; waiting up to {wait_s} s", file=sys.stderr, flush=True)
+                announced = True
+            time.sleep(poll_s)
 
 
 def read_msg(proc):
@@ -115,7 +144,7 @@ def main():
     print(f"{len(todo)}/{len(job['items'])} items to generate", flush=True)
     if not todo:
         return 0
-    take_lock(job["lock"])
+    take_lock(job["lock"], wait_s=int(job.get("lock_wait_s", 2700)))
     w = job["worker"]
     env = {**os.environ, **w.get("env", {})}
     err = open(os.path.join(out, "worker.log"), "a", encoding="utf-8")

@@ -44,6 +44,9 @@ takes that machine's GPU lock (shared with other narration pipelines there), kee
 and returns the WAVs in one transfer. Its remote directory is `STORY_SLUG--PRODUCER_CALLSIGN`, never a generic
 `narration/` basename; use `--dry-run` to print the namespace before taking the GPU lock. `narration/narration.json`
 records each sentence's text, seed, and position; re-runs reuse unchanged sentences within that isolated namespace.
+When other jobs hold the GPU lock, the runner queues (up to 45 min, printing "GPU busy ... waiting"), so start remote TTS
+in the background and poll its log. Never substitute another voice for a cloned one: if the lock times out, rerun or
+escalate; a stand-in voice may be used only for a timing draft that is never delivered.
 
 **Done when:** `narration.wav` and `narration.json` exist and the overall pace is 140-165 wpm (the tool prints it;
 short sentences read faster, so judge pace on the real script, not a fragment).

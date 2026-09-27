@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- tts_worker_runner: queues on the GPU lock (polls every 5 s, up to 45 min, job `lock_wait_s` overrides) instead of
+  exiting on the first "GPU busy"; removes a lock only while it names this process. In CacheBrief wave 1 a producer hit
+  the lock twice, exited, and shipped a macOS `say` fallback. Test: a waiter acquired 7.1 s after the holder released;
+  with a 2 s wait it exited 1 (negative control).
+
 From CacheBrief's three pilot shorts, AUDIT, and HEAD review (STEWARD pass 2, 2026-09-27):
 - voiceover and asr_remote: remote work dirs are namespaced `story--producer` (from --story-slug/--producer-callsign,
   EDITBAY_* env, or the run folder), so concurrent producers on the GPU host never share a directory; `--dry-run`
