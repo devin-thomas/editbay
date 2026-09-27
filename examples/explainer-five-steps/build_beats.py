@@ -69,9 +69,9 @@ code_html = ('<div class="card demo code"><div class="kicker">index.html</div>' 
 t_web = at("as a web page")
 code_js = " ".join(f'tl.fromTo("#cl{k}", {{opacity: 0, x: -10}}, {{opacity: 1, x: 0, duration: 0.15}}, {round(t_web - 1.2 + k * 0.28, 3)});'
                    for k in range(len(code)))
-t_fbf = at("frame by frame")
+t_fbf = at("renders it")  # start on "renders" so the count lands and holds before the card leaves
 code_js += (f' const fcEl = document.getElementById("fc"); const fco = {{n: 0}};'
-            f' tl.to(fco, {{n: {TOTAL_FRAMES}, duration: 1.4, ease: "power1.out", onUpdate: () => {{ fcEl.textContent = String(Math.round(fco.n)).padStart(4, "0"); }}}}, {t_fbf});')
+            f' tl.to(fco, {{n: {TOTAL_FRAMES}, duration: 1.0, ease: "power1.out", onUpdate: () => {{ fcEl.textContent = String(Math.round(fco.n)).padStart(4, "0"); }}}}, {t_fbf});')
 
 # --- Step 5 demo: this video's own checks, ticked as they are named.
 # Every line is something this video's own QA proved (qa/REPORT.md): loudness gate, words gate, motion sidecar.
@@ -136,9 +136,9 @@ cues = [
      "content": {"number": "STEP 05", "title": "Verify", "subtitle": "measure, check, fix"}, "sfx": "whoosh-short", "why": "step card"},
     {"id": "C51", "anchor": "It measures", "offset": -0.2, "until_start": "Then the loop", "tail": -0.12, "kind": "custom", "zone": "right",
      "content": {"html": chk_html, "js": chk_js}, "origin": "agent", "why": "this video's own QA, ticked as each check is named"},
-    {"id": "C60", "anchor": "the loop feeds itself", "offset": -0.1, "until": "starts smarter", "tail": 0.55, "kind": "title", "zone": "top",
+    {"id": "C60", "anchor": "the loop feeds itself", "offset": -0.1, "until": "starts smarter", "tail": 0.35, "kind": "title", "zone": "top",
      "content": {"title": "The loop feeds itself."}, "sfx": "shimmer", "why": "callback to the thesis"},
-    {"id": "C61", "anchor": "What you liked", "until": "starts smarter", "tail": 0.55, "kind": "custom", "zone": "center",
+    {"id": "C61", "anchor": "What you liked", "until": "starts smarter", "tail": 0.35, "kind": "custom", "zone": "center",
      "content": {"html": loop_html, "js": loop_js}, "origin": "agent", "why": "draw the loop as it is described"},
     {"id": "C62", "at": round(end_of_speech + 0.35, 3), "hold": 3.6, "kind": "custom", "zone": "full", "cover_face": True,
      "content": {"html": '<div class="endcard"><div class="brand">editbay</div><div class="by">Starter Pack · Devin Thomas</div>'

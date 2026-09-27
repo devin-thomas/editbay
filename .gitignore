@@ -23,3 +23,4 @@ examples/**/hf/renders/
 # absolute media paths by design (Resolve needs file URLs) or raw tool dumps summarised in REPORT.md
 examples/**/*.fcpxml
 examples/**/qa/hyperframes-check.json
+examples/**/deliver/*.jpg

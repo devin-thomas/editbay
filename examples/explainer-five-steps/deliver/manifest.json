@@ -1,0 +1,71 @@
+[
+ {
+  "variant": "master-4k",
+  "file": "five-step-edit-loop-master-4k.mp4",
+  "bytes": 22122205,
+  "sha256": "6be82fdd8e1229c6bd9d04ab9d9a12f6b77adbc47c864a89bcf2dc1d58f0e7c1",
+  "duration": 59.783,
+  "video": "h264 3840x2160 60.0fps",
+  "audio": "aac 48000 Hz",
+  "loudness": {
+   "lufs": -16.1,
+   "true_peak_dbtp": -1.4
+  }
+ },
+ {
+  "variant": "review-1080p",
+  "file": "five-step-edit-loop-review-1080p.mp4",
+  "bytes": 9371948,
+  "sha256": "5dc1196b16280d1cfbcb2e02c1a90ebc3287ef30febbd05dbe7a73ecd6730f1e",
+  "duration": 59.783,
+  "video": "h264 1920x1080 60.0fps",
+  "audio": "aac 48000 Hz",
+  "loudness": {
+   "lufs": -16.1,
+   "true_peak_dbtp": -1.4
+  }
+ },
+ {
+  "variant": "vertical",
+  "file": "five-step-edit-loop-vertical.mp4",
+  "bytes": 8771675,
+  "sha256": "f91fcedd8aefb2196377477098a1e925beea2d55b3338067f2bfd58354fa0759",
+  "duration": 59.783,
+  "video": "h264 1080x1920 60.0fps",
+  "audio": "aac 48000 Hz",
+  "loudness": {
+   "lufs": -16.1,
+   "true_peak_dbtp": -1.4
+  }
+ },
+ {
+  "variant": "captions",
+  "file": "five-step-edit-loop.en.srt",
+  "bytes": 1697,
+  "sha256": "971b30cc7820ecd7bd3ffa661f51696b8d271fa80814ec00ce68f67ab2d4ccf6"
+ },
+ {
+  "variant": "captions",
+  "file": "five-step-edit-loop.en.vtt",
+  "bytes": 1630,
+  "sha256": "a31f7481382136817bde1c71722aded0b6ef04efe97875dfb1ffe4703d2a421c"
+ },
+ {
+  "variant": "thumb-A",
+  "file": "five-step-edit-loop-thumb-A.jpg",
+  "bytes": 68698,
+  "sha256": "34d1aa7c4b75998e6b2134a999951515afe6bd6f1c1ebee00a25b50cf1aa300b"
+ },
+ {
+  "variant": "thumb-B",
+  "file": "five-step-edit-loop-thumb-B.jpg",
+  "bytes": 82500,
+  "sha256": "c208acbda041ec0a0837e72531ad0c501bf3ec6f47a73820bf98abebefcd720c"
+ },
+ {
+  "variant": "thumb-C",
+  "file": "five-step-edit-loop-thumb-C.jpg",
+  "bytes": 82592,
+  "sha256": "cac69716619bf8c896c696df78b27d9ede0b0e96d9625e86ec6d7e1fad3890d1"
+ }
+]

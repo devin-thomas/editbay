@@ -1,0 +1,86 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:01.460
+You can hand a video to a
+
+00:00:01.460 --> 00:00:03.100
+coding agent and get a real edit
+
+00:00:03.100 --> 00:00:03.380
+back.
+
+00:00:03.620 --> 00:00:05.420
+What makes it work is a loop,
+
+00:00:05.480 --> 00:00:06.540
+not a lucky prompt.
+
+00:00:07.940 --> 00:00:09.560
+Step one is Transcribe.
+
+00:00:10.210 --> 00:00:12.790
+Every word gets a timestamp, so every
+
+00:00:12.790 --> 00:00:14.490
+graphic can land on the word it
+
+00:00:14.490 --> 00:00:15.070
+belongs to.
+
+00:00:16.280 --> 00:00:17.640
+Step two is Cut.
+
+00:00:18.300 --> 00:00:20.700
+Dead air, filler, and retakes come
+
+00:00:20.700 --> 00:00:22.780
+out, and every cut lands in silence.
+
+00:00:24.250 --> 00:00:26.210
+Step three is Plan the Beats.
+
+00:00:26.630 --> 00:00:28.550
+Each graphic gets a word to land
+
+00:00:28.550 --> 00:00:30.730
+on, a place on screen, and a
+
+00:00:30.730 --> 00:00:31.410
+reason to exist.
+
+00:00:32.530 --> 00:00:33.870
+Step four is Build.
+
+00:00:34.490 --> 00:00:36.410
+The agent writes the motion as a
+
+00:00:36.410 --> 00:00:38.030
+web page and renders it frame by
+
+00:00:38.030 --> 00:00:38.290
+frame.
+
+00:00:39.160 --> 00:00:40.820
+Step five is Verify.
+
+00:00:41.360 --> 00:00:43.920
+It measures the loudness, checks every
+
+00:00:43.920 --> 00:00:46.260
+cut and every card, and fixes what
+
+00:00:46.260 --> 00:00:47.480
+fails before you watch.
+
+00:00:48.420 --> 00:00:50.020
+Then the loop feeds itself.
+
+00:00:50.480 --> 00:00:52.340
+What you liked and what you didn't
+
+00:00:52.340 --> 00:00:54.400
+goes back into the skills, so the
+
+00:00:54.400 --> 00:00:55.580
+next edit starts smarter.
+

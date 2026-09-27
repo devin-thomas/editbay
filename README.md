@@ -33,8 +33,9 @@ voices, credentials file, and delivery profiles. Install HyperFrames' own skills
 | music, sound effects, a mix at spec | `sound-bed` | bed with an exact beat grid, SFX, ducked mix at -16/-14 LUFS |
 | motion graphics and overlays in HyperFrames | `motion-build` | a check-clean composition and renders |
 | proof the render is right | `render-verify` | gates on the DOM and the encoded file, one visual read, a QA report |
+| hand it off | `delivery-pack` | 4K master, review copy, vertical cut, captions, chapters, thumbnails, manifest |
 
-Coming next: `reference-to-style`, `broll-sourcing`, `delivery-pack`, `skill-retro`, `video-director`.
+Coming next: `reference-to-style`, `broll-sourcing`, `skill-retro`, `video-director`.
 
 ## Tools
 

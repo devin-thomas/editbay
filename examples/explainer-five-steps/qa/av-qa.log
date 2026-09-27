@@ -2,7 +2,7 @@
 
 - probe: {"duration": 59.783333, "video": {"codec": "h264", "size": "1920x1080", "fps": 60.0, "pix_fmt": "yuv420p", "duration": 59.783333, "color_primaries": "bt709"}, "audio": {"codec": "aac", "sample_rate": 48000, "channels": 2, "duration": 59.78}}
 - black: none
-- freeze: [(0.5, 1.9), (2.766667, 3.566667), (3.566667, 4.166667), (4.4, 4.983333), (5.583333, 7.366667), (8.316667, 9.933333), (10.3, 11.05), (11.433333, 12.5), (12.5, 15.95), (16.85, 20.483333), (20.483333, 21.55), (21.55, 23.916667), (24.633333, 26.666667), (26.783333, 27.833333), (27.916667, 28.916667), (29.166667, 30.75), (30.9, 32.2), (33.333333, 34.333333), (34.416667, 34.933333), (35.583333, 37.5), (37.5, 38.816667), (39.516667, 41.183333), (41.516667, 42.3), (42.3, 44.616667), (44.616667, 45.766667), (45.766667, 48.0), (48.283333, 48.916667), (49.35, 50.0), (50.0, 50.9), (50.9, 53.683333), (53.683333, 55.916667), (56.166667, 59.316667)]
+- freeze: [(0.5, 1.9), (2.766667, 3.566667), (3.566667, 4.166667), (4.4, 4.983333), (5.583333, 7.366667), (8.316667, 9.933333), (10.3, 11.05), (11.433333, 12.5), (12.5, 15.95), (16.85, 20.483333), (20.483333, 21.55), (21.55, 23.916667), (24.633333, 26.666667), (26.783333, 27.833333), (27.916667, 28.916667), (29.4, 30.75), (30.9, 32.2), (33.333333, 34.333333), (34.416667, 34.933333), (35.583333, 37.5), (37.5, 38.816667), (39.516667, 41.183333), (41.516667, 42.3), (42.3, 44.616667), (44.616667, 45.766667), (45.766667, 48.0), (48.283333, 48.916667), (49.35, 50.0), (50.0, 50.9), (50.9, 53.683333), (53.683333, 55.716667), (56.166667, 59.316667)]
 - silence (>0.8s): [(58.213562, 59.78)]
 - pops: none
 
@@ -17,7 +17,7 @@ PASS
 - WARN static picture 42.30-44.62s (2.3s; allow intentional holds with --allow-freeze)
 - WARN static picture 45.77-48.00s (2.2s; allow intentional holds with --allow-freeze)
 - WARN static picture 50.90-53.68s (2.8s; allow intentional holds with --allow-freeze)
-- WARN static picture 53.68-55.92s (2.2s; allow intentional holds with --allow-freeze)
+- WARN static picture 53.68-55.72s (2.0s; allow intentional holds with --allow-freeze)
 - WARN static picture 56.17-59.32s (3.2s; allow intentional holds with --allow-freeze)
 - WARN silence 58.21-59.78s
 - note static picture 0.50-1.90s (1.4s; allow intentional holds with --allow-freeze)
@@ -31,7 +31,7 @@ PASS
 - note static picture 20.48-21.55s (1.1s; allow intentional holds with --allow-freeze)
 - note static picture 26.78-27.83s (1.1s; allow intentional holds with --allow-freeze)
 - note static picture 27.92-28.92s (1.0s; allow intentional holds with --allow-freeze)
-- note static picture 29.17-30.75s (1.6s; allow intentional holds with --allow-freeze)
+- note static picture 29.40-30.75s (1.4s; allow intentional holds with --allow-freeze)
 - note static picture 30.90-32.20s (1.3s; allow intentional holds with --allow-freeze)
 - note static picture 33.33-34.33s (1.0s; allow intentional holds with --allow-freeze)
 - note static picture 34.42-34.93s (0.5s; allow intentional holds with --allow-freeze)

@@ -183,7 +183,7 @@
    "zone": "right",
    "content": {
     "html": "<div class=\"card demo code\"><div class=\"kicker\">index.html</div><div class=\"cl\" id=\"cl0\">&lt;div id=\"C10\" class=\"clip\"</div><div class=\"cl\" id=\"cl1\">     data-start=\"12.40\"</div><div class=\"cl\" id=\"cl2\">     data-duration=\"4.80\"&gt;</div><div class=\"cl\" id=\"cl3\">  Transcribe</div><div class=\"cl\" id=\"cl4\">&lt;/div&gt;</div><div class=\"frames\">frame <span id=\"fc\">0000</span></div></div>",
-    "js": "tl.fromTo(\"#cl0\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 34.91); tl.fromTo(\"#cl1\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.19); tl.fromTo(\"#cl2\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.47); tl.fromTo(\"#cl3\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.75); tl.fromTo(\"#cl4\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 36.03); const fcEl = document.getElementById(\"fc\"); const fco = {n: 0}; tl.to(fco, {n: 3587, duration: 1.4, ease: \"power1.out\", onUpdate: () => { fcEl.textContent = String(Math.round(fco.n)).padStart(4, \"0\"); }}, 37.61);"
+    "js": "tl.fromTo(\"#cl0\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 34.91); tl.fromTo(\"#cl1\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.19); tl.fromTo(\"#cl2\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.47); tl.fromTo(\"#cl3\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 35.75); tl.fromTo(\"#cl4\", {opacity: 0, x: -10}, {opacity: 1, x: 0, duration: 0.15}, 36.03); const fcEl = document.getElementById(\"fc\"); const fco = {n: 0}; tl.to(fco, {n: 3587, duration: 1.0, ease: \"power1.out\", onUpdate: () => { fcEl.textContent = String(Math.round(fco.n)).padStart(4, \"0\"); }}, 37.11);"
    },
    "origin": "agent",
    "why": "the composition is code; frames are rendered from it"
@@ -223,7 +223,7 @@
    "anchor": "the loop feeds itself",
    "offset": -0.1,
    "until": "starts smarter",
-   "tail": 0.55,
+   "tail": 0.35,
    "kind": "title",
    "zone": "top",
    "content": {
@@ -236,7 +236,7 @@
    "id": "C61",
    "anchor": "What you liked",
    "until": "starts smarter",
-   "tail": 0.55,
+   "tail": 0.35,
    "kind": "custom",
    "zone": "center",
    "content": {

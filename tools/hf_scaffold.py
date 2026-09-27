@@ -11,6 +11,7 @@ Usage:
   hf_scaffold.py --beats beats/beats.resolved.json --brand BRAND.json --out hf/ [--size 1920x1080] [--fps 60]
                  [--audio sound/mix.wav] [--base media/talk.mp4] [--background grid|glow|solid]
                  [--captions words.json] [--hud "EDITBAY / EXPLAINER"] [--title "..."] [--extra-css scenes.css]
+                 [--remap left=upper,right=lower]   (re-layout the same beat sheet for 1080x1920)
 Cue kinds: title, side-card, lower-third, bullet, label, step, word-highlight, image-panel, takeover, custom.
   content fields: title, subtitle, kicker, icon (img path), items (list), src (image/video), html + js (custom).
   enter/exit presets: fade, rise, drop, slide-from-left, slide-from-right, pop (transform and opacity only).
@@ -33,9 +34,12 @@ ZONES = {  # fractions of the canvas: x0, y0, x1, y1, flex alignment (justify, a
     "pip-tr": (0.67, 0.04, 0.97, 0.36, "flex-end", "flex-start"),
     "pip-bl": (0.03, 0.64, 0.33, 0.96, "flex-start", "flex-end"),
     "pip-br": (0.67, 0.64, 0.97, 0.96, "flex-end", "flex-end"),
+    # portrait zones for vertical cuts (--remap left=upper,right=lower)
+    "upper": (0.06, 0.15, 0.94, 0.47, "center", "center"),
+    "lower": (0.06, 0.49, 0.94, 0.84, "center", "center"),
 }
 ENTER_BY_ZONE = {"left": "slide-from-left", "right": "slide-from-right", "bottom": "rise", "top": "drop",
-                 "center": "pop", "full": "fade"}
+                 "center": "pop", "full": "fade", "upper": "drop", "lower": "rise"}
 PRESET = {"fade": {}, "rise": {"y": 40}, "drop": {"y": -34}, "slide-from-left": {"x": -90}, "slide-from-right": {"x": 90},
           "pop": {"scale": 0.86}}
 EASE_IN = {"pop": "back.out(1.5)"}
@@ -230,7 +234,9 @@ def main():
     ap.add_argument("--words", help="word array for word-highlight cues (defaults to the beat sheet's words)")
     ap.add_argument("--hf-version", default="0.8.79")
     ap.add_argument("--extra-css", help="a CSS file appended to the generated styles (custom scenes)")
+    ap.add_argument("--remap", default="", help="zone remap for a re-layout, e.g. left=upper,right=lower (vertical cuts)")
     a = ap.parse_args()
+    remap = dict(kv.split("=") for kv in a.remap.split(",") if "=" in kv)
     W, H = (int(x) for x in a.size.split("x"))
     sheet = json.load(open(a.beats)); brand = json.load(open(a.brand))
     base_dir = os.path.dirname(os.path.abspath(a.beats))
@@ -256,6 +262,8 @@ def main():
         return f"assets/{os.path.basename(path)}"
 
     for c in sheet["cues"]:
+        if c.get("zone") in remap:
+            c["zone"] = remap[c["zone"]]
         ct = c.get("content") or {}
         for k in ("icon", "src"):
             if ct.get(k) and os.path.exists(os.path.join(base_dir, ct[k])):
