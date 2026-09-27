@@ -40,8 +40,9 @@ for entry in skills:
         for key in ("display_name:", "short_description:", "default_prompt:"):
             if key not in y:
                 errors.append(f"{yaml.relative_to(root)}: missing {key}")
-        if f"${entry.parent.name}" not in y:
-            errors.append(f"{yaml.relative_to(root)}: default_prompt should mention ${entry.parent.name}")
+        # Codex lists skills installed with the editbay tree as editbay:<skill>, so prompts mention that name.
+        if f"$editbay:{entry.parent.name}" not in y:
+            errors.append(f"{yaml.relative_to(root)}: default_prompt should mention $editbay:{entry.parent.name}")
     for tool in set(re.findall(r"tools/([\w\-]+\.py)", text)):
         if not (root / "tools" / tool).exists():
             errors.append(f"{rel}: names tools/{tool}, which does not exist")
