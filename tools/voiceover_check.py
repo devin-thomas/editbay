@@ -27,6 +27,19 @@ def spoken_number(n):
     return TENS[n // 10] + ("" if n % 10 == 0 else ONES[n % 10])
 
 
+SYMBOLS = {"%": " percent ", "&": " and "}
+
+
+def tokens(text):
+    """Split on spaces after spelling out symbols ASR emits as their own tokens: "50%" or "50 %" is "fifty percent".
+    CacheBrief 2026-09-28: a correct "50 percent ... Images 2.0" failed at WER 0.25 because norm() stripped the heard
+    "%" and ASR split "2.0" into "2" ".0" (words_of rejoins that). Now 8/8 pass on both ASR passes; a changed script
+    still fails (negative control); earlier Muse and GoCardless runs still pass."""
+    for k, v in SYMBOLS.items():
+        text = text.replace(k, v)
+    return text.split()
+
+
 def norm(w):
     w = re.sub(r"[^a-z0-9']", "", w.lower().replace("-", ""))
     return spoken_number(int(w)) if w.isdigit() and int(w) < 100 else w
@@ -34,9 +47,16 @@ def norm(w):
 
 def words_of(path):
     d = json.load(open(path))
-    if isinstance(d, list):
-        return [(w["start"], w["end"], w["text"]) for w in d]
-    return [(w[0], w[1], w[2]) for s in d["segments"] for w in s.get("words") or []]
+    raw = [(w["start"], w["end"], w["text"]) for w in d] if isinstance(d, list) else \
+        [(w[0], w[1], w[2]) for s in d["segments"] for w in s.get("words") or []]
+    out = []
+    for a, b, text in raw:
+        if out and re.fullmatch(r"\.\d+[.,!?]?", text.strip()):   # ASR splits "2.0" into "2" ".0": rejoin it
+            pa, _, pt = out[-1]
+            out[-1] = (pa, b, pt + text.strip())
+            continue
+        out += [(a, b, t) for t in tokens(text)]
+    return out
 
 
 def wer(ref, hyp):
@@ -73,7 +93,7 @@ def main():
     import difflib
     ref_tok, owner = [], []
     for k, s in enumerate(nar["sentences"]):
-        for w in s["text"].split():
+        for w in tokens(s["text"]):
             if norm(w):
                 ref_tok.append(alias.get(norm(w), norm(w))); owner.append(k)
     hyp_words = [w for (_, _, w) in words if norm(w)]
@@ -101,7 +121,7 @@ def main():
     bad = []
     for k, s in enumerate(nar["sentences"]):
         heard = heard_by[k]
-        ref = s["text"].split()
+        ref = tokens(s["text"])
         hyp = [alias.get(norm(w), w) for w in heard]
         refa = [alias.get(norm(w), w) for w in ref]
         e, c = wer(refa, hyp), cer(refa, hyp)
