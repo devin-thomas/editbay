@@ -35,7 +35,8 @@ Gather into `RETRO.md` (format: [references/retro-format.md](references/retro-fo
 
 ## 3. Change the owner
 
-Write each lesson as a rule with a number or an example ("hold step cards until the next step's first word; no empty
+If the lesson is mechanical or checkable and has already been written down once (it recurred), make it a tool or a gate
+with a negative control instead of more text; leave judgement calls as rules. Otherwise, write each lesson as a rule with a number or an example ("hold step cards until the next step's first word; no empty
 frames between steps"), not a mood ("better pacing"). Positive phrasing first; a prohibition only as a guardrail next
 to its positive target. Add a dated line to the owner's changelog or feedback log. Keep SKILL.md short: detail goes in
 its references.

@@ -16,6 +16,10 @@ Design: [docs/DESIGN.md](docs/DESIGN.md). Paid services and their free/local alt
 
 ## Rules
 
+- Script what can drift: a step that is mechanical or checkable (a format, a limit, a naming rule, a derived file) becomes
+  a tool or a gate with a negative control, not more prose. Judgement (story, visuals, taste, wording) stays with the
+  agent. In CacheBrief the end card and platform-copy limits kept failing audits as text rules and stopped once they
+  became tools (2026-09-27).
 - Run `python3 scripts/validate.py` before committing; it must print PASS. Also `git diff --check`.
 - No personal home paths, secrets, cookies, or tokens in any tracked file. Credentials are named, never stored.
 - Every tool change is tested on a real input, with a negative control when the tool is a gate (a gate that
