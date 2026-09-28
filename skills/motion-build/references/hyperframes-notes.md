@@ -81,3 +81,14 @@ Gotchas that each cost a re-render:
   diagram nodes at the full 36 px minimum, using two lines or wider nodes instead of marking factual text decorative.
 - **Rule 14 — persistent shell lanes:** after widening a source chip, inspect frame 0 and every persistent-bug hold;
   reserve a separate upper-right chip lane and keep the bug at its brand anchor so opaque cards cannot cover shell art.
+- **Rule 15 — caption allowances:** a caption wrapper's allowance does not reliably cover the evidence beneath it. Mark
+  the caption layer and each intentionally covered evidence element with explicit `data-layout-ignore` (or the narrow
+  caption-overlap attribute), then keep the text and visual gates mandatory.
+- **Rule 16 — cue stacks:** cues sharing a visual zone need explicit lanes, or the previous cue must fade before the next
+  enters (for example, a 0.18 s crossfade). Record intentional full-frame overlap on every overlapping section and in
+  the beat record; never waive the whole composition.
+- **Rule 17 — warnings still need evidence:** duplicate-media, nested-cue, and caption-tween warnings are not blockers by
+  themselves, but record their exact classes and require clean `hf.py check`, text gates, and encoded proof before render
+  approval. Rerun the transition check after the final layout repair.
+- **Rule 18 — generated caption spacing:** join caption word spans with literal whitespace and quote every generated
+  attribute selector. Capture a mid-caption highlighted word to prove the gaps and selector path render correctly.

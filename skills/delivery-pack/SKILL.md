@@ -45,7 +45,11 @@ rules (first at 0:00, at least three, each at least 10 s); otherwise the tool sa
 candidates, A/B/C, with no pick: the creator picks, or a designed thumbnail replaces them. The description draft
 carries the voice disclosure when a cloned voice narrates, and credits for music and generated media. Use repeatable
 `--asset VARIANT=PATH` for designed thumbs, covers, and other first-class image deliverables; the tool records their
-hashes and pixel dimensions. Platform details: [references/platform-specs.md](references/platform-specs.md).
+hashes and pixel dimensions. Use `--asset-name VARIANT=FILENAME` when the public basename is part of the brief; this
+avoids staging a source file solely to control its name. After any wrap-only or hyphen-join correction, inspect the
+emitted SRT and VTT, enforce the 42-character line limit, and refresh manifest hashes. The ledger and delivery helpers
+live under `$EB/tools`; CacheBrief stock and platform helpers live under `$CB/tools` and `$CB/publish`.
+Platform details: [references/platform-specs.md](references/platform-specs.md).
 
 **Done when:** `deliver/DELIVERY.md` lists every file with its spec and measured loudness, and `manifest.json` has a
 SHA-256 for each.

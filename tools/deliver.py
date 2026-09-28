@@ -10,7 +10,7 @@ Usage:
     --file master=renders/master-4k.mp4 --file review=renders/review.mp4 --file vertical=renders/vertical.mp4 \
     --words narration/words.words.json [--beats beats/beats.resolved.json --chapter-kinds step,chapter] \
     [--chapter "0:00 Intro"] [--thumb-from renders/review.mp4 --thumb-at 6.6,45.8,57.5] \
-    [--asset designed-thumb=PATH] [--asset cover=PATH]
+    [--asset designed-thumb=PATH] [--asset cover=PATH] [--asset-name cover=SLUG-cover.jpg]
     [--title "..."] [--summary "..."] [--disclosure "..."] [--credit "Music: ..."]
 Captions: SRT and VTT from the verified word timings (7 words / 34 characters per line, breaks at pauses and sentence
 ends). Hyphenated ASR tokens such as `one` + `-time` are joined before cue assembly, and overlong assembled lines fail.
@@ -90,6 +90,8 @@ def main():
     ap.add_argument("--out", required=True); ap.add_argument("--slug", required=True)
     ap.add_argument("--file", action="append", default=[], help="variant=path (master, review, vertical, ...)")
     ap.add_argument("--asset", action="append", default=[], help="designed asset variant=path (for example cover=cover.jpg)")
+    ap.add_argument("--asset-name", action="append", default=[], metavar="VARIANT=FILENAME",
+                    help="destination filename for a designed asset; otherwise its source basename is kept")
     ap.add_argument("--words"); ap.add_argument("--beats"); ap.add_argument("--chapter-kinds", default="step,chapter")
     ap.add_argument("--chapter", action="append", default=[], help='"0:00 Title" (overrides chapters from the beat sheet)')
     ap.add_argument("--thumb-from"); ap.add_argument("--thumb-at", default="")
@@ -98,6 +100,17 @@ def main():
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     delivered, notes = [], []
+    asset_names = {}
+    for spec in a.asset_name:
+        if "=" not in spec:
+            raise SystemExit("deliver: --asset-name must be VARIANT=FILENAME")
+        variant, filename = spec.split("=", 1)
+        if (not variant or not filename or os.path.basename(filename) != filename
+                or filename in (".", "..")):
+            raise SystemExit("deliver: --asset-name filename must be a plain destination basename")
+        if variant in asset_names:
+            raise SystemExit(f"deliver: duplicate --asset-name for variant {variant!r}")
+        asset_names[variant] = filename
     for spec in a.file:
         variant, path = spec.split("=", 1)
         dst = os.path.join(a.out, f"{a.slug}-{variant}{os.path.splitext(path)[1]}")
@@ -108,7 +121,7 @@ def main():
         variant, path = spec.split("=", 1)
         if not variant or not path:
             raise SystemExit("deliver: --asset must include a variant and path")
-        dst = os.path.join(a.out, os.path.basename(path))
+        dst = os.path.join(a.out, asset_names.get(variant, os.path.basename(path)))
         shutil.copy2(path, dst)
         delivered.append((variant, dst))
     if a.words:

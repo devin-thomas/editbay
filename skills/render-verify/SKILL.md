@@ -41,7 +41,9 @@ inspect frame N-1 in `encoded-last-frame.png`, and require the proof record to n
 and repeat the exact voice disclosure; verify caption ink and opacity there because a nearby timed frame does not count.
 Measure loudness on the encoded review/delivery file, not only the source WAV. If the local HyperFrames AAC path
 reproducibly attenuates the mix, apply a measured source compensation, rerun the encoded loudness gate, and record both
-measurements. What each gate proves and how to fix its common failures:
+measurements. After audio remux or packaging, rerun the frame and logo proofs on the copied delivery encode, not only
+the HyperFrames intermediate. If an expected review artifact is absent, record it as not checked; never invent evidence.
+What each gate proves and how to fix its common failures:
 [references/gates.md](references/gates.md). `--allow-*` ranges must match the plan (a fade from black, a held end card);
 never widen them to make a failure go away.
 

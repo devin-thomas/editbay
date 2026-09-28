@@ -19,15 +19,16 @@ and lines beginning `On-screen:`, `Pronunciation:`, or `Metadata:` are skipped b
 `narration/script-metadata.md`. One paragraph per beat, tagged `[B01]`. Write numbers, times, and symbols the way they
 are said ("five point five", "three P M"), spell out acronyms the voice would mangle, and keep sentences under about
 25 words. Pronunciation notes belong in `transcript/glossary.json` or a skipped metadata block, never as plain text in a
-spoken paragraph. When a glossary is supplied, validate every term before starting TTS: it must include a `variants`
-array, even when the canonical form is the only accepted spelling. Voice and tone rules come from the brand profile
+spoken paragraph. When a glossary is supplied, validate every term before starting TTS: it must include non-empty
+`canonical`, `variants`, and `why` fields, even when the canonical form is the only accepted spelling. Voice and tone rules come from the brand profile
 (`voice`). Guide: [references/script-craft.md](references/script-craft.md).
 
 **Done when:** every paragraph carries a beat tag and reads aloud cleanly at 140-160 words per minute (count it).
 
 ## 2. Choose the voice
 
-The config's `tts.default_voice` names the voice; `tts.voices.<name>` says how it runs. A creator's cloned voice runs
+The config's `tts.default_voice` names the voice; `tts.voices.<name>` says how it runs. Read the configured voice ID
+and pass that exact ID; never infer a voice from an example name. A creator's cloned voice runs
 on the GPU host through its own worker (`engine: remote`) and carries a `consent` note and a `disclosure` line: use it
 when the creator asked for it (record where and when in `HUMAN_QUEUE.md`), and put the disclosure in the video's
 description or end card. A stock voice needs neither. Drafts can use `--engine say` to rehearse timing for free.

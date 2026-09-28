@@ -425,7 +425,7 @@ def main():
         cw = cw if isinstance(cw, list) else [{"text": w[2].strip(), "start": w[0], "end": w[1]} for s in cw["segments"] for w in s["words"]]
         for k, line in enumerate(caption_lines(cw)):
             s, e = line[0]["start"], max(line[-1]["end"], line[0]["start"] + 0.6)
-            spans = "".join(f'<span class="w" data-t="{w["start"]}"><span class="tx">{esc(w["text"])}</span></span>' for w in line)
+            spans = " ".join(f'<span class="w" data-t="{w["start"]}"><span class="tx">{esc(w["text"])}</span></span>' for w in line)
             body.append(f'<div id="cap{k}" class="clip cap-line" data-start="{round(s, 3)}" data-duration="{round(e - s, 3)}" '
                         f'data-layout-allow-caption-zone>{spans}</div>')
             caption_js = []

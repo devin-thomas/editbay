@@ -78,6 +78,9 @@ def validate_glossary(path):
     for index, term in enumerate(terms):
         if not isinstance(term, dict) or not isinstance(term.get("canonical"), str) or not term["canonical"].strip():
             raise SystemExit(f"voiceover: glossary term {index} needs a non-empty canonical string")
+        why = term.get("why")
+        if not isinstance(why, str) or not why.strip():
+            raise SystemExit(f"voiceover: glossary term {index} needs a non-empty why string")
         variants = term.get("variants")
         if not isinstance(variants, list) or any(not isinstance(v, str) or not v.strip() for v in variants):
             raise SystemExit(f"voiceover: glossary term {index} needs a variants array of non-empty strings")
@@ -144,8 +147,11 @@ def remote_generate(cfg, jobs, local_dir, story_slug, producer):
     import time as _t
     host, rdir = cfg["host"], remote_work_dir(cfg, story_slug, producer)
     here = os.path.dirname(os.path.abspath(__file__))
+    voice_id = cfg.get("voice_id")
     job = {"worker": cfg["worker"], "lock": cfg["lock"], "out_dir": rdir,
-           "items": [{"id": f"s{i:03d}", "text": t, "seed": sd, "settings": {"language": cfg.get("language", "English")}}
+           "items": [{"id": f"s{i:03d}", "text": t, "seed": sd,
+                      "settings": {"language": cfg.get("language", "English")},
+                      **({"voice_id": voice_id} if voice_id else {})}
                      for i, t, sd in jobs]}
     jf = os.path.join(tempfile.mkdtemp(), "job.json")
     json.dump(job, open(jf, "w", encoding="utf-8"), ensure_ascii=False, indent=1)

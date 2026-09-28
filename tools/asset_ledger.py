@@ -123,6 +123,11 @@ def main():
         if a.source_start is not None:
             entry["source_start"] = a.source_start
             entry["source_end"] = a.source_end
+        prior = next((e for e in led["assets"] if e.get("file") == entry["file"]), None)
+        if prior and not a.name and prior.get("sha256") != digest:
+            raise SystemExit(
+                f"asset_ledger: basename collision for {entry['file']!r}; use --name with a unique relative path"
+            )
         led["assets"] = [e for e in led["assets"] if e["file"] != entry["file"]] + [entry]
         os.makedirs(os.path.dirname(os.path.abspath(a.ledger)), exist_ok=True)
         json.dump(led, open(a.ledger, "w"), indent=1)

@@ -28,7 +28,8 @@ sound-bed (the base video is muted), so loudness is decided in one place.
 For a local CacheBrief project, resolve the look and shell styles to files copied under the render root and fail before
 rendering if either stylesheet is missing; local font URLs must stay inside that root (use `/brand/fonts/...` or a
 normalized copy, never an unresolved `../fonts` path). Pass approved evidence or logo files with repeatable
-`--asset NAME=PATH`; rerunning the scaffold preserves existing project-local assets.
+`--asset NAME=PATH` and keep the extension in `NAME` (for example, `logo.png=assets/logo.png`); rerunning the scaffold
+preserves existing project-local assets.
 
 **Done when:** `hf/index.html` exists and `uv run $EB/tools/hf.py lint hf/` reports no errors.
 

@@ -21,6 +21,11 @@
   keep the URL, timestamps, response evidence, and the failed commands in `ESCALATION.md`; do not fabricate a screenshot.
   Use a source-labelled headline/type treatment or another accessible primary source, and mark the capture as blocked in
   the asset ledger.
+- **Canonical capture fallback:** after two identical failures for a canonical page, preserve both error captures, mark
+  the page unavailable, and switch to a directly related official documentation page. Credit that replacement as context
+  on screen; do not retry the same URL again.
+- **Extraction stalls:** timebox `core-extraction` (or the provider's equivalent) to two attempts. Record the stall,
+  exclude partial output from the composition, and use only independently verified type or mark attribution.
 - **Ad-heavy captures:** when ads or browser chrome dominate a live source page, do not present the screenshot as
   headline evidence. Typeset the exact headline and byline in a source-labelled card, disclose that the capture was
   omitted, and retain the canonical URL in the delivery package.
