@@ -2,6 +2,57 @@
 
 ## Unreleased
 
+- Music promo kit, from the Lil Gohan app trailer (2026-09-29, 125 BPM, 39.5 s, 16:9 + 9:16):
+  - New skill `style-music-promo`: trailers, sizzle reels, intros, outros, interstitials and idents cut to a supplied
+    song. Map the track first, give sections roles (motif, drop, flurry, resolve), drive pulses from the song's own
+    analysis, a liquid-glass motif, stop on an event with a tempo-synced echo, two aspects decided up front. Includes
+    the HyperFrames kit (device frames, SoundCloud-style waveform, a Three.js cover wall/sphere/spectrum ring,
+    timeline helpers) and a new route in video-director.
+  - New skill `app-capture`: real iOS app footage as XCUITest performances on song time (XCTest's idle waits skipped:
+    gestures went from 1-2 s late to ~0.05 s), aligned frame-exactly and synced by the app's own clock (3-6 ms).
+  - New tools: `track_map.py` (tempo/phase fit, bars, sections from stems, 16th-note groove, lyric anchors, per-frame
+    features for HyperFrames), `echo_tail.py` (stop on an event with an echo throw, or fade over N bars),
+    `sim_take.py` (sync, align, changes, events for simulator recordings: a naive trim or decode shifted content 0.8-2.7 s early),
+    `glass_logo.py` (Blender liquid-glass logo plates, 16:9 and 9:16), `logo_matte.py` (alpha from several flat
+    backgrounds).
+  - Found by the tools on the run's own files: the song's MP3 decodes 0.81 dB over full scale, so the first music bed
+    hard-clipped 922 samples in the hook (rebuilt with 1.5 dB of headroom; `echo_tail.py --gain` and a clip warning);
+    low-band energy picks the wrong downbeat when the 808 alternates beats 1 and 2 (track_map votes on stem entries
+    first).
+  - From the trailer's final QA: `glass_logo.py` splits the shine sweep (the white bar reflected lavender in the thin
+    film, off-brand for an aqua mark; the reflection copy is tinted (0.45, 0.9, 1.0)) and keys sweeps as CONSTANT
+    steps (0.01 s-apart keys merged on one frame and left 3 s BEZIER ramps); `verify_report --allow-silence` (an
+    end card decaying to silence, like `--allow-freeze`; negative control: a waiver from 38.2 s still fails the
+    37.08 s silence); kit.md: one project folder per aspect (`multiple_root_compositions`), and clips on one track do not
+    stack (the stage canvas starting 0.06 s early on the plate's track blanked it for 3 frames before the drop); master
+    to -1.5 dBTP for AAC delivery (a -1.0 master went over in the encode and remux_audio's limiter cost 0.4 LU and
+    2 dB of peak; -1.5 came through at -1.4).
+  - Cold-read test (a fresh agent made a 7.3 s channel ident on "Villains", 140 BPM, from the skill alone) and fixes:
+    - track_map picked beat 3 on Villains 0:60 with no note: its one-bar change windows voted the groove's bass gap
+      (phase 2 316 dB vs phase 0 237, no 2/3 majority, so low-band energy decided). Changes are now 2 bars against 2
+      bars, the first bass/drums entrance votes its rise, low-band energy and the first vocal entrance only report,
+      and any disagreement prints per-phase votes, every cue and a MAP.md check. Villains 0:60 now beat 0 (86 %,
+      flagged: the bass returns on beat 3 of bar 33); "Changed My Phone" 0:45, 10:45, 0:30, 30:90 and whole song
+      unchanged and unanimous (0:45: same 124.997 BPM, grid, features, bands, events and sections).
+    - `--grid-from map.json`: a short window keeps the song's grid, bar numbers, loudness references and stems (the
+      ident window alone refit 140.018 to 139.655 BPM and moved its first beat). A window's partial last bar is mapped
+      and flagged, so bar 9 keeps its hits (bass 1.964, 2.392, 2.821) and reads `X...X...Xxxxxxxx` as in the 0:60
+      map, not 12 X against itself. Missing, broken or non-map files exit 1 with the reason.
+    - echo_tail: `--json` `hits` (each repeat's audible transient: within 3.9 ms of onsets measured on the Villains
+      bed, 8 of 8; the trailer had keyed type 0.31 s after them); an 8 ms fade-in when the bed starts mid-song (it
+      stepped 0 → 0.051 in one sample); `--gain` applied at load, so `--gain -1.5` now equals the trailer's
+      rebuilt music.wav sample for sample (it was ±1 LSB in 10,843 samples).
+    - Kit: `template.html` (pinned GSAP, local fonts, root attributes, mix audio, inline timeline registry; an
+      external timeline.js fails `missing_timeline_registry`), `mark.css` + `K.flatMark` (the no-GPU motif) and
+      `K.bloom` (the hit as an accent bloom ≤ 0.35 on the mark: the draft's 0.5 white overlay took the dark corners
+      from luma 3 to 123), `ring.js` (standalone spectrum ring), `wave.js` starting at `AUD.wave.start` (no manual
+      slicing), `immediateRender: false` on every helper fromTo (without it the pulse layer sat 1.75 % large and
+      4.5 px low until the first 808), `stage.js` reading `events.bass` and checking its phases.
+    - Docs: one downbeat check with numbers, the map-once-then-`--grid-from` pattern, ident = 2 bars + a 2-4 s echo
+      tail with one bar recipe, wordmark 1.0-1.2x the brand headline, vocal-free bars for idents, SFX `gain_db`
+      relative to sfx_synth's -3 dBFS peak, the beat-align gate's real tolerance (one frame, 16.7 ms at 60 fps).
+      Proof: the ident rebuilt from the kit passes `verify_report` reel (16:9) and shorts (9:16).
+
 - tts_worker_runner: queues on the GPU lock (polls every 5 s, up to 45 min, job `lock_wait_s` overrides) instead of
   exiting on the first "GPU busy"; removes a lock only while it names this process. In CacheBrief wave 1 a producer hit
   the lock twice, exited, and shipped a macOS `say` fallback. Test: a waiter acquired 7.1 s after the holder released;

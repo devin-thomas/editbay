@@ -6,7 +6,7 @@
 
 Usage:
   verify_report.py --render renders/review.mp4 --out qa/ [--profile reel] [--config ~/.config/editbay/config.json]
-      [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 12.0:15.5,40.2:44.0]   (comma-separated start:end ranges)
+      [--expect-duration 15] [--allow-black 0:0.3] [--allow-freeze 12.0:15.5,40.2:44.0] [--allow-silence 38.2:39.5]   (comma-separated start:end ranges)
       [--hf-project hf/]                         hyperframes check (DOM: layout, contrast, motion sidecars), through hf.py
       [--brand BRAND.json]                       with --hf-project: text_check.py (phone-size text, words split across lines)
       [--min 30]                                 override the orientation-aware text minimum passed to text_check.py
@@ -80,6 +80,7 @@ def main():
     ap.add_argument("--profile"); ap.add_argument("--config", default=os.path.expanduser("~/.config/editbay/config.json"))
     ap.add_argument("--expect-duration", type=float); ap.add_argument("--allow-black")
     ap.add_argument("--allow-freeze", help="intentional holds as comma-separated start:end ranges, e.g. 12:15,40:44.5")
+    ap.add_argument("--allow-silence", help="intentional quiet, e.g. an end card decaying to silence: start:end ranges")
     ap.add_argument("--brand", help="brand profile JSON: gates on-screen text against its phone minimum")
     ap.add_argument("--min", type=float, help="override the text minimum passed to text_check.py")
     ap.add_argument("--hf-project"); ap.add_argument("--grid"); ap.add_argument("--half", action="store_true")
@@ -143,6 +144,8 @@ def main():
         args += ["--allow-black", a.allow_black]
     if a.allow_freeze:
         args += ["--allow-freeze", a.allow_freeze]
+    if a.allow_silence:
+        args += ["--allow-silence", a.allow_silence]
     args += ["--require-content-ends"]
     gate("av-qa", *tool("av_qa.py", *args), os.path.join(a.out, "av_qa.json"))
     tail_path = os.path.join(a.out, "encoded-last-frame.png")

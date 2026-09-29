@@ -1,0 +1,4 @@
+interface:
+  display_name: "App Capture"
+  short_description: "Real iOS app footage as scripted simulator performances synced to the song by the app's clock"
+  default_prompt: "Use $editbay:app-capture to film my app on the iPhone and iPad simulators with the song playing in it, synced to the soundtrack."

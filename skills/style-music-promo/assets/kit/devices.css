@@ -1,0 +1,27 @@
+/* Device frames for real app footage in CSS 3D (iPhone 17 portrait, iPad Pro 13" landscape), touch indicators and a
+   moving glare. Sizes are the 1080p layout; the timeline scales/rotates the .dev wrapper and zooms the inner .zoom.
+   Markup (untimed wrappers; the timed <video class="clip"> segments live inside .screen, never inside a timed wrapper):
+   <div class="dev iphone" id="ph"><div class="zoom" id="phz">
+     <div class="edge" style="--i:1"></div> ... (8 edges for thickness)
+     <div class="body"><div class="screen"> <video ...> <div class="touch" id="t0"></div> <div class="glare"></div>
+   </div></div></div></div> */
+#devs { position: absolute; inset: 0; perspective: 2600px; perspective-origin: 50% 45%; transform-style: preserve-3d; }
+.dev { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; opacity: 0; }
+.dev .zoom { position: absolute; inset: 0; transform-style: preserve-3d; }
+/* screen 372x809 = 402x874 pt at 0.925 px/pt; the recording (1206x2622) oversamples 3.2x */
+.iphone { width: 392px; height: 829px; margin: -414.5px 0 0 -196px; --r: 60px; --sr: 51px; --bez: 10px; --touch: 41px; }
+/* screen 1040x780 = 1376x1032 pt at 0.756 px/pt */
+.ipad { width: 1080px; height: 820px; margin: -410px 0 0 -540px; --r: 34px; --sr: 17px; --bez: 20px; --touch: 34px; }
+.edge { position: absolute; inset: 0; border-radius: var(--r); background: linear-gradient(135deg, #5b6068, #1d1f23 45%, #474b52 70%, #16181b);
+  transform: translateZ(calc(var(--i) * -1.4px)); }
+.body { position: absolute; inset: 0; border-radius: var(--r); border: 3px solid transparent; box-sizing: border-box;
+  background: linear-gradient(#050506, #050506) padding-box,
+              linear-gradient(135deg, #b9bfc7, #3b3f45 22%, #8d9299 48%, #26292d 72%, #aeb4bc) border-box;
+  box-shadow: 0 60px 120px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(0, 0, 0, 0.7); }
+.screen { position: absolute; inset: calc(var(--bez) - 3px); border-radius: var(--sr); overflow: hidden; background: #000; }
+.screen video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.glare { position: absolute; left: -60%; top: -20%; width: 220%; height: 140%; pointer-events: none;
+  background: linear-gradient(112deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.075) 47%, rgba(255,255,255,0.02) 53%, rgba(255,255,255,0) 60%); }
+.touch { position: absolute; width: var(--touch); height: var(--touch); margin: calc(var(--touch) / -2) 0 0 calc(var(--touch) / -2);
+  border-radius: 50%; background: rgba(255, 255, 255, 0.34); opacity: 0;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 22px rgba(77, 255, 255, 0.55); }

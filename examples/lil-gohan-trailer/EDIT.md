@@ -1,0 +1,21 @@
+# EDIT: Lil Gohan app — "Changed My Phone" trailer
+
+- Goal: a viewer sees the Lil Gohan app for iPhone and iPad actually playing "Changed My Phone 📲 Remix!" from the first tap to the last pause, feels the whole archive behind it, and leaves knowing it's coming soon from Uppercut Labs.
+- Audience: Lil Gohan's listeners and anyone who follows the build; they know the music, not the app.
+- Sources:
+  - Real simulator takes of the current app (dark, 9:41 status bar), performed by XCUITest scripts in `driver/`: A6 (iPhone main), B2 (iPhone features), C4 + C5 (iPad Pro 13" landscape), E2 (iPhone bookends: tap to play, home screen, pause). Recorded with `simctl io recordVideo` (HEVC).
+  - The song: the archive MP3 the app streams (`media.lilgohan.com/audio/songs/ihad2changemyphone/3cffcfe8f7be7c0a.mp3`, 320 kbps). The Scarlett loopback pair was silent (routing not changed), so the soundtrack is the same file rather than a capture of the simulator's output; every take is synced to it by the app's own clock.
+  - Catalog: `api.lilgohan.com` revision `cf7bbb3c…` (663 songs, 68 albums, 49 collections, 338 producers, 27.0 h of archive audio), 343 release artworks.
+  - App icon avatar (aqua, from `public/images/artist/avatars/lil-gohan-{aqua,white,lavender}.webp`, alpha by three-background matting).
+  - Uppercut Labs badge: `https://starter.devthomas.site/uppercut-labs-logo.png` (corners cut to alpha, colours untouched).
+- Deliverables: 1920×1080 60 fps master (H.264 + AAC, −14 LUFS, −1 dBTP), review copy, stills. 4K later if asked (the 3D plates are rendered at 1080p).
+- Brand: Apple-app identity — aqua `#4DFFFF` (never the website's pale purple), SF Pro Display, dark. Not the FGC commentator profile (`~/.config/editbay/brands/lil-gohan.json` is a different identity). No "LG", no filler copy.
+- Style: Apple-grade product film. One motif: the aqua app icon (glass → filled → lockup). Real UI only; motion graphics frame it, never fake it.
+- Voice: none.
+- Mode: autonomous; beats open (agent flourishes recorded in BEATS.md).
+- Beats the creator asked for: the song starts at the very beginning, literally from a tap in the app; ~37–40 s; intro (first "16") then hook (second "16"), fading right after the second 16; iPad shown with real taps, scrolls, play and pause; a clean liquid-glass 3D app icon that moves, the aqua filling into it while it stays glassy; "Coming Soon™"; Uppercut Labs at the end.
+- Sourcing allowed: captures (simulator), official assets (catalog artwork, avatar, badge), local 3D (Blender Cycles), local SFX synthesis. No paid generation.
+- Proof: the app's own clock, progress bar and "Listened Ns this play" match the soundtrack in every Now Playing shot; the play and the pause are real taps.
+- Human boundaries: publishing/uploading is Devin's call. The Gunflame artwork fix and the Apple-app tint fix were deployed/committed with his OK (2026-09-29).
+- Route and machines: music-led piece — sound-bed (supplied track measured: 125.0 BPM, beat 0 at 0.058 s, intro bars 1–8, hook bars 9–16, break 17–18) → beat-sheet → broll-sourcing (simulator takes + catalog art) → motion-build (HyperFrames 0.8.92, Three.js stage) + Blender 5.2 Cycles plates → render-verify → delivery-pack → skill-retro. Everything local on the Mac Studio (M5 Max); no Titan needed.
+- Goal condition: `verify_report.py` ends with "report: qa/REPORT.md" and no FAIL; `loudness.py` prints OK for the delivered master; `deliver/DELIVERY.md` exists.

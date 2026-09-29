@@ -14,7 +14,11 @@
     "hyperframes",
     "transcription",
     "voiceover",
-    "verification"
+    "verification",
+    "music",
+    "trailer",
+    "ident",
+    "app-capture"
   ],
   "skills": [
     "./skills/video-director",
@@ -29,6 +33,8 @@
     "./skills/render-verify",
     "./skills/delivery-pack",
     "./skills/reference-to-style",
+    "./skills/style-music-promo",
+    "./skills/app-capture",
     "./skills/style-craft-reel",
     "./skills/style-edit-talks-back",
     "./skills/skill-retro"

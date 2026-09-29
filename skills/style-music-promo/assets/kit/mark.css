@@ -1,0 +1,31 @@
+/* The flat mark: the no-GPU stand-in for the liquid-glass motif (glass_logo.py needs Blender). The brand mark in a
+   disc: clear = greyscale at 35 % opacity inside a 3 px white ring; on the hit it fills with colour, a 6 px accent
+   ring takes over, a ring bursts to 1.6x and an accent bloom lights the mark (promo.js K.flatMark and K.bloom).
+   Markup (untimed; the page's own CSS sizes #mark with --fm-d and puts the image on .fm-grey as a CSS background,
+   because a second <img> of the same file trips HyperFrames' duplicate_media_discovery_risk lint):
+   <div class="fm" id="mark"><div class="fm-pulse">
+     <div class="fm-disc fm-grey"></div>
+     <div class="fm-disc fm-col"><img src="assets/logo.png" alt="Brand" /></div>
+     <div class="fm-ring fm-ringW"></div><div class="fm-ring fm-ringA"></div><div class="fm-ring fm-burst"></div>
+   </div></div>
+   <div class="fm-bloom" id="bloom"></div>          (a sibling after the mark, centred on the same point) */
+.fm { --fm-d: 560px; --fm-accent: #4dffff; --fm-accent-rgb: 77, 255, 255; --fm-surface: #0b0d12;
+  position: absolute; width: var(--fm-d); height: var(--fm-d); margin: calc(var(--fm-d) / -2) 0 0 calc(var(--fm-d) / -2); }
+.fm-pulse { position: absolute; inset: 0; }
+.fm-disc { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background-color: var(--fm-surface); }
+/* Whole mark in the disc by default. To crop into it (an avatar's face), move the img box and give .fm-grey the same
+   crop: img left -30 %, top -28 %, 160 % square = background-size 160 %, background-position 50 % 46.67 %. */
+.fm-disc img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; }
+.fm-grey { background-position: center; background-size: contain; background-repeat: no-repeat;
+  filter: grayscale(1) brightness(1.35) contrast(0.9); }
+.fm-ring { position: absolute; inset: -6px; border-radius: 50%; box-sizing: border-box; }
+.fm-ringW { border: 3px solid rgba(244, 246, 250, 0.85); }
+.fm-ringA { border: 6px solid var(--fm-accent); opacity: 0;
+  box-shadow: 0 0 40px rgba(var(--fm-accent-rgb), 0.55), inset 0 0 30px rgba(var(--fm-accent-rgb), 0.25); }
+.fm-burst { border: 4px solid var(--fm-accent); opacity: 0; }
+/* The hit's light: accent-tinted, additive, centred on the mark, 2.2x its diameter; peak opacity <= 0.35. */
+.fm-bloom { --fm-d: 560px; --fm-accent-rgb: 77, 255, 255; position: absolute; pointer-events: none; opacity: 0;
+  width: calc(var(--fm-d) * 2.2); height: calc(var(--fm-d) * 2.2); margin: calc(var(--fm-d) * -1.1) 0 0 calc(var(--fm-d) * -1.1);
+  border-radius: 50%; mix-blend-mode: screen;
+  background: radial-gradient(circle, rgba(var(--fm-accent-rgb), 1) 0%, rgba(var(--fm-accent-rgb), 0.5) 24%,
+              rgba(var(--fm-accent-rgb), 0.12) 46%, rgba(var(--fm-accent-rgb), 0) 64%); }

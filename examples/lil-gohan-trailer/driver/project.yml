@@ -1,0 +1,41 @@
+name: Choreo
+options:
+  bundleIdPrefix: com.lilgohan.trailer
+  deploymentTarget:
+    iOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    GENERATE_INFOPLIST_FILE: YES
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+targets:
+  ChoreoHost:
+    type: application
+    platform: iOS
+    sources: [Host]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lilgohan.trailer.host
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+  ChoreoUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: ChoreoHost
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lilgohan.trailer.uitests
+        TEST_TARGET_NAME: ChoreoHost
+        TARGETED_DEVICE_FAMILY: "1,2"
+schemes:
+  Choreo:
+    build:
+      targets:
+        ChoreoHost: all
+        ChoreoUITests: [test]
+    test:
+      targets: [ChoreoUITests]

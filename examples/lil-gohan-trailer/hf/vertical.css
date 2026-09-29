@@ -1,0 +1,19 @@
+/* 9:16 overrides: devices lower and larger (timeline poses), type in the top band, waveform along the bottom */
+#wave { left: 0; top: 1500px; width: 1080px; height: 420px; }
+#stage { width: 1080px; height: 1920px; }
+#glow { width: 1300px; height: 1700px; margin: -850px 0 0 -650px; top: 55%; }
+#scrim { background: linear-gradient(180deg, rgba(2,3,4,0.9) 0%, rgba(2,3,4,0.72) 20%, rgba(2,3,4,0) 36%); }
+.stat, .cap { left: 0; right: 0; width: auto; text-align: center; }
+.stat { top: 235px; }
+.stat .num { font-size: 200px; }
+.stat .lab { font-size: 52px; }
+.cap { top: 265px; }
+.cap .num { font-size: 150px; }
+.flabel { left: 0; right: 0; width: auto; top: 300px; text-align: center; }
+.flabel span { font-size: 92px; }
+#lock { top: 1190px; }
+#lockName { font-size: 104px; }
+#lockSoon { font-size: 52px; margin-top: 20px; }
+#lockDev { font-size: 30px; margin-top: 26px; }
+#badgeWrap, #badge { width: 460px; height: 460px; }
+#studioName { font-size: 52px; margin-top: 56px; }

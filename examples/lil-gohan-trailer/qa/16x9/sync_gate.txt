@@ -1,0 +1,11 @@
+T   2.90  soundtrack 0:01  clock ['0:01']  listened ['1']  PASS
+T   3.30  soundtrack 0:01  clock ['0:01']  listened ['1']  PASS
+T   3.90  soundtrack 0:02  clock ['0:02']  listened ['2']  PASS
+T  27.60  soundtrack 0:26  clock ['0:26']  listened ['26']  PASS
+T  28.10  soundtrack 0:26  clock ['0:26']  listened ['26']  PASS
+T  30.55  soundtrack 0:29  clock ['0:29']  listened ['29']  PASS
+T  31.50  soundtrack 0:30  clock ['0:30']  listened ['30']  PASS
+T  31.95  soundtrack 0:30  clock ['0:30']  listened ['30']  PASS
+T  32.40  soundtrack 0:30  clock ['0:30']  listened ['30']  PASS
+T  32.70  soundtrack 0:31  clock ['0:31']  listened ['31']  PASS
+sync gate: PASS

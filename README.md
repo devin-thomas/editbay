@@ -46,6 +46,8 @@ Start with `video-director`: it writes the brief, picks the route, and runs the 
 | proof the render is right | `render-verify` | gates on the DOM and the encoded file, one visual read, a QA report |
 | hand it off | `delivery-pack` | 4K master, review copy, vertical cut, captions, chapters, thumbnails, manifest |
 | a house style learned from a video you admire | `reference-to-style` | measurements, a breakdown, and a new style skill that keeps the principles and leaves the signature |
+| a trailer, sizzle reel, intro, outro, interstitial, or ident cut to a song (16:9 and 9:16) | `style-music-promo` | a track map, a bar map with roles, a liquid-glass motif, a stop-on-event ending, and the HyperFrames kit (device frames, waveform, cover-wall stage) |
+| real app footage from the iOS Simulator with the song playing in the app | `app-capture` | scripted XCUITest performances on song time, frame-exact aligned takes, clock sync, touch overlays |
 | a short motion reel in the craft-reel style | `style-craft-reel` | the style's rules, motif, and acceptance table (built by reference-to-style) |
 | a funny talking-head edit where the edit answers the host (asides, counters, punch words) | `style-edit-talks-back` | the style's rules and acceptance table (built by reference-to-style from eight measured videos) |
 | the next run to go better | `skill-retro` | RETRO.md: what the creator corrected, which skill or tool changes, and who owns each change |
@@ -55,8 +57,8 @@ Start with `video-director`: it writes the brief, picks the route, and runs the 
 `tools/` holds the measurements and generators the skills call; each runs with `uv run tools/<name>.py --help`.
 Probe and look: `media_probe`, `contact_sheet`, `scene_cuts`, `palette`, `faces`, `reference_report`. Words:
 `transcribe_faster_whisper` and `asr_remote` (GPU host), `reconcile`, `transcript_diff`. Cutting: `cut_plan`, `cut_render`. Voice:
-`voiceover`, `voiceover_check`, `tts_worker_runner` (GPU host). Planning: `beats_check`. Sourcing: `asset_ledger`.
-Sound: `beat_grid`, `beat_bed`, `sfx_synth`, `mix`, `loudness`, `remux_audio`. Build, verify, deliver: `hf` (the
+`voiceover`, `voiceover_check`, `tts_worker_runner` (GPU host). Planning: `beats_check`, `track_map`. App footage: `sim_take`. Plates: `glass_logo` (Blender), `logo_matte`. Sourcing: `asset_ledger`.
+Sound: `beat_grid`, `beat_bed`, `echo_tail`, `sfx_synth`, `mix`, `loudness`, `remux_audio`. Build, verify, deliver: `hf` (the
 HyperFrames CLI with paid-service keys removed), `hf_scaffold`, `text_check`, `av_qa`, `face_clear`, `verify_report`,
 `deliver`.
 
