@@ -22,10 +22,13 @@ anchors in the hook: "I changed my phone" (song 25.10-25.80 s) and "had to chang
   catalog fling was scheduled to already be moving on the downbeat.
 - Real taps on the beat: Albums on bar 11's downbeat, Collections on its clap, the iPad sidebar folding on bar 12's clap.
 - The lyric does the device swaps; the flurry sits in bar 15; the second lyric swap brings back the phone for the pause.
-- The pause (song 31.313 s, 53 ms after beat 65) stops the music; a quarter-note echo of "slam" rings under the lockup;
-  "Lil Gohan", "Coming Soon™", "iPhone · iPad" land on echoes 2, 3, 4; the ident lands on bar 19's downbeat. (They were
-  keyed to stop + k beats, the ends of the repeat windows; `echo_tail --json` now gives the audible hits, 0.31 s
-  earlier: T 33.406, 33.886, 34.366.)
+- Silence before the song's first note (T 0-1.442): the first cut had a -24 dB swell and a tap click there, and
+  the owner heard them as a wrong first note.
+- The song fades, linearly, from the end of "had to change my phone." (T 31.482) to zero at the real pause (song
+  31.313 s, 53 ms after beat 65, T 32.755); the lockup is silent apart from the pause-tap click, and the Uppercut
+  Labs hit rings out on bar 19's downbeat. The first cut stopped on the pause with a quarter-note echo of "slam";
+  the owner rejected it as an echo he did not put in the song. "Lil Gohan", "Coming Soon™", "iPhone · iPad" and the
+  glass glow pulses kept the rhythm through the silence (T 33.406, 33.886, 34.366).
 
 ## What it cost
 

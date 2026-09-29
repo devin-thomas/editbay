@@ -34,7 +34,7 @@ The timeline is one paused GSAP timeline; poses are `pick({…16:9…}, {…9:16
 From the template: copy the kit files you use into the project's `kit/`, write `js/data.js` (`window.AUD`,
 `window.SHOT`), and replace the tokens (TITLE, W, H, DUR, FPS, VERTICAL, FONT_FAMILY, FONT_FILE, CSS, BODY, TIMELINE).
 Times come from the maps, never typed: bars from `ident.json` `bars`, hits from `events.grid`, the stop and the type
-cues from `echo.json` (`stop.edit`, `hits`).
+cues from `echo.json` (`stop.edit`; `hits` only when the artist asked for an echo).
 
 ## Gotchas (each cost a render)
 
@@ -86,7 +86,7 @@ position 50 % 46.67 %).
   renders at once did not raise throughput.
 - Renders are resumable (`use_overwrite=False` + placeholders); an empty placeholder left by a killed render must be
   deleted before resuming. Pre-create empty files for frames you do not need.
-- Key any echo-synced glow to the real stop time from the product take, not to a planned one.
+- Key any after-stop glow to the real stop time from the product take, not to a planned one.
 
 ## Vertical (9:16)
 

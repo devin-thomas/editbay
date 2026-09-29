@@ -16,8 +16,11 @@ Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`..
 
 1. **Map first.** `track_map.py` gives BPM and beat phase, bar downbeats, sections by which stems play, the groove
    (808/kick, clap, hats per 16th) and lyric anchors. Plan in bars; convert to seconds last.
-2. **The song starts the piece.** At most 1.5 s of pre-roll. If the product plays music, the song starts from a real
-   action in it (tap to play) and ends on one (pause): the edit is bookended by the product.
+2. **The song starts the piece, and nothing sounds before it.** At most 1.5 s of pre-roll, in digital silence: no
+   swell, riser, click or tone before the song's first note (a sound there is heard as the song's first note: the
+   Lil Gohan owner rejected a -24 dB swell and a tap click, 2026-09-29); the only alternative is a non-tonal cold-open
+   sound the artist asks for (e.g. an analog TV power-on without its whine). If the product plays music, the song
+   starts from a real action in it (tap to play) and ends on one (pause): the edit is bookended by the product.
 3. **Sections have roles.** Intro phrase: the motif and one hero idea, one change per bar or one continuous 3D shot.
    Drop: the product at full energy, cuts on downbeats and claps. The last bar before the resolve: a flurry on half
    beats (the densest frame). The resolve: the lockup (the sparsest frame).
@@ -29,10 +32,14 @@ Paths: `$EB` is the editbay root, the folder holding `skills/` and `tools/` (`..
    no lyrics on screen. Idents and interstitials sit on vocal-free bars (MAP.md: no `vocals` in the bar's stems), and a
    lyric is a cue only after its words are read in MAP.md's anchors and fit the brand (Villains' first line is not).
 6. **Numbers are real.** Stats come from the catalog or a measurement (663 songs, 27 hours); count up in ≤0.55 s.
-7. **Endings stop on an event.** "Fade after the second sixteen" = stop on the section's last event (the in-app pause,
-   a logo hit) with a quarter-note echo throw of the last half beat, 3-4 s tail (`echo_tail.py`); or `--fade-bars N`.
-   Lockup type lands on `echo_tail --json` `hits[1..3]` (the audible hits of repeats 2-4; the repeat windows end
-   0.31 s after them in the trailer); the studio ident lands where the next section would have dropped.
+7. **Endings fade the song itself, into an event.** Never add processing to the artist's song (no echo throw, reverb,
+   filter sweep or stutter): "fade after the second sixteen" = a plain linear fade from the end of the last lyric
+   line to zero on the section's last event (the in-app pause, the lockup cut): `echo_tail.py --fade-from F --stop S`
+   (the trailer: 1.27 s, from the end of "had to change my phone." to the pause). The owner rejected the echo tail as
+   "an echo I didn't personally add to the song". Silence after the event is fine; tonal sound design is fine once
+   the music has visibly stopped (the studio ident's hit and ring-out). The echo throw (`echo_tail.py` default) and
+   `--fade-bars` run-on fade are only for when the artist asks. The studio ident lands where the next section would
+   have dropped; lockup type lands on the bar grid continued through the silence.
 8. **One motif: the brand mark in liquid glass.** `glass_logo.py`: clear glass on the intro, filling with the brand
    colour through the second half, full on the drop (camera dives into it on the pre-drop), back as the lockup.
    No GPU for Blender: the flat mark (kit `mark.css` + `K.flatMark`): clear = greyscale at 35 % in a 3 px white ring;
@@ -59,8 +66,9 @@ Formats (bar maps, lengths, what each needs): [references/formats.md](references
    a first X on step 4k means the downbeat is k beats later (`--downbeat K` settles it). Then map the edit window
    with `--grid-from beats/map.json --window A:B --offset O --duration D`: same tempo, bars and loudness
    references; never refit a window under ~10 s (Villains 3.4 s: 140.018 → 139.655 BPM, first beat moved).
-2. Sound: `echo_tail.py` for the bed (stop point from the product take when there is one), `sfx_synth.py` for one sound
-   per idea (tap click, transformation whoosh, glass shimmer, dive sub-drop, ident impact), `mix.py` to −14 LUFS.
+2. Sound: `echo_tail.py --fade-from F --stop S` for the bed (the stop from the product take when there is one; F at the
+   end of the last lyric line), `sfx_synth.py` for one sound per idea once the song is playing (transformation whoosh,
+   glass shimmer, dive sub-drop, the pause-tap click, ident impact), none before the first note; `mix.py` to −14 LUFS.
 3. Footage: `app-capture` for product UI; catalog artwork for walls and orbits (ledger every file).
 4. Plates: `glass_logo.py` per aspect; test three frames at 20 % size, then render at 16 spp (resumable). No GPU:
    the flat mark (rule 8), no plates.
@@ -69,8 +77,8 @@ Formats (bar maps, lengths, what each needs): [references/formats.md](references
 
 ## Sound
 
-The song carries it; SFX mark only what the eye sees: −14 dB click on a real tap, −20 dB whoosh on a
-transformation, −20 dB shimmer when the glass appears, −16 dB sub-drop on the dive, −10 dB impact on the ident. These
+The song carries it; SFX mark only what the eye sees, never before the song's first note: −12 dB click on the
+real pause tap, −20 dB whoosh on a transformation, −20 dB shimmer when the glass appears, −16 dB sub-drop on the dive, −10 dB impact on the ident. These
 are `mix.py` cue `gain_db` values on `sfx_synth.py` files, which peak at −3 dBFS (−10 dB peaks at −13 dBFS
 pre-master), with the bed at `mix.py --music-gain` (default −6 dB); loudnorm then moves everything together. Master
 −14 LUFS, −1.5 dBTP (AAC adds a few tenths: a −1.0 master tripped remux_audio's limiter and lost 2 dB of peak);
@@ -96,7 +104,7 @@ under the dry hit) so a 3 s badge hold is not dead air; the last second may deca
 
 - [ ] Track mapped; format and window on section boundaries; bar map written
 - [ ] Mapped once from 0, edit window mapped with `--grid-from`; downbeat check applied when cues disagree
-- [ ] Bookends from the product; stop + echo tail; type on the echo `hits`
+- [ ] Silence before the first note; bookends from the product; a plain fade into the stop, nothing added to the song
 - [ ] Motif in glass (plates per aspect after a three-frame test), or the flat mark without a GPU
 - [ ] Every pulse from the map JSON; lyrics as anchors only; numbers real
 - [ ] 16:9 and 9:16 verified and delivered

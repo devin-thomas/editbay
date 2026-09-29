@@ -3,13 +3,15 @@
 # requires-python = ">=3.10,<3.14"
 # dependencies = ["librosa>=0.10", "numpy", "scipy", "soundfile"]
 # ///
-"""A music bed that stops on an event (an in-app pause, a hard cut) with a tempo-synced echo throw, or fades out.
+"""A music bed that ends on an event (an in-app pause, a hard cut): a plain fade into it, a fade after it, or an
+echo throw.
 
 Usage:
   echo_tail.py SONG --out music.wav --stop S (--bpm 124.987 | --map map.json) [--start 0] [--place 0] [--duration S]
                [--repeats 8] [--first 0.92] [--feedback 0.63] [--throw 0.5] [--reverb 0.55] [--gain 0]
                [--json echo.json]
   echo_tail.py SONG --out music.wav --stop S (--bpm B | --map map.json) --fade-bars N [--beats-per-bar 4] ...
+  echo_tail.py SONG --out music.wav --stop S --fade-from F [--start 0] [--place 0] [--duration S] [--gain 0]
   --stop    song seconds where the music stops (echo) or starts fading (--fade-bars).
   --place   edit seconds where song time --start lands; the stop lands at place + stop - start (printed).
   --map     a track_map.py JSON; its period sets the echo spacing and bar length.
@@ -21,6 +23,12 @@ at 180 Hz, panned 35 % to alternating sides. The bus, plus 0.35 x the last 0.6 s
 stereo reverb (decaying noise, RT60 2.6 s, 2.8 s long, low-passed at 3.8 kHz, fixed seed) mixed at --reverb.
 Fade mode: the song runs past --stop for N bars under a raised-cosine fade to silence (the plain "fade after the
 second sixteen").
+Fade-into mode (--fade-from F): the song plays untouched to song second F, then a plain linear fade reaches zero at
+--stop; nothing follows (no echo, no reverb, no tempo needed). This is the default ending for an artist's own song:
+the Lil Gohan owner rejected the echo throw ("an echo I didn't personally add to the song") and asked for "a normal
+fade" on 2026-09-29. The trailer: --fade-from 30.04 (the end of "had to change my phone.") --stop 31.313 (the in-app
+pause) --place 1.442: a 1.27 s fade, peaks -3.9 / -10.9 / -20.1 dBFS at T 31.5 / 32.0 / 32.4 after the mix, digital
+zero from the pause on.
 Writes 48 kHz stereo 24-bit WAV. Duration defaults to the end of the tail (last echo + reverb, or the fade end).
 Levels are not normalised (leave loudness to the mix); --gain scales the song at load, samples over 0 dBFS are
 counted and a --gain that clears them is suggested. A bed that starts mid-song (--start > 0) fades in over 8 ms.
@@ -96,7 +104,7 @@ def main():
     ap.add_argument("--start", type=float, default=0.0, help="song seconds the bed starts from")
     ap.add_argument("--place", type=float, default=0.0, help="edit seconds where --start lands")
     ap.add_argument("--duration", type=float, help="output length (default: end of the tail)")
-    tempo = ap.add_mutually_exclusive_group(required=True)
+    tempo = ap.add_mutually_exclusive_group()
     tempo.add_argument("--bpm", type=float)
     tempo.add_argument("--map", help="track_map.py JSON (uses its period)")
     ap.add_argument("--repeats", type=int, default=8)
@@ -105,12 +113,17 @@ def main():
     ap.add_argument("--throw", type=float, default=0.5, help="seconds before the stop that repeat")
     ap.add_argument("--reverb", type=float, default=0.55, help="reverb return level")
     ap.add_argument("--fade-bars", type=float, help="fade the song out over N bars after --stop instead")
+    ap.add_argument("--fade-from", type=float, help="song seconds: plain linear fade from here to zero at --stop")
     ap.add_argument("--beats-per-bar", type=int, default=4)
     ap.add_argument("--gain", type=float, default=0.0, help="dB applied to the whole bed (headroom for hot masters)")
     ap.add_argument("--json", help="write the stop, echo times and settings here")
     a = ap.parse_args()
 
-    D = json.load(open(a.map))["period"] if a.map else 60.0 / a.bpm
+    if a.fade_from is not None and a.fade_bars:
+        sys.exit("--fade-from and --fade-bars are different endings; pass one")
+    if a.fade_from is None and not (a.bpm or a.map):
+        sys.exit("--bpm or --map is required for the echo and --fade-bars endings")
+    D = json.load(open(a.map))["period"] if a.map else (60.0 / a.bpm if a.bpm else None)
     y = load(a.song) * 10 ** (a.gain / 20)     # gain at load, as the trailer's bed was built (bit-exact at -1.5 dB)
     song_dur = y.shape[1] / SR
     fade_s = a.fade_bars * a.beats_per_bar * D if a.fade_bars else 0.0
@@ -119,7 +132,9 @@ def main():
                  f"song ({song_dur:.3f} s)")
     if not 0 <= a.start < a.stop:
         sys.exit(f"need 0 <= --start ({a.start:g}) < --stop ({a.stop:g})")
-    if not fade_s and not 0 < a.throw <= a.stop - a.start:
+    if a.fade_from is not None and not a.start <= a.fade_from < a.stop:
+        sys.exit(f"--fade-from {a.fade_from:g} must be in [--start {a.start:g}, --stop {a.stop:g})")
+    if not fade_s and a.fade_from is None and not 0 < a.throw <= a.stop - a.start:
         sys.exit(f"--throw {a.throw:g} s must be > 0 and fit between --start and --stop")
 
     stop_T = a.place + a.stop - a.start
@@ -127,6 +142,8 @@ def main():
         dur = a.duration
     elif fade_s:
         dur = stop_T + fade_s
+    elif a.fade_from is not None:
+        dur = stop_T
     else:
         dur = math.ceil((stop_T + a.repeats * D + IR_SECONDS) * 10) / 10
     if dur <= stop_T:
@@ -136,10 +153,23 @@ def main():
     n = n1 - n0
     k8 = int(0.008 * SR)
     fade_in = np.linspace(0, 1, k8) if a.start > 0 else None     # a cut into the song mid-signal steps: no click
-    report = {"song": a.song, "out": a.out, "mode": "fade" if fade_s else "echo", "period": D, "start": a.start,
+    mode = "fade" if fade_s else ("fade-into" if a.fade_from is not None else "echo")
+    report = {"song": a.song, "out": a.out, "mode": mode, "period": D, "start": a.start,
               "place": a.place, "stop": {"song": a.stop, "edit": round(stop_T, 4)}, "duration": dur}
 
-    if fade_s:
+    if a.fade_from is not None:
+        seg = y[:, n0:n1].copy()
+        nfrom = int(a.fade_from * SR) - n0
+        seg[:, nfrom:] *= np.linspace(1.0, 0.0, n - nfrom)                        # plain linear fade to zero
+        if fade_in is not None:
+            seg[:, :k8] *= fade_in
+        add(out, seg, at)
+        from_T = a.place + a.fade_from - a.start
+        report["fade"] = {"from": {"song": a.fade_from, "edit": round(from_T, 4)}, "seconds": round(stop_T - from_T, 4),
+                          "curve": "linear"}
+        print(f"fade into the stop: T {from_T:.3f} -> {stop_T:.3f} (song {a.fade_from:g}-{a.stop:g} s, linear, "
+              f"zero from the stop on); song placed at T {a.place:g}")
+    elif fade_s:
         nf = int(fade_s * SR)
         seg = y[:, n0:n1 + nf].copy()
         seg[:, n:] *= 0.5 * (1 + np.cos(np.pi * np.arange(nf) / nf))

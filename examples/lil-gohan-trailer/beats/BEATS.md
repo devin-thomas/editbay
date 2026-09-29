@@ -6,7 +6,7 @@ Lyric anchors (Whisper on the vocal stem, not shown on screen): "I changed my ph
 
 | T (s) | Musical anchor | What's on screen | Why | Origin |
 |---|---|---|---|---|
-| 0.00 | pre-roll | iPhone in 3D, search result "Changed My Phone 📲 Remix!", SoundCloud-style waveform waiting at the playhead | the song is about to come from the app | brief |
+| 0.00 | pre-roll | iPhone in 3D, search result "Changed My Phone 📲 Remix!", SoundCloud-style waveform waiting at the playhead; digital silence until the first note | the song is about to come from the app | brief |
 | 0.95 | — | real tap on the row (touch indicator) | literally start the song in the app | brief |
 | 1.44 | song t=0 | music starts; mini player flips to ⏸; waveform starts scrolling | proof it's playing | brief |
 | 1.81 | beat 0.6 | Now Playing sheet rises (real tap); camera swings to front | the app plays it | agent |
@@ -36,9 +36,9 @@ Lyric anchors (Whisper on the vocal stem, not shown on screen): "I changed my ph
 | 30.30 | bar 16 | iPad Now Playing (synced) | — | agent |
 | 30.64–31.08 | "change … phone" | iPad rotates back into the iPhone | the lyric again | agent |
 | 31.08–32.70 | end of hook | push in on the play/pause control | tension | agent |
-| 32.755 | beat 65 (+0.05) | the real pause: music stops, tempo-synced echo throw of "slam" (the fade right after the second 16); the ▶ holds for a beat's half | bookend: play → pause | brief |
-| 32.943 | half beat after 65 | cut to the glass lockup (full aqua, settling; backdrop glow pulses on each echo) | resolve | brief |
-| 33.72 / 34.20 / 34.68 | echo repeats 2–4 | "Lil Gohan" / "Coming Soon™" / "iPhone · iPad" | type lands on the echoes | brief |
+| 32.755 | beat 65 (+0.05) | the real pause: the song has faded linearly from T 31.48 (end of "had to change my phone.") to zero here (the fade right after the second 16); the ▶ holds for a beat's half | bookend: play → pause | brief |
+| 32.943 | half beat after 65 | cut to the glass lockup (full aqua, settling; backdrop glow pulses on the grid through the silence) | resolve | brief |
+| 33.406 / 33.886 / 34.366 | half beats 66–68, in silence | "Lil Gohan" / "Coming Soon™" / "iPhone · iPad" | type keeps the song's rhythm after it stops | brief |
 | 36.06 | bar 19 (where the verse would drop) | black → Uppercut Labs badge, sweep, wordmark; impact | studio lockup | brief |
 | 36.86–39.50 | — | badge holds to the last frame (no fade to black: feeds loop and use the last frame) | end | agent |
 

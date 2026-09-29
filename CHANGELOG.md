@@ -19,6 +19,13 @@
     hard-clipped 922 samples in the hook (rebuilt with 1.5 dB of headroom; `echo_tail.py --gain` and a clip warning);
     low-band energy picks the wrong downbeat when the 808 alternates beats 1 and 2 (track_map votes on stem entries
     first).
+  - Owner's ruling on the trailer's sound (2026-09-29): nothing may sound before the song's first note (a -24 dB swell
+    and a tap click there were heard as a wrong first note), and nothing may be added to the artist's song (the echo
+    throw was "an echo I didn't personally add"). style-music-promo rules 2 and 7 now require a silent pre-roll and a
+    plain fade into the ending event; tonal sound design stays fine once the music has visibly stopped.
+    `echo_tail.py --fade-from F --stop S`: a plain linear fade to zero on the stop, nothing after (reproduces the
+    trailer's new bed sample for sample; negative controls: F past the stop, F with --fade-bars, and echo mode without
+    a tempo each exit 1; echo mode unchanged, 0 of 1,896,000 frames differ).
   - From the trailer's final QA: `glass_logo.py` splits the shine sweep (the white bar reflected lavender in the thin
     film, off-brand for an aqua mark; the reflection copy is tinted (0.45, 0.9, 1.0)) and keys sweeps as CONSTANT
     steps (0.01 s-apart keys merged on one frame and left 3 s BEZIER ramps); `verify_report --allow-silence` (an

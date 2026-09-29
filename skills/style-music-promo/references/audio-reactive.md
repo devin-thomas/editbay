@@ -40,8 +40,8 @@ groove string; the tool now finds all eight and lands within 2.4 ms of the hand-
   played part in the accent with a vertical gradient, unplayed #39404a, 28 % reflection below, edges faded over 260 px.
   Before the song starts the upcoming waveform waits to the right, still.
 - **Glow**: backdrop glow opacity 0.3 + 0.8·mel in the quiet intro; 0.25 + 0.6·bass in the hook.
-- **Echo pulses** (after a stop): glow peaks at the stop and at each echo hit (`echo_tail --json` `hits`), halving
-  about every repeat (0.62^k).
+- **After-stop pulses**: glow peaks at the stop, then keeps the grid's rhythm through the silence, falling about
+  0.62x per pulse back to rest (with an artist-approved echo, key them to `echo_tail --json` `hits`).
 - **3D plates in Blender**: key the backdrop emission every 2 frames from `mel` and `vox`; sweep lights on bar
   downbeats and on a vocal accent ("Yeah").
 

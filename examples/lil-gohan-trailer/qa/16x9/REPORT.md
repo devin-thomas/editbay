@@ -1,6 +1,6 @@
 # QA report: trailer-16x9.mp4
 
-- when: 2026-09-29T17:44:47
+- when: 2026-09-29T18:47:28
 - profile: reel {"size": "1920x1080", "fps": 60, "lufs": -14, "true_peak": -1.0}
 - verdict: **automated gates pass**; the visual gate needs a reader
 
@@ -10,7 +10,7 @@
 | text | PASS | 21 text items; 0 errors, 0 warnings  PASS |
 | av-qa | PASS | PASS |
 | encoded-tail | PENDING | decoded frame 2369 of 2369 to qa/16x9/encoded-last-frame.png; inspect it and record end-card proof before delivery |
-| loudness | PASS | renders/trailer-16x9.mp4: -13.6 LUFS, LRA 12.2 LU, TP -1.4 dBTP  OK (target -14.0 ±1 LU, TP <= -1.0) |
+| loudness | PASS | renders/trailer-16x9.mp4: -13.6 LUFS, LRA 16.0 LU, TP -1.4 dBTP  OK (target -14.0 ±1 LU, TP <= -1.0) |
 | beat-align | PASS | 3/3 cuts within ±16.7 ms |
 | face-clear | PENDING | no --faces/--source (no talking head?) |
 | words | PENDING | both --expected and --heard are required for the words gate |
@@ -44,6 +44,10 @@
   text gate 21 items, 0 warnings.
 - end card: encoded-last-frame.png (frame 2369 of 2369) is the Uppercut Labs badge and wordmark, centred, on the dark
   stage: the end-card proof.
+- sound (owner's notes 2026-09-29): digital silence before the song's first note (T 0-1.44); a plain linear
+  fade from the end of "had to change my phone." (T 31.48) to zero at the in-app pause (T 32.755); no echo or
+  reverb on the song; the real pause-tap click, then silence under the lockup until the Uppercut Labs hit rings out.
+  Silences waived as intended: 0-1.5, 32.7-36.1, 38.2-39.5.
 - sync: in-app clock / listen counter match the soundtrack at 10 of 10 sampled Now Playing frames (sync_gate.txt).
 
 ## Repairs

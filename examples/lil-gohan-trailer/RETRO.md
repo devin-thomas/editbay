@@ -2,6 +2,7 @@
 
 | lesson | evidence | owner |
 |---|---|---|
+| Owner: sounds before the song's first note (a -24 dB swell, a tap click) and an echo he did not put in the song are artistic violations; wanted dead silence first and a plain fade into the pause. Tonal sound after the music has stopped is fine | owner's notes 2026-09-29 (he was nervous to raise it); rebuilt bed: digital silence T 0-1.44, linear fade T 31.48 -> 32.755 | style-music-promo rules 2 and 7; `echo_tail.py --fade-from`; song_policy in both Lil Gohan brand profiles |
 | Simulator recordings (`simctl io recordVideo`, HEVC) are sparse VFR (a frame only when the screen changes) with DTS up to ~3 s behind PTS. `trim=start=X` starts at the next *existing* frame, and a plain decode uses DTS-driven best-effort timestamps: both shift content early (0.8–2.7 s measured on take E2: the DTS-driven decode alone 1.8–2.5 s, the trim alone 0.82 s when the start falls in a gap). Decode with `-fflags +igndts`, make the whole take CFR first, then cut by frame index | E2 clock read 0:31 where the soundtrack was at 0:30; after the fix the clock flips between 54.20 and 54.23 s (true tick 54.217) | new tool `sim_take.py align` (built 2026-09-29), app-capture references |
 | App footage can be synced to a song exactly by OCR-ing the app's own Now Playing clock: the label ticks when AVPlayer crosses each whole second (1 s periodic observer), so every "0:NN" change is a sync point; offsets agreed within 3–6 ms across ticks and across a take's two Now Playing windows | `tools/sync_clock.py` on A6/B2/C4/C5/E2; spread 0.003–0.064 s | new tool `sim_take.py sync` (built 2026-09-29; `--thr 0.5` catches every tick), app-capture references |
 | Scripted XCUITest performances drift 1–2 s per gesture because XCTest waits for the app to go idle before and after every event (never, while music plays and counters tick). Swizzling `XCUIApplicationProcess.shouldSkipPre/PostEventQuiescence` (and the wait itself) makes gestures land on schedule | A2: actions 1.2–3 s late; A3 onward: within ~0.05 s of plan | app-capture (Performance.swift template, references/performance-driver.md) |
@@ -23,3 +24,6 @@
 
 - 2026-09-29: supplied the 1080 px Gunflame artwork URL mid-run (the catalog's 100 px copy was pixelated on the iPad hero); deployed site + catalog API with his OK.
 - 2026-09-29: asked for a vertical cut for Shorts/TikTok/Reels mid-run.
+- 2026-09-29: rejected the pre-roll swell/click and the echo tail ("artistic violations"); chose dead silence before
+  the song and a plain fade into the pause; tonal sound after the pause is fine. Kept the pale-cream glass shine.
+- 2026-09-29: times in 12-hour Central ("7:30 PM CT"); phone copies must be under 30 MB.

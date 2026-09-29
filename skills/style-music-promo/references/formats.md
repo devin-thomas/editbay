@@ -6,12 +6,12 @@ says otherwise. Every format ends on the lockup, and 9:16 versions keep the same
 
 | format | length | bar map | needs |
 |---|---|---|---|
-| trailer | 30-45 s | pre-roll ≤ 1.5 s · intro phrase (8) · hook phrase (8) · stop + echo tail (2) · studio ident (1.5) | product takes, glass plates (intro + lockup), catalog art, stats |
+| trailer | 30-45 s | pre-roll ≤ 1.5 s · intro phrase (8) · hook phrase (8) · plain fade into the stop, silent lockup (2) · studio ident (1.5) | product takes, glass plates (intro + lockup), catalog art, stats |
 | sizzle reel | 15-30 s | hit on bar 1 of the hook · montage on downbeats and claps (6) · flurry (1) · lockup (1) | product/footage selects, one motif |
 | intro / opener | 4-8 s | motif reveal (1-2) · lockup on the last downbeat (1-2); the song keeps going under the content | glass plate or motif, title |
-| outro | 8-15 s | stop on the section's last event · echo tail under the lockup (2) · studio ident + end-screen space (≥ 5 s) | lockup plate, links/end-screen zones |
+| outro | 8-15 s | fade into the section's last event · lockup (2) · studio ident + end-screen space (≥ 5 s) | lockup plate, links/end-screen zones |
 | interstitial / bumper | 1-3 s | one whip or flash into a label on a downbeat, or a half-bar sting | one sound, one word |
-| ident / logo sting | 2 bars + a 2-4 s echo tail (5.5-8 s; 7.3 s at 140 BPM) | reveal on the last bar before the hook (1) · the hit on the hook's first downbeat, stop at that bar's end (1) · echo tail: wordmark on `hits[1]` | glass plate, or the flat mark (no GPU) |
+| ident / logo sting | 2 bars + a 2-4 s fade or held silence (5.5-8 s; 7.3 s at 140 BPM) | reveal on the last bar before the hook (1) · the hit on the hook's first downbeat, stop at that bar's end (1) · echo tail: wordmark on `hits[1]` | glass plate, or the flat mark (no GPU) |
 
 ## Trailer (the worked example, 125 BPM)
 
@@ -24,7 +24,7 @@ says otherwise. Every format ends on the lockup, and 9:16 versions keep the same
 | 11-14 | 20.70-28.38 | the product | real taps on downbeats/claps; the iPad; the lyric-cued device swap |
 | 15 | 28.38-30.30 | flurry | six feature cards on beats then half beats; spectrum ring |
 | 16 | 30.30-32.22 | back to the start | the second lyric swap; push in on the pause control |
-| 17-18 | 32.22-36.06 | stop + resolve | the real pause (beat 65), echo tail; lockup; type on echoes 2-4 |
+| 17-18 | 32.22-36.06 | stop + resolve | fade from 31.48 to zero at the real pause (beat 65); silent lockup, type on the grid |
 | 19 | 36.06-39.50 | studio | ident on the bar where the verse would have dropped; held to the last frame |
 
 ## Picking the window
@@ -35,8 +35,9 @@ says otherwise. Every format ends on the lockup, and 9:16 versions keep the same
 - If the lyric in the hook names the product's idea (the phone, the drive, the night), anchor a transformation to it.
 - For idents and intros from a longer song: reveal on the last bar before the hook; the hit is the hook's first
   downbeat (track_map's first bass/drums entrance, "bass enters at beat 32"); stop at the end of that
-  bar, before the next vocal, and let `echo_tail.py` make the tail (the stop's quarter-note echo throw plus reverb,
-  2-4 s). Villains: bar 8 reveal (T 0.25), bar 9 hit (T 1.964, the 808 enters), stop T 3.627 (51 ms before bar 10's
-  vocal), "Lil Gohan" on echo hit 2 (T 4.324), last frame 7.3 s.
+  bar, before the next vocal, with a plain fade into the stop (`echo_tail.py --fade-from F --stop S`), then 2-4 s of
+  silence or the studio ident's own hit. Villains (cold-read test, made before the owner's ruling, so it used the
+  echo throw): bar 8 reveal (T 0.25), bar 9 hit (T 1.964, the 808 enters), stop T 3.627 (51 ms before bar 10's
+  vocal), "Lil Gohan" at T 4.324, last frame 7.3 s.
 - Prefer vocal-free bars for idents and interstitials; the Villains intro's first line (song 9.5 s) was not
   ident-safe, so the window moved to bars 8-9, where MAP.md shows no vocals.
