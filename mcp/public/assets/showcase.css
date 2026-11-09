@@ -28,6 +28,10 @@ h3{font-size:21px;line-height:28px;font-weight:600;letter-spacing:-.5px;margin:0
 .panel h2{color:var(--accent)}
 .panel p{margin:0;font-size:15px;line-height:26px;font-weight:500;color:var(--text);overflow-wrap:anywhere}
 .action{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg-btn{min-height:40px;padding:11px 12px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);font-weight:600;font-size:14px;line-height:18px}
+.seg-btn:hover{color:var(--text);border-color:var(--panel-border)}
+.seg-btn[aria-pressed="true"]{background:var(--small);color:var(--text);border-color:var(--panel-border)}
 .primary,.small{border:0;border-radius:8px;font-weight:600;font-size:14px;line-height:18px}
 .primary{min-height:44px;padding:12px 16px;background:var(--accent);color:var(--on-accent)}
 .primary:hover{background:var(--hover-light)}

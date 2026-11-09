@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = realpathSync(fileURLToPath(new URL("../../", import.meta.url)));
 const git = (...args) => execFileSync("git", ["-C", root, ...args], { encoding: "utf8", maxBuffer: 8 * 1024 * 1024 });
 export function isPublishedPath(path) {
-  return path === "README.md" || path === "mcp/README.md" || /^docs\/[A-Z-]+\.md$/.test(path) || /^skills\/[a-z0-9-]+\/(SKILL\.md|references\/[a-z0-9-]+\.md)$/.test(path);
+  return path === "README.md" || path === "mcp/README.md" || /^docs\/[A-Z-]+\.md$/.test(path) || /^skills\/[a-z0-9-]+\/(SKILL\.md|references\/[a-z0-9-]+\.md)$/.test(path) || /^tools\/[a-z0-9_]+\.py$/.test(path);
 }
 export function buildContent() {
   if (realpathSync(git("rev-parse", "--show-toplevel").trim()) !== root) throw new Error("Build only from a standalone public checkout, not a folder inside another repository");
@@ -18,11 +18,14 @@ export function buildContent() {
   const documents = manifest.documents.map((path) => {
     if (typeof path !== "string" || !isPublishedPath(path)) throw new Error("Unapproved document path");
     const text = git("show", `${revision}:${path}`);
-    const title = /^# (.+)$/m.exec(text)?.[1] ?? path;
+    const tool = /^tools\/([a-z0-9_]+\.py)$/.exec(path)?.[1] ?? null;
+    const title = tool ?? /^# (.+)$/m.exec(text)?.[1] ?? path;
     const skill = /^skills\/([^/]+)\/SKILL\.md$/.exec(path)?.[1] ?? null;
     const description = skill === null ? "" : /^description: (.+)$/m.exec(text)?.[1]?.replace(/^"(.*)"$/, "$1");
     if (skill !== null && !description) throw new Error(`Missing description: ${path}`);
-    return { path, title, skill, description: description ?? "", text, sha256: createHash("sha256").update(text).digest("hex") };
+    const toolDescription = tool === null ? "" : /^(?:#.*\n)*"""\s*(.+?)(?:\n|""")/.exec(text)?.[1]?.trim();
+    if (tool !== null && !toolDescription) throw new Error(`Missing docstring: ${path}`);
+    return { path, title, skill, tool, description: description || toolDescription || "", text, sha256: createHash("sha256").update(text).digest("hex") };
   });
   if (!documents.some((document) => document.skill === "video-director")) throw new Error("Missing entry skill");
   const directory = new URL("../src/generated/", import.meta.url);

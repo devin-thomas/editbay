@@ -1,6 +1,6 @@
 # EditBay
 
-> Portable video-editing skills and local tools. Hosted MCP: read-only guidance, not remote editing.
+> Portable video-editing skills and local tools. Hosted MCP: read-only guidance and script source, not remote editing. Call list_tools, then get_tool, or fetch /docs/tools/<name>.py.
 
 - [Start](https://editbay.uppercut-labs.com/guides/start.md)
 - [README](https://editbay.uppercut-labs.com/docs/README.md)

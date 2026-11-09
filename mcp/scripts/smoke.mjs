@@ -13,7 +13,10 @@ let client = new Client({ name: "editbay-smoke", version: "1.0.0" });
 try {
   await client.connect(new StreamableHTTPClientTransport(new URL(endpoint)));
   const tools = await client.listTools();
-  assert.equal(tools.tools.length, 4);
+  assert.equal(tools.tools.length, 6);
+  const script = await client.callTool({ name: "get_tool", arguments: { name: "loudness" } });
+  assert.ok(!script.isError);
+  assert.match(script.structuredContent.content, /EBU R128/);
   const skill = await client.callTool({ name: "get_skill", arguments: { name: "video-director" } });
   assert.ok(!skill.isError);
   assert.equal(skill.structuredContent.revision, health.revision);

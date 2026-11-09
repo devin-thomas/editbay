@@ -10,8 +10,9 @@ function summarize(description: string): string {
 }
 
 const skillDocuments: readonly Document[] = documents.filter((document: Document): boolean => document.skill !== null);
+const toolDocuments: readonly Document[] = documents.filter((document: Document): boolean => document.tool !== null);
 const skillIndex: string = skillDocuments.map((document: Document): string => `- ${document.skill}: ${summarize(document.description)}`).join("\n");
-const instructions: string = `editbay skills for editing and making videos. When a request matches a skill below (cutting, captions, transcripts, motion graphics, sound, verification, delivery, app footage, style references), load that skill before starting: use the prompt of the same name, or get_skill.\n${skillIndex}\nStart with video-director for a whole edit. list_skills returns each skill's full "use when" description.\n\n` + "editbay is a read-only source of video-editing skills, documentation and runbooks. Start with list_skills or search_editbay, then get_skill and read_document. Follow references using exact repository-relative paths; resolve Markdown links relative to the document path. Read all pages using nextOffset. Responses identify their committed source revision and SHA-256. Historical provider prices and host benchmarks are documentation, not current guarantees. Tools, media editing, rendering, downloads, local files and paid services run on the caller's machine, never on this server. $EB in runbooks means a caller-installed editbay checkout. This server serves no personal config, examples or credentials.";
+const instructions: string = `editbay skills for editing and making videos. When a request matches a skill below (cutting, captions, transcripts, motion graphics, sound, verification, delivery, app footage, style references), load that skill before starting: use the prompt of the same name, or get_skill.\n${skillIndex}\nStart with video-director for a whole edit. list_skills returns each skill's full "use when" description.\n\n` + "editbay is a read-only source of video-editing skills, documentation and runbooks. Start with list_skills or search_editbay, then get_skill and read_document. Follow references using exact repository-relative paths; resolve Markdown links relative to the document path. Read all pages using nextOffset. Responses identify their committed source revision and SHA-256. Historical provider prices and host benchmarks are documentation, not current guarantees. Tools, media editing, rendering, downloads, local files and paid services run on the caller's machine, never on this server. $EB in runbooks means the folder on the caller's machine that holds skills/ and tools/. list_tools and get_tool serve the Python scripts as source text only: save them together in $EB/tools (some call their siblings), check each SHA-256, read a script before running it, and run it locally with uv run. This server serves no personal config, examples or credentials.";
 const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
 const authMeta = { securitySchemes: [{ type: "noauth" }] } as const;
 const pathSchema = z.string().min(1).max(300).describe("Exact repository-relative document path, such as skills/video-director/SKILL.md");
@@ -60,6 +61,20 @@ export function createServer(baseUrl: string): McpServer {
     return result({ ...metadata(document, baseUrl), content: document.text.slice(offset, end), offset, nextOffset: end < document.text.length ? end : null, totalCharacters: document.text.length });
   });
 
+  server.registerTool("list_tools", {
+    description: "List the editbay Python scripts served as source text, each with a one-line purpose, SHA-256 and size. Nothing runs on this server: save the scripts together in one local folder (some call their siblings) and run them with uv run.",
+    inputSchema: {}, annotations, _meta: authMeta,
+  }, (): CallToolResult => result({ revision, count: toolDocuments.length, saveIn: "$EB/tools", tools: toolDocuments.map((document: Document): Record<string, unknown> => ({ name: document.tool, description: document.description, ...metadata(document, baseUrl), bytes: new TextEncoder().encode(document.text).length })) }));
+
+  server.registerTool("get_tool", {
+    description: "Return one editbay script's complete source with its SHA-256 and source revision. Source text only: nothing runs on this server. Save it as $EB/tools/<name> on the caller's machine, verify the SHA-256 of the saved bytes, read it, then run it locally with uv run. Usage is in the script's docstring.",
+    inputSchema: { name: z.string().regex(/^[a-z0-9_]{1,80}(\.py)?$/).describe("Script name, with or without .py, such as loudness") }, annotations, _meta: authMeta,
+  }, ({ name }: { name: string }): CallToolResult => {
+    const file: string = name.endsWith(".py") ? name : `${name}.py`;
+    const document: Document = requireDocument(`tools/${file}`);
+    return result({ ...metadata(document, baseUrl), name: file, description: document.description, content: document.text, saveAs: `$EB/tools/${file}`, run: `uv run $EB/tools/${file}` });
+  });
+
   for (const skill of skillDocuments) {
     const name: string = skill.skill ?? "";
     const references: readonly Document[] = documents.filter((candidate: Document): boolean => candidate.path.startsWith(`skills/${name}/references/`));
@@ -76,7 +91,7 @@ export function createServer(baseUrl: string): McpServer {
         "",
         references.length === 0 ? "This skill has no separate reference documents." : `Supporting references (read each with read_document using the path, or as a resource):\n${references.map((reference: Document): string => `- ${reference.path} (${documentUri(reference.path)})`).join("\n")}`,
         "",
-        "This server only serves instructions. Tools, rendering, media and files run on your machine; $EB means a local editbay checkout.",
+        "This server only serves instructions and script source. Rendering, media and files stay on your machine; the scripts this skill names come from get_tool, saved together in $EB/tools.",
       ];
       return { description: skill.description, messages: [{ role: "user" as const, content: { type: "text" as const, text: lines.join("\n") } }] };
     });
@@ -109,10 +124,10 @@ export async function handleRequest(request: Request): Promise<Response> {
   const url: URL = new URL(request.url);
   if (request.method === "OPTIONS") return withHeaders(new Response(null, { status: 204 }));
   if (url.pathname === "/health" && request.method === "GET") {
-    return withHeaders(Response.json({ status: "ok", name: "editbay", revision, documents: documents.length, skills: documents.filter((document: Document): boolean => document.skill !== null).length, mode: "read-only" }));
+    return withHeaders(Response.json({ status: "ok", name: "editbay", revision, documents: documents.length, skills: documents.filter((document: Document): boolean => document.skill !== null).length, tools: toolDocuments.length, mode: "read-only" }));
   }
   if (url.pathname === "/about.json" && request.method === "GET") {
-    return withHeaders(Response.json({ name: "editbay", description: "Free, read-only skills, documentation and video editing runbooks", mcp: `${url.origin}/mcp`, transport: "Streamable HTTP", authentication: "none", revision, instructions }));
+    return withHeaders(Response.json({ name: "editbay", description: "Free, read-only skills, documentation, runbooks and script source for video editing", mcp: `${url.origin}/mcp`, transport: "Streamable HTTP", authentication: "none", revision, instructions }));
   }
   if (url.pathname.startsWith("/docs/") && request.method === "GET") {
     let path: string;

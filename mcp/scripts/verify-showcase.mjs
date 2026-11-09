@@ -34,8 +34,13 @@ try {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   await page.goto(base.href);
-  const prompt = (await page.locator("#setup-prompt").innerText()).trim();
-  assert.ok(prompt.includes(endpoint) && prompt.includes("video-director"));
+  let prompt = (await page.locator("#setup-prompt").innerText()).trim();
+  assert.ok(prompt.includes("claude plugin marketplace add devin-thomas/editbay") && prompt.includes("claude plugin install editbay@editbay") && prompt.includes("video-director"));
+  assert.equal(await page.locator("#pick-claude").getAttribute("aria-pressed"), "true");
+  await page.locator("#pick-mcp").click();
+  assert.equal(await page.locator("#pick-claude").getAttribute("aria-pressed"), "false");
+  prompt = (await page.locator("#setup-prompt").innerText()).trim();
+  assert.ok(prompt.includes(endpoint) && prompt.includes("video-director") && prompt.includes("get_tool"));
   const deny = () => page.evaluate(() => Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("denied"); } } }));
   const expect = (wanted) => page.evaluate((value) => Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async (text) => { if (text !== value) throw new Error("wrong text"); } } }), wanted);
   await deny();

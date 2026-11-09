@@ -4,6 +4,7 @@ export type Document = {
   readonly path: string;
   readonly title: string;
   readonly skill: string | null;
+  readonly tool: string | null;
   readonly description: string;
   readonly text: string;
   readonly sha256: string;

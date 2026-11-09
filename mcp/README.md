@@ -4,7 +4,7 @@ Canonical showcase: `https://editbay.uppercut-labs.com`
 
 Streamable HTTP MCP: `https://editbay.uppercut-labs.com/mcp`
 
-The MCP is read-only and unauthenticated. It serves documentation; it cannot operate an editor, upload or render media, read a user's files, or call a paid provider.
+The MCP is read-only and unauthenticated. It serves documentation and the Python scripts as source text; it cannot run them, operate an editor, upload or render media, read a user's files, or call a paid provider.
 
 ## Build and verify
 
