@@ -4,7 +4,14 @@ import { ErrorCode, ListResourcesRequestSchema, McpError, ReadResourceRequestSch
 import { z } from "zod";
 import { documents, documentUri, documentUrl, findDocument, revision, searchDocuments, type Document, type SearchHit } from "./content.ts";
 
-const instructions: string = "editbay is a read-only source of video-editing skills, documentation and runbooks. Start with list_skills or search_editbay, then get_skill and read_document. Follow references using exact repository-relative paths; resolve Markdown links relative to the document path. Read all pages using nextOffset. Responses identify their committed source revision and SHA-256. Historical provider prices and host benchmarks are documentation, not current guarantees. Tools, media editing, rendering, downloads, local files and paid services run on the caller's machine, never on this server. $EB in runbooks means a caller-installed editbay checkout. This server serves no personal config, examples or credentials.";
+function summarize(description: string): string {
+  const sentence: string = /^.+?[.!?](?=\s|$)/.exec(description)?.[0] ?? description;
+  return sentence.length > 140 ? `${sentence.slice(0, 137)}...` : sentence;
+}
+
+const skillDocuments: readonly Document[] = documents.filter((document: Document): boolean => document.skill !== null);
+const skillIndex: string = skillDocuments.map((document: Document): string => `- ${document.skill}: ${summarize(document.description)}`).join("\n");
+const instructions: string = `editbay skills for editing and making videos. When a request matches a skill below (cutting, captions, transcripts, motion graphics, sound, verification, delivery, app footage, style references), load that skill before starting: use the prompt of the same name, or get_skill.\n${skillIndex}\nStart with video-director for a whole edit. list_skills returns each skill's full "use when" description.\n\n` + "editbay is a read-only source of video-editing skills, documentation and runbooks. Start with list_skills or search_editbay, then get_skill and read_document. Follow references using exact repository-relative paths; resolve Markdown links relative to the document path. Read all pages using nextOffset. Responses identify their committed source revision and SHA-256. Historical provider prices and host benchmarks are documentation, not current guarantees. Tools, media editing, rendering, downloads, local files and paid services run on the caller's machine, never on this server. $EB in runbooks means a caller-installed editbay checkout. This server serves no personal config, examples or credentials.";
 const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false } as const;
 const authMeta = { securitySchemes: [{ type: "noauth" }] } as const;
 const pathSchema = z.string().min(1).max(300).describe("Exact repository-relative document path, such as skills/video-director/SKILL.md");
@@ -52,6 +59,28 @@ export function createServer(baseUrl: string): McpServer {
     const end: number = Math.min(offset + limit, document.text.length);
     return result({ ...metadata(document, baseUrl), content: document.text.slice(offset, end), offset, nextOffset: end < document.text.length ? end : null, totalCharacters: document.text.length });
   });
+
+  for (const skill of skillDocuments) {
+    const name: string = skill.skill ?? "";
+    const references: readonly Document[] = documents.filter((candidate: Document): boolean => candidate.path.startsWith(`skills/${name}/references/`));
+    server.registerPrompt(name, {
+      title: `editbay: ${name}`,
+      description: skill.description,
+      argsSchema: { task: z.string().trim().max(2000).optional().describe("What you want to do with this skill; added above the skill text") },
+    }, ({ task }: { task?: string | undefined }) => {
+      const lines: string[] = [
+        `Follow the editbay skill "${name}" (source revision ${revision}, SHA-256 ${skill.sha256}).`,
+        ...(task ? ["", `Task: ${task}`] : []),
+        "",
+        skill.text,
+        "",
+        references.length === 0 ? "This skill has no separate reference documents." : `Supporting references (read each with read_document using the path, or as a resource):\n${references.map((reference: Document): string => `- ${reference.path} (${documentUri(reference.path)})`).join("\n")}`,
+        "",
+        "This server only serves instructions. Tools, rendering, media and files run on your machine; $EB means a local editbay checkout.",
+      ];
+      return { description: skill.description, messages: [{ role: "user" as const, content: { type: "text" as const, text: lines.join("\n") } }] };
+    });
+  }
 
   server.server.registerCapabilities({ resources: {} });
   server.server.setRequestHandler(ListResourcesRequestSchema, (): { resources: { uri: string; name: string; description: string; mimeType: string }[] } => ({

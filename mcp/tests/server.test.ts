@@ -34,6 +34,39 @@ test("real SDK initialization, tool discovery, skill loading and reference readi
   } finally { await client.close(); }
 });
 
+test("server instructions name every skill so a model can route to it", async (): Promise<void> => {
+  let client: Client = await connect();
+  try {
+    const instructions: string = client.getInstructions() ?? "";
+    const names: string[] = documents.flatMap((document): string[] => (document.skill === null ? [] : [document.skill]));
+    assert.ok(names.length >= 17);
+    for (const name of names) assert.ok(instructions.includes(`- ${name}:`), name);
+    assert.ok(instructions.length < 6000, `instructions too long: ${instructions.length}`);
+  } finally { await client.close(); }
+});
+
+test("every skill is a prompt that carries the skill text, task and references", async (): Promise<void> => {
+  let client: Client = await connect();
+  try {
+    const skills = documents.filter((document): boolean => document.skill !== null);
+    const prompts = await client.listPrompts();
+    assert.deepEqual(prompts.prompts.map((prompt): string => prompt.name).sort(), skills.map((document): string => document.skill ?? "").sort());
+    for (const prompt of prompts.prompts) {
+      const skill = skills.find((document): boolean => document.skill === prompt.name);
+      assert.ok(skill);
+      assert.equal(prompt.description, skill.description);
+    }
+    const loaded = await client.getPrompt({ name: "rough-cut", arguments: { task: "cut the pauses from interview.mp4" } });
+    const text: string = JSON.stringify(loaded.messages);
+    assert.match(text, /cut the pauses from interview\.mp4/);
+    assert.match(text, /skills\/rough-cut\/references\/pacing\.md/);
+    assert.match(text, new RegExp(findDocument("skills/rough-cut/SKILL.md")?.sha256 ?? "missing"));
+    const bare = await client.getPrompt({ name: "video-director" });
+    assert.doesNotMatch(JSON.stringify(bare.messages), /Task:/);
+    await assert.rejects(client.getPrompt({ name: "not-a-skill" }));
+  } finally { await client.close(); }
+});
+
 test("search finds a relevant runbook and returns no invented matches", async (): Promise<void> => {
   let client: Client = await connect();
   try {
