@@ -1,0 +1,4 @@
+interface:
+  display_name: "Style: Craft Reel"
+  short_description: "15 s showreel: one motif through labelled craft chapters on a beat grid"
+  default_prompt: "Use $editbay:style-craft-reel to make a 15-second showreel for this brand that shows range, on the beat."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Style: Edit Talks Back"
+  short_description: "Talking-head edit where the edit is a character: asides, counters, punch words, a parody-world open"
+  default_prompt: "Use $editbay:style-edit-talks-back to cut this talking-head footage into a funny edit where the editor answers the host on screen."

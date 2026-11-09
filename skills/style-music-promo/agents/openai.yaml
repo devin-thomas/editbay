@@ -1,0 +1,4 @@
+interface:
+  display_name: "Style: Music Promo"
+  short_description: "Trailers, sizzle reels, intros, outros, interstitials and idents cut to a song, 16:9 and 9:16"
+  default_prompt: "Use $editbay:style-music-promo to cut a 30-second trailer for my app on this song, with a 9:16 version."

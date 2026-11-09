@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reference to Style"
+  short_description: "Measure a video you admire and turn its grammar into a skill"
+  default_prompt: "Use $editbay:reference-to-style to analyse why this video works and turn its style into a reusable skill."

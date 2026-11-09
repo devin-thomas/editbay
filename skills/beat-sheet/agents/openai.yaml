@@ -1,0 +1,4 @@
+interface:
+  display_name: "Beat Sheet"
+  short_description: "Anchor every visual to a word or a beat, then check it"
+  default_prompt: "Use $editbay:beat-sheet to plan where every graphic, card, and cut lands in this video, and check the plan."

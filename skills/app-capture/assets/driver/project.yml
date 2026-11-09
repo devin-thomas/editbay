@@ -1,0 +1,44 @@
+# XcodeGen spec for a UI-test "performer": an empty host app plus a UI test bundle that drives ANOTHER installed app
+# by bundle identifier. Copy this folder into the edit project, set APP_BUNDLE_ID in UITests/Performance.swift, then:
+#   xcodegen generate && ./take.sh <simulator-udid> <TAKE_NAME> Takes/testTakeA
+name: Performer
+options:
+  bundleIdPrefix: com.example.performer
+  deploymentTarget:
+    iOS: "26.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    GENERATE_INFOPLIST_FILE: YES
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+targets:
+  PerformerHost:
+    type: application
+    platform: iOS
+    sources: [Host]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.performer.host
+        TARGETED_DEVICE_FAMILY: "1,2"
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+  PerformerUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: PerformerHost
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.performer.uitests
+        TEST_TARGET_NAME: PerformerHost
+        TARGETED_DEVICE_FAMILY: "1,2"
+schemes:
+  Performer:
+    build:
+      targets:
+        PerformerHost: all
+        PerformerUITests: [test]
+    test:
+      targets: [PerformerUITests]

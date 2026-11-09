@@ -1,0 +1,9 @@
+# EditBay
+
+> Portable video-editing skills and local tools. Hosted MCP: read-only guidance, not remote editing.
+
+- [Start](https://editbay.uppercut-labs.com/guides/start.md)
+- [README](https://editbay.uppercut-labs.com/docs/README.md)
+- [Hosted MCP](https://editbay.uppercut-labs.com/mcp)
+- [Health](https://editbay.uppercut-labs.com/health)
+- [Public source](https://github.com/devin-thomas/editbay)

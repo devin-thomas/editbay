@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render Verify"
+  short_description: "Automated gates, one visual read, two repairs, an honest QA report"
+  default_prompt: "Use $editbay:render-verify to check this render, fix what fails, and give me the QA report."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sound Bed"
+  short_description: "Music on a grid, synthesised SFX, ducking, loudness to spec"
+  default_prompt: "Use $editbay:sound-bed to make the music bed and sound effects for this edit and mix it to the delivery loudness."

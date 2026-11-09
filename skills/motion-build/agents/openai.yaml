@@ -1,0 +1,4 @@
+interface:
+  display_name: "Motion Build"
+  short_description: "Beat sheet to a checked HyperFrames composition and render"
+  default_prompt: "Use $editbay:motion-build to build the motion graphics from this beat sheet in HyperFrames and render a review cut."

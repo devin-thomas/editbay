@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Retro"
+  short_description: "Turn feedback and QA findings into skill, style, and brand updates"
+  default_prompt: "Use $editbay:skill-retro to fold the feedback and QA findings from this run back into the skills that made it."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Footage Intake"
+  short_description: "Download, inventory, conform, and look at every source"
+  default_prompt: "Use $editbay:footage-intake to bring these videos into the project, inventory them, and give me contact sheets and notes."

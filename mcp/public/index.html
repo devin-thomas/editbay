@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="A video-editing workflow your agent can follow. Plan the cut, build the motion, and verify the result. Portable skills, local tools, and a read-only hosted MCP.">
+  <title>EditBay — Make the cut. Keep the proof.</title>
+  <link rel="canonical" href="https://editbay.uppercut-labs.com/">
+  <link rel="stylesheet" href="/assets/showcase.css">
+  <script src="/assets/showcase.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav wrap">
+  <a class="wordmark" href="/" aria-label="EditBay home"><span class="mark" aria-hidden="true">E<span>▰</span></span>editbay<span class="dot">.</span></a>
+  <nav aria-label="Primary"><a href="#workflow">Workflow</a><a href="/guides/start.md">Guide</a><a class="nav-cta" href="#connect">Connect your agent <span aria-hidden="true">↗</span></a></nav>
+</header>
+<main id="main">
+  <section class="hero wrap" aria-labelledby="headline">
+    <div class="hero-copy">
+      <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> THE AGENT'S EDITING ROOM</p>
+      <h1 id="headline">Make the cut.<br><span>Keep the proof.</span></h1>
+      <p class="lede">A video-editing workflow your agent can follow—from the first brief to the final frame. Skills for the decisions. Local tools for the work. Evidence for the result.</p>
+      <div class="actions"><a class="button primary" href="#connect">Connect your agent <span aria-hidden="true">↗</span></a><a class="button secondary" href="https://github.com/devin-thomas/editbay">Explore the source</a></div>
+      <p class="quiet">No sign-in for hosted guidance. Your media stays with your local tools.</p>
+    </div>
+    <figure class="edit-demo" aria-label="Synthetic illustration of a video-editing timeline">
+      <div class="demo-bar"><span><span class="status-dot" aria-hidden="true"></span> NEUTRAL STUDY / 001</span><span>16:9 · 24 FPS</span></div>
+      <div class="preview">
+        <div class="frame-guides" aria-hidden="true"></div>
+        <span class="frame-counter" id="frame-counter">FRAME 000</span>
+        <div class="preview-title"><span class="eyebrow">A LITTLE INTENTION.</span><strong id="demo-title">A better cut.</strong><span class="preview-line" aria-hidden="true"></span></div>
+        <span class="frame-label">ILLUSTRATIVE COMPOSITION</span>
+      </div>
+      <div class="transport"><button id="demo-toggle" type="button" aria-pressed="false">Play illustration</button><span id="demo-time">00:00 / 00:12</span><span class="demo-state">SYNTHETIC</span></div>
+      <div class="timeline" aria-hidden="true"><div class="ruler"><span>0s</span><span>3s</span><span>6s</span><span>9s</span><span>12s</span></div><div class="track"><span class="track-name">V1</span><span class="clip clip-a">INTAKE</span><span class="clip clip-b">THE CUT</span><span class="clip clip-c">PAYOFF</span></div><div class="track"><span class="track-name">T1</span><span class="clip title-clip">TYPE / TIMING / INTENT</span></div><div class="track"><span class="track-name">A1</span><span class="audio-wave"></span></div><div class="playhead" id="playhead"></div></div>
+      <figcaption>A synthetic timeline illustration, not a recorded editing session or a rendered deliverable.</figcaption>
+    </figure>
+  </section>
+  <section class="boundary wrap" aria-label="What runs where"><p><strong>Guidance in the cloud.</strong><span>Read-only skills and runbooks.</span></p><span class="boundary-arrow" aria-hidden="true">→</span><p><strong>Production on your machine.</strong><span>Your files, engines, and approval gates.</span></p></section>
+  <section class="section wrap" id="workflow" aria-labelledby="workflow-title"><div class="section-heading"><div><p class="eyebrow">FROM IDEA TO DELIVERY</p><h2 id="workflow-title">One edit. A visible trail.</h2></div><p>The workflow leaves artifacts at each step, so you can inspect the decisions—not just watch an agent work.</p></div><div class="workflow-grid">
+    <article><span class="step">01 / DIRECT</span><h3>Define the promise.</h3><p>Write the goal, audience, sources, constraints, and acceptance checks before touching the timeline.</p><code>EDIT.md</code></article>
+    <article><span class="step">02 / SHAPE</span><h3>Find the story.</h3><p>Reconcile transcripts, select the useful moments, and anchor visual events to words and beats.</p><code>edl.json · BEATS.md</code></article>
+    <article><span class="step">03 / BUILD</span><h3>Give it rhythm.</h3><p>Compose motion, type, captions, and sound with reusable patterns and project-local assets.</p><code>hf/ · sound/</code></article>
+    <article><span class="step">04 / VERIFY</span><h3>Check the actual file.</h3><p>Measure the encode, inspect the cuts, review the soundtrack, and report what has not been tested.</p><code>qa/REPORT.md</code></article>
+  </div></section>
+  <section class="section wrap capabilities" aria-labelledby="capabilities-title"><div><p class="eyebrow">A TOOLKIT, NOT A BLACK BOX</p><h2 id="capabilities-title">Direct the edit.<br>Inspect the work.</h2><p>EditBay combines agent-readable workflows with local Python tools. Use the whole loop or load the runbook for the step in front of you.</p><a class="text-link" href="/docs/README.md">Read the toolkit guide ↗</a></div><div class="capability-list"><p><span>Timing</span>Transcripts, rough cuts, and beat sheets</p><p><span>Craft</span>Motion, sound, captions, and app capture</p><p><span>Evidence</span>Encoded-file checks and delivery manifests</p><p><span>Learning</span>Reference analysis and reusable style rules</p></div></section>
+  <section class="connect wrap" id="connect" aria-labelledby="connect-title"><div><p class="eyebrow">GIVE YOUR AGENT THE RUNBOOK</p><h2 id="connect-title">Start with a connection.</h2><p>Add the Streamable HTTP endpoint to your MCP-capable client. Then ask for <code>video-director</code>.</p><p class="quiet">The hosted service reads approved documentation only. It cannot upload, edit, render, record, or publish media for you.</p></div><div class="connect-box"><div class="code-heading"><span>REMOTE MCP / NO AUTH</span><button id="copy-endpoint" type="button">Copy endpoint</button></div><code id="endpoint">https://editbay.uppercut-labs.com/mcp</code><pre><code>{
+  "mcpServers": {
+    "editbay": {
+      "url": "https://editbay.uppercut-labs.com/mcp"
+    }
+  }
+}</code></pre><p id="copy-status" role="status" aria-live="polite"></p><a class="text-link" href="/guides/start.md">Read setup and local requirements ↗</a></div></section>
+</main>
+<footer class="wrap footer"><a class="wordmark" href="/">editbay<span class="dot">.</span></a><p>Built for intentional edits.</p><nav aria-label="Footer"><a href="https://github.com/devin-thomas/editbay">Source</a><a href="/llms.txt">For agents</a><a href="/health">Service health</a><a href="https://uppercut-labs.com">Uppercut Labs ↗</a></nav></footer>
+</body>
+</html>

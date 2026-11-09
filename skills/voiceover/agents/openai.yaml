@@ -1,0 +1,4 @@
+interface:
+  display_name: "Voiceover"
+  short_description: "Sentence-by-sentence TTS narration, checked against the script"
+  default_prompt: "Use $editbay:voiceover to turn this script into checked narration with word timings for the edit."

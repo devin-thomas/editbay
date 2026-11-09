@@ -1,0 +1,98 @@
+{
+  "$comment": "Example only. Replace placeholder paths and explicitly configure each engine. Keep credentials in local environment variables.",
+  "gpu_host": {
+    "ssh": "gpu-box",
+    "shell": "pwsh",
+    "work_root": "C:/work/editbay",
+    "python": "C:/work/editbay/.venv/Scripts/python.exe",
+    "notes": "Placeholder SSH alias and paths. Configure a host explicitly before any remote run."
+  },
+  "render_host": "local",
+  "downloads": {
+    "host": "gpu-box",
+    "yt_dlp_args": []
+  },
+  "credentials": {
+    "env_file": "~/.config/editbay/.env",
+    "providers": {
+      "gemini": "GEMINI_API_KEY",
+      "fish_audio": "FISH_AUDIO_API_KEY",
+      "elevenlabs": "ELEVENLABS_API_KEY",
+      "kie": "KIE_API_KEY",
+      "openai": "OPENAI_API_KEY"
+    }
+  },
+  "tts": {
+    "default_voice": "stock",
+    "voices": {
+      "creator-clone": {
+        "engine": "remote",
+        "host": "gpu-box",
+        "shell": "pwsh",
+        "runner_python": "C:/Python312/python.exe",
+        "work_dir": "C:/work/editbay/tts",
+        "worker": {
+          "python": "C:/tts/envs/qwen3-tts/Scripts/python.exe",
+          "script": "C:/tts/clone_worker.py",
+          "args": [
+            "--ckpt-dir",
+            "C:/tts/hf-home/hub/models--Qwen--Qwen3-TTS-12Hz-1.7B-Base/snapshots/<revision>",
+            "--profile",
+            "C:/tts/voices/creator-v1/profile.json"
+          ],
+          "env": {
+            "HF_HOME": "C:/tts/hf-home",
+            "HF_HUB_OFFLINE": "1",
+            "PYTHONIOENCODING": "utf-8"
+          }
+        },
+        "lock": "C:/tts/runs/.gpu.lock",
+        "language": "English",
+        "disclosure": "Narrated with a voice model trained on the creator's own voice.",
+        "consent": "who agreed, where, and for which projects"
+      },
+      "stock": {
+        "engine": "qwen3-worker",
+        "python": "~/tts/envs/qwen3-tts/bin/python",
+        "worker": "~/tts/worker.py",
+        "ckpt": "~/tts/hf-home/hub/models--Qwen--Qwen3-TTS-12Hz-1.7B-CustomVoice/snapshots/<revision>",
+        "device": "mps",
+        "voice": "aiden"
+      }
+    }
+  },
+  "brand_default": "neutral",
+  "brand_dirs": [
+    "~/.config/editbay/brands",
+    "<plugin>/brands"
+  ],
+  "delivery_profiles": {
+    "youtube": {
+      "size": "1920x1080",
+      "fps": 60,
+      "lufs": -14,
+      "true_peak": -1.0,
+      "master": "3840x2160@60 optional"
+    },
+    "explainer": {
+      "size": "1920x1080",
+      "fps": 60,
+      "lufs": -16,
+      "true_peak": -1.0,
+      "master": "3840x2160@60"
+    },
+    "shorts": {
+      "size": "1080x1920",
+      "fps": 60,
+      "lufs": -14,
+      "true_peak": -1.0,
+      "max_seconds": 60
+    },
+    "reel": {
+      "size": "1920x1080",
+      "fps": 60,
+      "lufs": -14,
+      "true_peak": -1.0
+    }
+  }
+}

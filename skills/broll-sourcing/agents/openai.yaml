@@ -1,0 +1,4 @@
+interface:
+  display_name: "B-roll Sourcing"
+  short_description: "Captures, official assets, stock, and generation, with a provenance gate"
+  default_prompt: "Use $editbay:broll-sourcing to gather the screenshots, recordings, and images this edit needs, with provenance for each."

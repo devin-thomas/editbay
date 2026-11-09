@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Director"
+  short_description: "Brief, route, and run the whole edit loop to delivery"
+  default_prompt: "Use $editbay:video-director to take this video from brief to verified delivery."

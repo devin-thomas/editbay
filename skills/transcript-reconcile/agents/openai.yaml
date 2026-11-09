@@ -1,0 +1,4 @@
+interface:
+  display_name: "Transcript Reconcile"
+  short_description: "Two-model transcripts, voted, glossary-fixed, logged"
+  default_prompt: "Use $editbay:transcript-reconcile to produce a corrected, word-timed transcript of this video with a corrections log."

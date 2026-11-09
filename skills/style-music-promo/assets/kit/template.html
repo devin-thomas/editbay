@@ -1,0 +1,48 @@
+<!doctype html>
+<!-- Music-promo composition template (HyperFrames 0.8.92; passes `hf.py check` as built in the DemoIdent ident proof).
+     The build script copies this file to the project's index.html (and vertical.html), copies the kit files it uses
+     into kit/, and replaces every {{TOKEN}}: TITLE, W, H, DUR, FPS, VERTICAL (true/false), FONT_FAMILY, FONT_FILE
+     (a file under assets/fonts/), CSS (the project's styles), BODY (its elements), TIMELINE (its timeline code).
+     Rules this layout keeps:
+     - GSAP from the pinned jsdelivr URL below, in <head>, before any kit script.
+     - Fonts are local files through @font-face with a relative URL; nothing is fetched from a font service.
+     - The root carries data-composition-id="main", data-start, data-width, data-height, data-duration, data-fps.
+     - One <audio> for the finished mix (sound/mix.wav copied to assets/), track 0; footage stays muted.
+     - Script order: data.js (window.AUD from the map JSON, window.SHOT from the build), then the kit files, then the
+       timeline inline in this page. An external timeline.js fails lint with missing_timeline_registry.
+     - Frame 0: zero-duration sets at 0 do not render the first frame, so opening states go through K.openState. -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width={{W}}, height={{H}}" />
+  <title>{{TITLE}}</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <link rel="stylesheet" href="kit/mark.css" />
+  <style>
+@font-face { font-family: "{{FONT_FAMILY}}"; src: url("assets/fonts/{{FONT_FILE}}"); font-weight: 1 1000; }
+html, body { margin: 0; background: #030405; }
+#root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #030405;
+  font-family: "{{FONT_FAMILY}}", system-ui, sans-serif; color: #f4f6fa; }
+{{CSS}}
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="main" data-start="0" data-width="{{W}}" data-height="{{H}}" data-duration="{{DUR}}" data-fps="{{FPS}}">
+{{BODY}}
+    <audio id="mix" src="assets/mix.wav" data-start="0" data-duration="{{DUR}}" data-track-index="0" data-volume="1"></audio>
+  </div>
+  <script src="js/data.js"></script>
+  <script src="kit/wave.js"></script>
+  <script src="kit/ring.js"></script>
+  <script src="kit/promo.js"></script>
+  <script>
+window.__timelines = window.__timelines || {};
+const tl = gsap.timeline({ paused: true });
+const K = makePromo(tl, { vertical: {{VERTICAL}}, fps: {{FPS}} });
+const S = window.SHOT, AUD = window.AUD;
+{{TIMELINE}}
+window.__timelines["main"] = tl;
+  </script>
+  <!-- A Three.js stage (stage.js) goes here as <script type="module" src="kit/stage.js">, with an importmap in <head>. -->
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "editbay",
+  "owner": {
+    "name": "Devin Thomas",
+    "url": "https://starter.uppercut-labs.com"
+  },
+  "description": "editbay: agent skills for editing and making videos with a coding agent, built on HyperFrames.",
+  "plugins": [
+    {
+      "name": "editbay",
+      "source": "./",
+      "description": "Transcribe, cut, plan the beats, build with HyperFrames, verify, deliver; plus reference-to-style and skill retros.",
+      "category": "media",
+      "keywords": ["video", "editing", "motion-design", "hyperframes", "transcription", "verification"]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+# Media and generated output stay out of git; records (briefs, sheets, reports, manifests) go in.
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.m4a
+*.mp3
+!tools/**/*.wav
+renders/
+work/
+**/node_modules/
+**/.hyperframes/
+**/snapshots/
+.env
+.env.*
+__pycache__/
+.DS_Store
+# regenerable evidence images and scaffold caches
+examples/**/qa/*.jpg
+examples/**/qa/*.png
+examples/**/hf/renders/
+# absolute media paths by design (Resolve needs file URLs) or raw tool dumps summarised in REPORT.md
+examples/**/*.fcpxml
+examples/**/qa/hyperframes-check.json
+examples/**/deliver/*.jpg
+examples/**/reference/*.jpg
+examples/**/reference/*.png

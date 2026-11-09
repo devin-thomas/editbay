@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delivery Pack"
+  short_description: "Masters, vertical cut, captions, chapters, thumbnails, manifest"
+  default_prompt: "Use $editbay:delivery-pack to render the delivery variants of this edit and package them with captions, thumbnails, and a manifest."

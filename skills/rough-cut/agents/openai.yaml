@@ -1,0 +1,4 @@
+interface:
+  display_name: "Rough Cut"
+  short_description: "Cut dead air, fillers, and retakes, frame-exact, with FCPXML"
+  default_prompt: "Use $editbay:rough-cut to remove the mistakes, retakes, and dead air from this recording and give me the cut plus a Resolve timeline."
