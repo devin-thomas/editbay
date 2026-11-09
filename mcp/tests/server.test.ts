@@ -55,6 +55,7 @@ test("every skill is a prompt that carries the skill text, task and references",
       const skill = skills.find((document): boolean => document.skill === prompt.name);
       assert.ok(skill);
       assert.equal(prompt.description, skill.description);
+      assert.doesNotMatch(skill.description, /^["']/, `${prompt.name} description keeps YAML quotes`);
     }
     const loaded = await client.getPrompt({ name: "rough-cut", arguments: { task: "cut the pauses from interview.mp4" } });
     const text: string = JSON.stringify(loaded.messages);

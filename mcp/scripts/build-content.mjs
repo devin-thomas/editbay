@@ -20,7 +20,7 @@ export function buildContent() {
     const text = git("show", `${revision}:${path}`);
     const title = /^# (.+)$/m.exec(text)?.[1] ?? path;
     const skill = /^skills\/([^/]+)\/SKILL\.md$/.exec(path)?.[1] ?? null;
-    const description = skill === null ? "" : /^description: (.+)$/m.exec(text)?.[1];
+    const description = skill === null ? "" : /^description: (.+)$/m.exec(text)?.[1]?.replace(/^"(.*)"$/, "$1");
     if (skill !== null && !description) throw new Error(`Missing description: ${path}`);
     return { path, title, skill, description: description ?? "", text, sha256: createHash("sha256").update(text).digest("hex") };
   });
