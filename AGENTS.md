@@ -1,6 +1,6 @@
 # EditBay contributor contract
 
-This is the public, portable editing toolkit. Skills describe workflows; Python tools perform local operations; the hosted MCP serves an explicit list of documentation only.
+This is the public, portable editing toolkit. Skills describe workflows; Python tools perform local operations; the hosted MCP serves an explicit list of documentation and script source as read-only text and runs nothing.
 
 Keep personal profiles, credentials, voice assets, provider logs, recordings, generated productions, and workstation configuration outside this repository. Use local configuration and neutral placeholders. Never add a production artifact as a test fixture without a privacy and rights review.
 

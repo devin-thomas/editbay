@@ -6,7 +6,7 @@ Video-editing skills and local tools for coding agents. Turn a brief into a time
 
 ## Start with your agent
 
-Connect the read-only hosted MCP, then ask for `video-director`. It serves skills and runbooks; it does not accept media, access your computer, or perform edits remotely.
+Connect the read-only hosted MCP, then ask for `video-director`. It serves skills, runbooks and the Python scripts as read-only text (`list_tools`, `get_tool`); it runs nothing, does not accept media, access your computer, or perform edits remotely. Without the plugin, save the scripts together in a local `tools/` folder and run them with `uv run`.
 
 ```json
 {"mcpServers":{"editbay":{"url":"https://editbay.uppercut-labs.com/mcp"}}}

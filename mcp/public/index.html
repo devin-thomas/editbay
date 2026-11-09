@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="Video editing skills, local tools and a read-only MCP for Claude Code, Codex and Cursor.">
+  <meta name="description" content="Video editing skills, Python tools and a read-only MCP that serves them to Claude Code, Codex and Cursor.">
   <title>EditBay — Video editing for coding agents</title>
   <link rel="canonical" href="https://editbay.uppercut-labs.com/">
   <link rel="stylesheet" href="/assets/showcase.css">
@@ -25,7 +25,8 @@
     </div>
     <section class="panel" aria-labelledby="prompt-title">
       <h2 id="prompt-title">Setup prompt</h2>
-      <p id="setup-prompt">Connect the EditBay MCP server at https://editbay.uppercut-labs.com/mcp (Streamable HTTP, no sign-in). Load the video-director skill and use it to plan my edit. Run editing tools locally and keep my footage and renders on this machine.</p>
+      <div class="seg" role="group" aria-label="Choose your agent"><button class="seg-btn" type="button" id="pick-claude" aria-pressed="true">Claude Code</button><button class="seg-btn" type="button" id="pick-mcp" aria-pressed="false">Codex, Cursor and others</button></div>
+      <p id="setup-prompt">Install the EditBay plugin in Claude Code: run claude plugin marketplace add devin-thomas/editbay, then claude plugin install editbay@editbay. When both succeed, tell me to start a new session. In that session, load the video-director skill and use it to plan my edit. Keep my footage and renders on this machine.</p>
       <div class="action"><button class="primary" id="copy-prompt" type="button">Copy prompt</button><p class="copy-status" id="prompt-status" role="status" aria-live="polite"></p></div>
     </section>
   </section>
@@ -34,7 +35,7 @@
     <article id="connect">
       <h3>MCP</h3>
       <div>
-        <p>Skills and runbooks over Streamable HTTP. No sign-in. It reads documentation only; it cannot upload, render or publish media.</p>
+        <p>Skills as prompts, runbooks and the Python scripts as source text (<code>get_tool</code>), over Streamable HTTP. No sign-in. Nothing runs on the server: it cannot upload, render or publish media.</p>
         <div class="endpoint"><code id="endpoint">https://editbay.uppercut-labs.com/mcp</code><button class="small" id="copy-endpoint" type="button">Copy URL</button><p class="copy-status" id="copy-status" role="status" aria-live="polite"></p></div>
         <a href="/guides/start.md">Connect MCP</a>
       </div>
@@ -44,7 +45,7 @@
       <div>
         <code>claude plugin marketplace add devin-thomas/editbay</code>
         <code>claude plugin install editbay@editbay</code>
-        <p>Seventeen skills and the local Python tools for Claude Code. Codex can link the same <code>skills/</code> folders.</p>
+        <p>Seventeen skills and the local Python tools for Claude Code. Start a new session after installing. Codex can link the same <code>skills/</code> folders.</p>
         <a href="https://github.com/devin-thomas/editbay#readme">Install guide</a>
       </div>
     </article>

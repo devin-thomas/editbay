@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -21,7 +22,7 @@ test("real SDK initialization, tool discovery, skill loading and reference readi
   let client: Client = await connect();
   try {
     const tools = await client.listTools();
-    assert.deepEqual(tools.tools.map((tool): string => tool.name).sort(), ["get_skill", "list_skills", "read_document", "search_editbay"]);
+    assert.deepEqual(tools.tools.map((tool): string => tool.name).sort(), ["get_skill", "get_tool", "list_skills", "list_tools", "read_document", "search_editbay"]);
     assert.ok(tools.tools.every((tool): boolean => tool.annotations?.readOnlyHint === true));
     const skills = await client.callTool({ name: "list_skills", arguments: {} });
     assert.match(JSON.stringify(skills), /video-director/);
@@ -31,6 +32,79 @@ test("real SDK initialization, tool discovery, skill loading and reference readi
     const resource = await client.readResource({ uri: "editbay://docs/skills/video-director/references/routes.md" });
     assert.match(JSON.stringify(resource), /talking.head/i);
     assert.ok((await client.listResources()).resources.length === documents.length);
+  } finally { await client.close(); }
+});
+
+test("server instructions name every skill so a model can route to it", async (): Promise<void> => {
+  let client: Client = await connect();
+  try {
+    const instructions: string = client.getInstructions() ?? "";
+    const names: string[] = documents.flatMap((document): string[] => (document.skill === null ? [] : [document.skill]));
+    assert.ok(names.length >= 17);
+    for (const name of names) assert.ok(instructions.includes(`- ${name}:`), name);
+    assert.ok(instructions.length < 6000, `instructions too long: ${instructions.length}`);
+  } finally { await client.close(); }
+});
+
+test("every skill is a prompt that carries the skill text, task and references", async (): Promise<void> => {
+  let client: Client = await connect();
+  try {
+    const skills = documents.filter((document): boolean => document.skill !== null);
+    const prompts = await client.listPrompts();
+    assert.deepEqual(prompts.prompts.map((prompt): string => prompt.name).sort(), skills.map((document): string => document.skill ?? "").sort());
+    for (const prompt of prompts.prompts) {
+      const skill = skills.find((document): boolean => document.skill === prompt.name);
+      assert.ok(skill);
+      assert.equal(prompt.description, skill.description);
+      assert.doesNotMatch(skill.description, /^["']/, `${prompt.name} description keeps YAML quotes`);
+    }
+    const loaded = await client.getPrompt({ name: "rough-cut", arguments: { task: "cut the pauses from interview.mp4" } });
+    const text: string = JSON.stringify(loaded.messages);
+    assert.match(text, /cut the pauses from interview\.mp4/);
+    assert.match(text, /skills\/rough-cut\/references\/pacing\.md/);
+    assert.match(text, new RegExp(findDocument("skills/rough-cut/SKILL.md")?.sha256 ?? "missing"));
+    const bare = await client.getPrompt({ name: "video-director" });
+    assert.doesNotMatch(JSON.stringify(bare.messages), /Task:/);
+    await assert.rejects(client.getPrompt({ name: "not-a-skill" }));
+  } finally { await client.close(); }
+});
+
+test("every committed script is served read-only with a hash that matches its bytes", async (): Promise<void> => {
+  const root: string = fileURLToPath(new URL("../../", import.meta.url));
+  const committed: string[] = execFileSync("git", ["-C", root, "ls-tree", "--name-only", revision, "tools/"], { encoding: "utf8" }).split("\n").filter((path: string): boolean => path.endsWith(".py")).map((path: string): string => path.slice(6)).sort();
+  assert.ok(committed.length >= 35);
+  let client: Client = await connect();
+  try {
+    const listed = z.object({ count: z.number(), tools: z.array(z.object({ name: z.string(), description: z.string().min(10), sha256: z.string(), bytes: z.number(), url: z.string() })) }).parse((await client.callTool({ name: "list_tools", arguments: {} })).structuredContent);
+    assert.deepEqual(listed.tools.map((tool): string => tool.name).sort(), committed);
+    assert.equal(listed.count, committed.length);
+    for (const name of [committed[0] ?? "", "loudness", "loudness.py"]) {
+      const loaded = z.object({ name: z.string(), content: z.string(), sha256: z.string(), revision: z.string(), saveAs: z.string() }).parse((await client.callTool({ name: "get_tool", arguments: { name } })).structuredContent);
+      assert.equal(loaded.sha256, createHash("sha256").update(loaded.content).digest("hex"));
+      assert.equal(loaded.revision, revision);
+      assert.equal(loaded.saveAs, `$EB/tools/${loaded.name}`);
+      assert.equal(loaded.content, execFileSync("git", ["-C", root, "show", `${revision}:tools/${loaded.name}`], { encoding: "utf8" }));
+    }
+    const loud = z.object({ content: z.string() }).parse((await client.callTool({ name: "get_tool", arguments: { name: "loudness" } })).structuredContent);
+    assert.match(loud.content, /EBU R128/);
+    const asResource = await client.readResource({ uri: "editbay://docs/tools/loudness.py" });
+    assert.match(JSON.stringify(asResource), /EBU R128/);
+    assert.ok(client.getInstructions()?.includes("get_tool"));
+  } finally { await client.close(); }
+  const cited: Response = await handleRequest(new Request("https://editbay.test/docs/tools/loudness.py"));
+  assert.equal(cited.status, 200);
+  assert.match(await cited.text(), /EBU R128/);
+});
+
+test("only committed scripts are served: no examples, config, traversal or other file types", async (): Promise<void> => {
+  let client: Client = await connect();
+  try {
+    for (const name of ["glass_logo.example.json", "nope", "../README", "..\\loudness", "loudness.sh", "LOUDNESS", "tools/loudness"]) {
+      assert.equal((await client.callTool({ name: "get_tool", arguments: { name } })).isError, true, name);
+    }
+    for (const path of ["tools/glass_logo.example.json", "tools/__init__.py", "tools/../AGENTS.md", "tools/"]) {
+      assert.equal((await client.callTool({ name: "read_document", arguments: { path } })).isError, true, path);
+    }
   } finally { await client.close(); }
 });
 
@@ -82,7 +156,7 @@ test("unknown documents, path traversal, invalid inputs and unknown skills fail 
 test("only the committed documentation allowlist is exposed", (): void => {
   assert.match(revision, /^[a-f0-9]{40}$/);
   for (const document of documents) {
-    assert.ok(document.path === "README.md" || document.path === "mcp/README.md" || document.path.startsWith("docs/") || /^skills\/[^/]+\/(SKILL.md|references\/.*.md)$/.test(document.path));
+    assert.ok(document.path === "README.md" || document.path === "mcp/README.md" || document.path.startsWith("docs/") || /^skills\/[^/]+\/(SKILL.md|references\/.*.md)$/.test(document.path) || /^tools\/[a-z0-9_]+\.py$/.test(document.path));
     assert.match(document.sha256, /^[a-f0-9]{64}$/);
     assert.ok(!document.path.includes(".env"));
     assert.ok(!document.path.startsWith("examples/"));
