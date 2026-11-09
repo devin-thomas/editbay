@@ -27,7 +27,7 @@ Brief → intake → transcript → rough cut → beat sheet → motion and soun
 
 The collection also includes reference-to-style, app capture, narration, music-promo patterns, and a retrospective workflow. [Design](docs/DESIGN.md) describes the file contracts. [Provider guidance](docs/PROVIDERS.md) explains local and opt-in paid routes.
 
-The showcase's timeline is an illustrative, synthetic composition—not a recording of an editor, a rendered deliverable, or evidence of a completed production. [Examples](docs/EXAMPLES.md) explains how to make a neutral first project.
+[Examples](docs/EXAMPLES.md) explains how to make a neutral first project.
 
 ## Release checks
 

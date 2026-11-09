@@ -24,4 +24,4 @@ After checks and release approval, `npm run deploy` repeats the checks and deplo
 
 The Worker name is intentionally stable. Deploying the reviewed package updates the existing service as well as its custom domain, avoiding a second live copy of an outdated documentation corpus. Verify both entry points during a migration; do not roll back to a revision that predates the privacy boundary.
 
-The page contains an interactive synthetic timeline. Replace it with a recorded showcase only after approving the media rights, visible information, and metadata. No stock footage or fabricated production success is presented as evidence.
+The page uses no recorded media. Add a recorded showcase only after approving its media rights, visible information, and metadata.
