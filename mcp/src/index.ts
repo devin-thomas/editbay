@@ -32,7 +32,7 @@ function requireDocument(path: string): Document {
 }
 
 export function createServer(baseUrl: string): McpServer {
-  let server: McpServer = new McpServer({ name: "editbay", version: "0.1.0" }, { instructions });
+  let server: McpServer = new McpServer({ name: "editbay", version: "1.0.0" }, { instructions });
   server.registerTool("list_skills", {
     description: "Browse every editbay skill with its purpose and document path. Start with video-director for an end-to-end editing runbook.",
     inputSchema: {}, annotations, _meta: authMeta,
