@@ -1,11 +1,11 @@
 ---
 name: video-director
-description: Entry point for making or editing a video with editbay. Turns a request into an edit brief (goal, audience, sources, deliverables, brand, style, voice and consent, mode, human boundaries), routes it through the editbay steps or a HyperFrames workflow, plans which machine does what, sets a goal condition the run must prove with printed evidence, and runs the loop with checkpoints to delivery and a retro. Use when asked to edit a video, cut and package footage, make a reel, explainer, short, or motion piece, or "do the whole thing" from a file, URL, or idea.
+description: Entry point for making or editing a video with editbay. Turns a request into an edit brief (goal, audience, sources, deliverables, brand, style, voice and consent, mode, human boundaries), routes it through the editbay steps or a HyperFrames workflow, plans which machine does what, sets a goal condition the run must prove with printed evidence, sets a stop time, a render budget and a review-round cap, and runs the chain once with checkpoints to delivery and a retro. Use when asked to edit a video, cut and package footage, make a reel, explainer, short, or motion piece, or "do the whole thing" from a file, URL, or idea.
 ---
 
 # Video director
 
-One request, one brief, one loop: intake, transcript, cut, voice, beat sheet, sound, sources, build, verify, deliver,
+One request, one brief, one pass through the chain: intake, transcript, cut, voice, beat sheet, sound, sources, build, verify, deliver,
 retro. The director decides what applies, keeps the creator's boundaries, and never calls a step done without its
 evidence.
 
@@ -39,14 +39,29 @@ For long unattended runs, set a goal whose evaluator can check it from the trans
 lines the run must print (the QA report verdict, the loudness lines, the delivery path) and a turn cap.
 [references/goal-conditions.md](references/goal-conditions.md).
 
-**Done when:** the condition is written in `EDIT.md` and every item in it is something a tool prints.
+Write the bounds into `EDIT.md` beside the goal, before any render:
 
-## 4. Run the loop
+- **Stop time.** The creator's time budget as a clock time. At that time, deliver what is kept and list what is
+  open. More work needs the creator's say.
+- **Render budget.** How many full renders the run may make. Default 3: a draft and two repairs.
+- **Review rounds.** At most three critic or review rounds. Only a reproduced defect (broken, false, unreadable,
+  failing a measured gate) sends the work back. Taste notes go to `HUMAN_QUEUE.md`.
+- **Order.** Deliver first. Once a master is handed to delivery-pack, or anything is being built from it, it is
+  frozen until every output from it is finished.
+
+**Done when:** the condition is written in `EDIT.md`, every item in it is something a tool prints, and the stop
+time, render budget and round cap are written beside it.
+
+## 4. Run the chain
 
 Execute the chain, one skill at a time, each to its **Done when**. In collaborative mode pause at the plan (BEATS.md)
 and the final look; in autonomous mode post the same summaries and keep one question before publishing. Fire slow
 jobs (TTS, ASR, renders, generation) in the background and overlap them with planning. Read sheets at phase
 boundaries, in batches.
+
+The chain runs once. `render-verify` is the only step that repeats, and only inside its own limit. When the stop
+time, the render budget or the round cap is reached, go to delivery with the kept render and the open list. Do
+not start another pass.
 
 **Done when:** render-verify passes and delivery-pack has written `deliver/DELIVERY.md`.
 
@@ -60,6 +75,6 @@ Hand over the delivery folder with a short summary of what was checked and what 
 
 - [ ] Brief complete; consent and spend in HUMAN_QUEUE.md
 - [ ] Route and machines chosen
-- [ ] Goal condition checkable from printed evidence
+- [ ] Goal condition checkable from printed evidence; stop time, render budget and round cap written
 - [ ] Each step done to its criterion; checkpoints kept
 - [ ] Delivered with an honest summary; retro written

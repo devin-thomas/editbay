@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+`render-verify` and `video-director` now carry hard bounds: a stop time, a render budget and a three-round review cap, written into `EDIT.md` before any render. Only a reproduced defect sends work back, taste notes go to `HUMAN_QUEUE.md`, and a delivered master stays frozen until every output from it is finished.
+
 ## 1.0.0
 
 First release. The plugin, its skills and the read-only remote MCP are versioned 1.0.0.

@@ -1,6 +1,6 @@
 ---
 name: render-verify
-description: Verify a rendered video before anyone watches it. Runs the automated gates (hyperframes check on the composition; spec, black, freeze, silence, pops, loudness, beat alignment, face keep-clear, and words on the encoded file), reads one overview sheet and a strip at every cut, repairs up to twice per finding, and writes qa/REPORT.md with evidence. Use after every render and before delivery, and whenever asked to check, QA, verify, proof, or review a video. The loop that turns a first draft into the fifth.
+description: Verify a rendered video before anyone watches it. Runs the automated gates (hyperframes check on the composition; spec, black, freeze, silence, pops, loudness, beat alignment, face keep-clear, and words on the encoded file), reads one overview sheet and a strip at every cut, repairs each finding at most twice within a fixed render budget, then hands over, and writes qa/REPORT.md with evidence. Use after every render and before delivery, and whenever asked to check, QA, verify, proof, or review a video.
 ---
 
 # Render verify
@@ -64,6 +64,17 @@ legibility at phone size, anything off-brand.
 For each finding: fix the cause (the plan, the HTML, the mix), re-render only what changed when possible, and re-run
 the failing gate plus a strip around the fix. Log each pass in the report's Repairs table. After two passes on the
 same finding, stop: add it to `HUMAN_QUEUE.md` with the timestamp, the evidence file, and what you tried.
+
+Repair is bounded for the whole render too:
+
+- **Two repair renders.** One verify run makes at most two repair renders in total. A third needs the creator's say.
+- **Keep or roll back.** A repair render replaces the previous one only when the failing gate now passes and no gate
+  that passed before fails. Otherwise keep the previous render and queue the finding.
+- **Deliver before repairing.** When other outputs are being made from this render (cut-downs, platform encodes,
+  uploads), finish them from the render they started from before changing it.
+- **Stop time.** If `EDIT.md` gives a stop time, hand over at that time with what is open.
+
+A finding that is a matter of taste is never repaired here. It goes to `HUMAN_QUEUE.md`.
 
 **Done when:** every finding is fixed (gate re-run shows PASS) or queued for a human with evidence.
 
